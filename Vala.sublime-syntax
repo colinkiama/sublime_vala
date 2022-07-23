@@ -26,7 +26,7 @@ variables:
   # Lifted from the characters GLib's string.escape() method will handle.
   string_escape: \\[bfnrtv"]
 
-  access_modifier: public|private
+  access_modifier: public|private|protected|internal
   func_param_direction: out|ref
   jump_statement_keywords: break|continue|return|throw|yield
   ownership_modifiers: unowned|owned

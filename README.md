@@ -191,6 +191,7 @@ https://github.com/GNOME/gnome-calculator/blob/9c94cc009dac8802e5b3b9197ded9e052
 - [ ] Classes                                                                 
 	- [✓]  new  instantiation                                                   
 	- [ ] subclasses  
+	- [ ] Override keyword
 
 ## Credits
 
