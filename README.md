@@ -195,4 +195,4 @@ https://github.com/GNOME/gnome-calculator/blob/9c94cc009dac8802e5b3b9197ded9e052
 
 ## Credits
 
-Code used from [Vala.sublime-syntax](https://github.com/patrickrgaffney/Vala.sublime-syntax)
+Majority of syntax highlighting code and structure used from [Vala.sublime-syntax](https://github.com/patrickrgaffney/Vala.sublime-syntax)
