@@ -43,6 +43,7 @@ contexts:
   main:
     - include: using_statement
     - include: namespace_declarations
+    - include: class_declarations
     - include: method_declarations
     - include: keywords
     - include: statements
@@ -825,6 +826,34 @@ contexts:
       set: method_throws_keyword
 
 #####################################################################
+# Classes
+#####################################################################
+  class_declarations:
+    - match: '\b(class)\b\s+({{identifier}})'
+      captures:
+        1: storage.type.class.vala
+        2: entity.name.class.vala
+      push:
+        - meta_scope: meta.class.vala
+        - match: '{{identifier}}'
+          scope: entity.name.class.vala
+        - match: \.
+          scope: punctuation.accessor.dot.vala
+        - match: \{
+          scope: punctuation.section.block.begin.vala
+          set:
+            - meta_scope: meta.class.vala meta.block.vala
+            - match: \}
+              scope: punctuation.section.block.end.vala
+              pop: true
+            - include: class_members
+
+  class_members:
+    - include: class_declarations
+    - include: constant_declarations
+    - include: field_declarations
+
+#####################################################################
 # Namespaces
 #####################################################################
 
@@ -850,6 +879,7 @@ contexts:
 
   namespace_members:
     - include: namespace_declarations
+    - include: class_delcarations
     - include: constant_declarations
     - include: field_declarations
 
