@@ -679,8 +679,8 @@ contexts:
           (\?)?\s+
           (?# fully-qualified method name)
           ({{namespace_identifier}})
-          (?# opening parenthesis)
-          \s+(\()
+          (?# opening parenthesis  with space allowed before the parenthesis)
+          (\s*\()
         )
       captures:
         1: storage.modifier.vala

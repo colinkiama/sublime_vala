@@ -387,7 +387,6 @@
 //  ^^^ string.quoted.triple.vala punctuation.definition.string.end.vala
 
 /** Template strings. */
-    
     @"template string"
 //  ^^^^^^^^^^^^^^^^^^ string.quoted.double.vala
 //  ^ storage.modifier.string.vala
@@ -530,7 +529,7 @@
 //                 ^ punctuation.section.brackets.end.vala
 //                  ^ punctuation.section.brackets.end.vala
 
-    sizeof (int); typeof(Gtk.Something);
+    sizeof (int); typeof (Gtk.Something);
 //  ^^^^^^ keyword.operator.word.vala
 //         ^ punctuation.section.group.begin.vala
 //          ^^^ storage.type.vala
@@ -548,7 +547,7 @@
 //                            ^^ keyword.operator.word.vala
 //                               ^^^^^^^^^ support.type.vala
 
-    new int[3,4]; new Person(); new Button.with_label("click me");
+    new int[3,4]; new Person (); new Button.with_label ("click me");
 //  ^^^ keyword.operator.word.vala
 //      ^^^ storage.type.vala
 //         ^^^^^ meta.brackets.vala
@@ -749,7 +748,7 @@
 
 /** Ownership modifiers in forreach loops. */
 
-    foreach(unowned string name in obj.members){/*...*/}
+    foreach (unowned string name in obj.members) {/*...*/}
 //  ^^^^^^^ keyword.control.loop.vala
 //         ^ punctuation.section.group.begin.vala
 //          ^^^^^^^ storage.modifier.vala
@@ -827,7 +826,7 @@
 
 /** C-Style for loop with user type. */
 
-    for (File pos = file; pos != null; pos = pos.get_parent()) {/***/}
+    for (File pos = file; pos != null; pos = pos.get_parent ()) {/***/}
 //  ^^^ keyword.control.loop.vala
 //      ^ punctuation.section.group.begin.vala
 //       ^^^^ support.type.vala
@@ -878,7 +877,7 @@
 // METHOD CALLS
 /////////////////////////////////////////////////////////////////////
 
-    something();
+    something ();
 //  ^^^^^^^^^^^ meta.function-call.vala
 //  ^^^^^^^^^ variable.function.vala
 //           ^ punctuation.section.parens.begin.vala
@@ -886,7 +885,7 @@
 
     /* Expressions in parameters. */
 
-    some(thing, 1 * global::else);
+    some (thing, 1 * global::else);
 //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ meta.function-call.vala
 //  ^^^^ variable.function.vala
 //      ^ punctuation.section.parens.begin.vala
@@ -900,7 +899,7 @@
 
     /* Struct members. */
 
-    t.method(); a.b.c.d().e(); a. b();
+    t.method (); a.b.c.d ().e (); a. b ();
 //  ^ variable.other.readwrite.vala
 //   ^ punctuation.accessor.dot.vala
 //    ^^^^^^^^ meta.function-call.vala
@@ -931,7 +930,7 @@
 
     /* Pointer members. */
 
-    t->method(); a->b->c->d()->e(); a-> b();
+    t->method (); a->b->c->d ()->e (); a-> b ();
 //  ^ variable.other.readwrite.vala
 //   ^^ punctuation.accessor.arrow.vala
 //     ^^^^^^^^ meta.function-call.vala
@@ -964,7 +963,7 @@
 // METHODS
 /////////////////////////////////////////////////////////////////////
 
-    int method_name(int arg);
+    int method_name (int arg);
 //  ^^^ storage.type.vala
 //      ^^^^^^^^^^^ meta.function.vala entity.name.function.vala
 //                 ^ punctuation.section.parens.begin.vala
@@ -975,7 +974,7 @@
 
 /** Handles access modifiers. */
 
-    private void func();
+    private void func ();
 //  ^^^^^^^ storage.modifier.vala
 //          ^^^^ storage.type.vala
 //               ^^^^ meta.function.vala entity.name.function.vala
@@ -984,7 +983,7 @@
 
 /** Handles nullable checks on return type. */
 
-    public string? m();
+    public string? m ();
 //  ^^^^^^ storage.modifier.vala
 //         ^^^^^^ storage.type.vala
 //               ^ keyword.operator.vala
@@ -994,7 +993,7 @@
 
 /** Handles fully-qualified names for methods. */
 
-    void Gtk.draw_shape();
+    void Gtk.draw_shape ();
 //  ^^^^ storage.type.vala
 //       ^^^^^^^^^^^^^^ meta.function.vala entity.name.function.vala
 //                     ^ punctuation.section.parens.begin.vala
@@ -1002,7 +1001,7 @@
 
 /** Handles directional parameter qualifiers. */
 
-    void thing(out int i, ref int j);
+    void thing (out int i, ref int j);
 //  ^^^^ storage.type.vala
 //       ^^^^^ meta.function.vala entity.name.function.vala
 //            ^ punctuation.section.parens.begin.vala
@@ -1018,7 +1017,7 @@
 
 /** Handles nullable parameter types. */
 
-    void? thing(ref string? s);
+    void? thing (ref string? s);
 //  ^^^^ storage.type.vala
 //      ^ keyword.operator.vala
 //        ^^^^^ meta.function.vala entity.name.function.vala
@@ -1032,7 +1031,7 @@
 
 /** Handles user types for parameters. */
 
-    void f(Gtk.Thing s, int i);
+    void f (Gtk.Thing s, int i);
 //  ^^^^ storage.type.vala
 //       ^ meta.function.vala entity.name.function.vala
 //        ^ punctuation.section.parens.begin.vala
@@ -1046,7 +1045,7 @@
 
 /** Handles user return types. */
 
-    public Gtk.Thing? gg();
+    public Gtk.Thing? gg ();
 //  ^^^^^^ storage.modifier.vala
 //         ^^^^^^^^^ support.type.vala
 //                  ^ keyword.operator.vala
@@ -1056,7 +1055,7 @@
 
 /** Handles variable-length arguments. */
 
-    void method_with_varargs(int x, ...);
+    void method_with_varargs (int x, ...);
 //  ^^^^ storage.type.vala
 //       ^^^^^^^^^^^^^^^^^^^ meta.function.vala entity.name.function.vala
 //                          ^ punctuation.section.parens.begin.vala
@@ -1069,7 +1068,7 @@
 
 /** Handles default values for parameters. */
 
-    void f(int x, string s = "hello", double z = 0.5);
+    void f (int x, string s = "hello", double z = 0.5);
 //  ^^^^ storage.type.vala
 //       ^ meta.function.vala entity.name.function.vala
 //        ^ punctuation.section.parens.begin.vala
@@ -1090,7 +1089,7 @@
 
 /** Handles throws keyword and builtin types. */
 
-    void f() throws int;
+    void f () throws int;
 //  ^^^^ storage.type.vala
 //       ^ meta.function.vala entity.name.function.vala
 //        ^ punctuation.section.parens.begin.vala
@@ -1100,7 +1099,7 @@
 
 /** Handles throwing multiple errors. */
 
-    void f() throws int, string;
+    void f () throws int, string;
 //  ^^^^ storage.type.vala
 //       ^ meta.function.vala entity.name.function.vala
 //        ^ punctuation.section.parens.begin.vala
@@ -1112,7 +1111,7 @@
 
 /** Handles throwing user errors. */
 
-    int f() throws Gtk.SomeErr, UserError;
+    int f () throws Gtk.SomeErr, UserError;
 //  ^^^ storage.type.vala
 //      ^ meta.function.vala entity.name.function.vala
 //       ^ punctuation.section.parens.begin.vala
@@ -1124,7 +1123,7 @@
 
 /** Handles "requires" contract. */
 
-    int f(int x) requires (x > 0 && x < 10);
+    int f (int x) requires (x > 0 && x < 10);
 //  ^^^ storage.type.vala
 //      ^ meta.function.vala entity.name.function.vala
 //       ^ punctuation.section.parens.begin.vala
@@ -1144,7 +1143,7 @@
 
 /** Handles multiple "requires" contracts. */
 
-    int f(int x) requires (x > 0) requires (x < 10);
+    int f (int x) requires (x > 0) requires (x < 10);
 //  ^^^ storage.type.vala
 //      ^ meta.function.vala entity.name.function.vala
 //       ^ punctuation.section.parens.begin.vala
@@ -1166,7 +1165,7 @@
 
 /** Handles "ensures" contract. */
 
-    int f(int x) ensures (x > 0 && x < 10);
+    int f (int x) ensures (x > 0 && x < 10);
 //  ^^^ storage.type.vala
 //      ^ meta.function.vala entity.name.function.vala
 //       ^ punctuation.section.parens.begin.vala
@@ -1186,7 +1185,7 @@
 
 /** Handles multiple "ensures" contracts. */
 
-    int f(int x) ensures (x > 0) ensures (x < 10);
+    int f (int x) ensures (x > 0) ensures (x < 10);
 //  ^^^ storage.type.vala
 //      ^ meta.function.vala entity.name.function.vala
 //       ^ punctuation.section.parens.begin.vala
@@ -1208,7 +1207,7 @@
 
 /** Putting it all together, over multiple lines. */
 
-    double method_name(int x, double d, string s = "default")
+    double method_name (int x, double d, string s = "default")
 //  ^^^^^^ storage.type.vala
 //         ^^^^^^^^^^^ meta.function.vala entity.name.function.vala
 //                    ^ punctuation.section.parens.begin.vala
@@ -1299,7 +1298,7 @@
 
 /** Allows field declarations */
 
-    namespace ns1 {
+    namespace NS1 {
         string s = "string";
 //      ^^^^^^ storage.type.vala
 //             ^ variable.other.readwrite.vala
@@ -1333,7 +1332,7 @@
 //                  ^^^^^^^^ keyword.operator.word.vala
 //                          ^^^^^^^^^^^^ variable.other.readwrite.vala
 //                                      ^ punctuation.terminator.vala
-        const string s = 3;
+        const string S = 3;
 //      ^^^^^ storage.modifier.vala
 //            ^^^^^^ storage.type.vala
 //                   ^ variable.other.readwrite.vala
@@ -1341,7 +1340,7 @@
 //                       ^ constant.numeric.integer.vala
 //                        ^ punctuation.terminator.vala
 
-        public const Scratch.Widgets.HeaderBar s = 3;
+        public const Scratch.Widgets.HeaderBar S = 3;
 //      ^^^^^^ storage.modifier.vala
 //             ^^^^^ storage.modifier.vala
 //                   ^^^^^^^^^^^^^^^^^^^^^^^^^ support.type.vala
