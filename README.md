@@ -11,7 +11,6 @@
 	- [ ] Have custom build settings that allow compiler args to be configured like packages to include, compile methods etc. 
 	- [ ] Option to Run compiled program
 
-
 ## Syntax Highlighting Implementation Progress
 
   The following language features must be supported before this can really be 
