@@ -3,5 +3,6 @@ int main () {
     return 0;
 }
 
-
-error ("SDjkasljdlsakj");
+public void method_name (string args) {
+    print ("Hello World\n");
+}
