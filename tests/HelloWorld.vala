@@ -3,10 +3,3 @@ int main () {
     return 0;
 }
 
-construct {
-    
-}
-
-while (true) {
-    
-}
