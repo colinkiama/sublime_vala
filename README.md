@@ -15,7 +15,7 @@
 
 This uses the Sublime Text C# syntax definitions as a base so there are fewer things to implement then usual
 - [ ] Documentation comments (Valadoc)
-- [ ] Using statement list syntax
+- [X] Using statement list syntax
 
                                                                   
 ## Credits

@@ -255,6 +255,8 @@ contexts:
     - match: '<'
       scope: meta.generic.vala punctuation.definition.generic.begin.vala
       push: type_argument
+    - match: \,
+      scope: punctuation.separator.vala
     - match: ';'
       scope: punctuation.terminator.vala
       pop: true
