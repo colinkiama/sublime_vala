@@ -45,6 +45,8 @@ variables:
   reserved: '(?:abstract|as|base|break|case|catch|checked|class|const|continue|construct|default|delegate|do|else|ensures|enum|event|explicit|extern|finally|fixed|for|foreach|goto|if|implicit|in|interface|internal|is|lock|nameof|namespace|new|not|null|operator|out|override|params|private|protected|public|readonly|ref|requires|return|sealed|sizeof|stackalloc|static|string|struct|switch|this|throw|throws|try|typeof|unchecked|unsafe|using|virtual|volatile|while|yield)'
   name: '(?:@{{reserved}}|@{{base_type}}|@var|@?{{name_normal}})'
   namespaced_name: (?:(?:{{name}}{{generic_declaration}}\s*\.\s*)*{{name}}{{generic_declaration}})
+  identifier: \b[[:alpha:]_](?:[[:alnum:]_])*\b
+
 
   start_char: '(?:{{unicode_char}}|[_\p{L}])'
   other_char: '(?:{{unicode_char}}|[_0-9\p{L}])'
@@ -77,6 +79,11 @@ contexts:
         - match: '[*]/'
           scope: punctuation.definition.comment.end.vala
           pop: true
+
+  doc_comments:
+    - match: /\*\*
+      scope: comment.block.documentation.vala punctuation.definition.comment.begin.vala
+      push: documentation
 
   documentation:
     - meta_include_prototype: false
@@ -213,7 +220,7 @@ contexts:
           pop: true
 
   documentation_link_taglet:
-    - match: ({)(@link)\s+({{name}})(})
+    - match: ({)(@link)\s+({{identifier}})(})
       captures:
         1: punctuation.section.braces.begin.vala
         2: storage.type.vala
@@ -233,13 +240,13 @@ contexts:
         1: storage.type.vala
 
   documentation_see_taglet:
-    - match: (@see)\s+({{name}})
+    - match: (@see)\s+({{identifier}})
       captures:
         1: storage.type.vala
         2: entity.name.section.vala
 
   documentation_param_taglet:
-    - match: (@param)\s+({{name}})
+    - match: (@param)\s+({{identifier}})
       captures:
         1: storage.type.vala
         2: variable.parameter.vala
@@ -255,7 +262,7 @@ contexts:
         1: storage.type.vala
 
   documentation_throws_taglet:
-    - match: (@throws)\s+({{name}})
+    - match: (@throws)\s+({{identifier}})
       captures:
         1: storage.type.vala
         2: entity.name.type.vala

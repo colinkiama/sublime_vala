@@ -1,0 +1,13 @@
+<snippet>
+	<content><![CDATA[/**
+ * ${1:Brief description of symbol}
+ * 
+ * ${2:Optional long description of symbol}
+ *
+ * ${3:Optional taglets, for example:
+ * @param parameter_name Description of this parameter of a function}
+*/]]></content>
+	<tabTrigger>/**</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Documentation Comment</description>
+</snippet>
