@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[else {
+    $1
+}
+$0]]></content>
+	<tabTrigger>else</tabTrigger>
+	<description>Create else statement</description>
+	<scope>source.vala</scope>
+</snippet>

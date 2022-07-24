@@ -1,0 +1,10 @@
+<snippet>
+	<content><![CDATA[if (${1:true}) {
+    $2
+} else if (${3:true}) {
+	$4
+}$0]]></content>
+	<tabTrigger>elif</tabTrigger>
+	<description>Create if-else-if statement</description>
+	<scope>source.vala</scope>
+</snippet>

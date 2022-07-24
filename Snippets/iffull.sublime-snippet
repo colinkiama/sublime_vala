@@ -1,0 +1,12 @@
+<snippet>
+	<content><![CDATA[if (${1:true}) {
+    $2
+} else if (${3:true}) {
+	$4
+} else {
+	$5
+}
+$0]]></content>	<tabTrigger>iffull</tabTrigger>
+	<description>Create if statement with all if branches</description>
+	<scope>source.vala</scope>
+</snippet>

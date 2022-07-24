@@ -18,6 +18,36 @@
 			"kind": "keyword"
 		},
 		{
+			"trigger": "async",
+			"contents": "async",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "await",
+			"contents": "await",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "break",
+			"contents": "break",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "switch",
+			"contents": "switch",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "case",
+			"contents": "case",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "if",
+			"contents": "if",
+			"kind": "keyword"
+		},
+		{
 			"trigger": "ArrayList",
 			"contents": "ArrayList",
 			"kind": "type"
