@@ -1266,12 +1266,17 @@
 
 /** Matches class declaration with access modifier **/
 
-    public class ClassNmae {
+    public class ClassName {
 //  ^^^^^^
 //         ^^^^^
 //               ^^^^^^^^^^ meta.class.vala storage.type.class.vala
 //                         ^ meta.class.vala meta.class.vala meta.block.vala punctuation.section.block.begin.vala
         /** static keyword in field declaration **/
+
+        public void run () {
+
+        }
+
         static string field = "Hello";
 //      ^^^^^^ meta.class.vala meta.block.vala storage.modifier.vala
 //             ^^^^^^ meta.class.vala meta.block.vala storage.type.vala
@@ -1292,6 +1297,8 @@
     }
 //  ^ meta.class.vala meta.block.vala punctuation.section.block.end.vala
 /** 
+
+/** Matches abstract class **/
 
 
 /** Matches subclass **/

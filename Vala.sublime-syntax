@@ -858,6 +858,7 @@ contexts:
 
   class_members:
     - include: class_declarations
+    - include: method_declarations
     - include: constant_declarations
     - include: field_declarations
 
