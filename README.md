@@ -15,11 +15,186 @@
 
   The following language features must be supported before this can really be 
   usable. Tracking of the syntax support is done below.                       
-         
-- [ ] Variables
-	- [ ] Basic assignment: `int num = 1;`                                                                     
-
+                                                                              
+- [X] Comments                                                                
+	- [X] line comments  // comment                                             
+	- [X] block comments  /* blah */                                            
+	- [X] doc comments https://valadoc.org/markup.htm  /** doc */               
+	  - [X] start / end                                                         
+	  - [X]  <<BR>>  newlines                                                   
+	  - [X]  ''bold''                                                           
+	  - [X]  //italic//                                                         
+	  - [X]  __underlined__                                                     
+	  - [X] two-backticks for block quotes                                      
+	  - [X] allows nested inline modifiers                                      
+	  - [X] numbered lists using numbers  1.                                    
+	  - [X] numbered lists using  #                                             
+	  - [X] numbered lists using  i.                                            
+	  - [X] numbered lists using  I.                                            
+	  - [X] alphabetical lists using  a.                                        
+	  - [X] alphabetical lists using  A.                                        
+	  - [X] unordered lists using  *                                            
+	  - [X] nested lists                                                        
+	  - [X] code blocks                                                         
+	  - [X] links                                                               
+	  - [X] images                                                              
+	  - [X] tables                                                              
+	  - [X] headlines                                                           
+	  - [X] inline taglets                                                      
+	    - [X]  {@inheritDoc}                                                    
+	    - [X]  {@link [node]}                                                   
+	  - [X] block taglets                                                       
+	    - [X]  @deprecated [version]                                            
+	    - [X]  @see [node-name]                                                 
+	    - [X]  @param [name] [description]                                      
+	    - [X]  @since [version]                                                 
+	    - [X]  @return [description]                                            
+	    - [X]  @throws [type] [description]                                     
+- [X] Type Keywords                                                           
+	- [X] booleans                                                              
+	- [X] integers                                                              
+	- [X] floats                                                                
+	- [X] strings                                                               
+- [X] Operators                                                               
+	- [X] assignment                                                            
+	- [X] bitwise                                                               
+	- [X] bitwise-shift                                                         
+	- [X] relational                                                            
+	- [X] logical                                                               
+	- [X] coalescing                                                            
+	- [X] ternary                                                               
+	- [X] class/array ( new ) instantiation (example https://github.com/GNOME/gnome-calculator/blob/cb0ad0e958172a854608e3eb357018236f00aee7/gcalc/gcalc-parser.vala#L86)         
+	- [X]  sizeof  (example https://github.com/GNOME/gnome-clocks/blob/5df999052d2c4daf54a31386fe0960615f8244c0/src/utils.vala#L222) 
+	- [X]  typeof  (example https://github.com/GNOME/gnome-calculator/blob/9c94cc009dac8802e5b3b9197ded9e052b8d1fcc/src/math-preferences.vala#L57)                                                     
+	- [X]  ->  pointer operator                                                 
+	- [X]  global::                                                             
+	- [X] array indicies / subscripts                                           
+	- [X] commas                                                                
+	- [X] semicolon                                                             
+	- [X] ellipsis parameter (only valid in method definitions)                 
+	- [X]  delete                                                               
+	- [X] slice  [:]                                                            
+	- [X] ownership transfer  (owned)                                           
+	- [X] parenthesis                                                           
+	- [X] brackets                                                              
+- [X] Primitive Literals                                                      
+	- [X] integers                                                              
+	- [X] floats                                                               
+	- [X]  true  and  false                                                     
+	- [X]  null                                                                 
+	- [X] single-line strings                                                   
+	- [X] single-line string escapes                                            
+	- [X] verbatim strings                                                      
+	- [X] string templates:  @"$a * $b = $(a * b)"                              
+- [ ] Variables                                                               
+	- [X] declaration with explicit type                                        
+	- [X] declaration with explicit type and initializer                        
+	- [X] declaration with type inference                                       
+	- [X]  var                                                                  
+	- [X] identifiers                                                           
+	- [ ]  @ -prefixed identifiers                                              
+	- [X] storage modifiers             
+	- [X] static keyword                                        
+	- [X] index operators (subscript) on variables                              
+- [X] Blocks                                                                  
+	- [X] statements surrounded by  { ... }                                     
+- [X] Selection Statements                                                    
+	- [X]  if                                                                   
+	- [X]  else if                                                              
+	- [X]  else                                                                 
+	- [X]  switch ,                                                             
+	- [X] switch  case                                                          
+	- [X] switch  default                                                       
+- [X] Iteration Statements                                                    
+	- [X]  while                                                                
+	- [X]  do...while                                                           
+	- [X]  for                                                                  
+	- [X]  foreach...in                                                         
+	- [X] Jump Statements                                                         
+	- [X]  break                                                                
+	- [X]  continue                                                             
+	- [X]  return                                                               
+	- [X]  throw                                                                
+- [ ] Try Statement                                                           
+	- [ ]  try                                                                  
+- [ ] Lock Statement                                                          
+	- [ ]  lock  (example https://github.com/GNOME/vala/blob/mainline/vala/valalockstatement.vala#L28-L35)                                                            
+	- [ ]  unlock  (example https://github.com/GNOME/vala/blob/mainline/vala/valaunlockstatement.vala#L25)
+- [ ] Namespaces                                                              
+	- [X]  namespace                                                            
+	- [X] recursive                                                             
+	- [X] nested naming  Namespace1.Namespace2                                  
+	- [X] members                                                               
+	- [X] access modifiers  public ,  private                                   
+	- [X] field declaration                                                     
+	- [X] constants  const                                                      
+	- [X]  using  statements                                                    
+	- [X]  global::  references                                                 
+	- [ ] only allows  namespace-members  as the body:                          
+	  - [ ] class declarations                                                  
+	  - [ ] abstract-classes declarations                                       
+	  - [X] constant declarations                                               
+	  - [ ] delegate declarations                                               
+	  - [ ] enum declarations                                                   
+	  - [ ] errordomain declarations                                            
+	  - [X] field declarations                                                  
+	  - [ ] interface declarations                                              
+	  - [ ] method declarations                                                 
+	  - [X] namespace declarations                                              
+- [X] Member access                                                           
+	- [X] dot-access  x.member                                                  
+	- [X]  this  keyword                                                        
+	- [X] works on all expressions                                              
+	- [X] pointer access  ptr->member                                           
+	- [X] access via element indicies                                           
+- [X] Method Calls                                                            
+	- [X] normal calls                                                          
+	- [X]  .  member calls                                                      
+	- [X]  ->  member calls                                                     
+- [X] Lambdas                                                                 
+	- [X]  params => body                                                       
+	- [X] providing direction on parameters:  out ,  ref                        
+	- [X] named parameters                                                      
+- [X] Methods                                                                 
+	- [X] storage modifiers                                                     
+	- [X] nullable return types                                                 
+	- [X] fully-qualified method names                                          
+	- [X] storage modifiers                                                     
+	- [X] directional parameter qualifiers                                      
+	- [X] nullable parameter types                                              
+	- [X] user parameter types                                                  
+	- [X] user return types                                                     
+	- [X] default values                                                        
+	- [X]  ...  operator                                                        
+	- [X]  throws                                                               
+	- [X]  requires                                                             
+	- [X]  ensures                                                              
+- [ ] Structs                                                                 
+	- [ ] instantiation                                                         
+	- [ ] initializing field values                                             
+- [ ] Arrays                                                                  
+	- [X]  new  instantiation                                                   
+	- [ ] providing  sizes  and initialization expressions                      
+	- [ ] subscripts                                                            
+- [ ] Enums                                                                   
+- [ ] Methods                                                                 
+	- [ ] storage modifiers
+	- [ ] static keyword                                                     
+	- [X]  yield  expression (note: after function calls)                       
+https://github.com/GNOME/gnome-calculator/blob/9c94cc009dac8802e5b3b9197ded9e052b8d1fcc/search-          
+provider/search-provider.vala#L109-L114                                   
+- [ ] Delegates                                                               
+	- [X]  yield  expression (note: after function calls)                       
+https://github.com/GNOME/gnome-calculator/blob/9c94cc009dac8802e5b3b9197ded9e052b8d1fcc/search-provider/search-provider.vala#L109-L114                                   
+- [ ] Errors                                                                  
+- [ ] Signals                                                                 
+	- [X]  yield  expression                                                    
+- [ ] Generics                                                                
+- [ ] Classes                                                                 
+	- [X]  new  instantiation                                                   
+	- [ ] subclasses  
+	- [ ] Override keyword
 
 ## Credits
 
-Ideas of how to structure file an some regex strings from: [Vala.sublime-syntax](https://github.com/patrickrgaffney/Vala.sublime-syntax)
+Majority of syntax highlighting code and structure used from [Vala.sublime-syntax](https://github.com/patrickrgaffney/Vala.sublime-syntax)
