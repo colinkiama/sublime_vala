@@ -59,31 +59,38 @@
 		},
 		{
 			"trigger": "print",
-			"contents": "print (\"${1:input}\"$2);$0"
+			"contents": "print (\"${1:input}\"$2);$0",
+			"kind": "function"
 		},
 		{
 			"trigger": "println",
-			"contents": "print (\"${1:input}\\n\"$2);$0"
+			"contents": "print (\"${1:input}\\n\"$2);$0",
+			"kind": "function"
 		},
 		{
 			"trigger": "debug",
-			"contents": "debug (\"${1:input}\"$2);$0"
+			"contents": "debug (\"${1:input}\"$2);$0",
+			"kind": "function"
 		},
 		{
 			"trigger": "info",
-			"contents": "info (\"${1:input}\"$2);$0"
+			"contents": "info (\"${1:input}\"$2);$0",
+			"kind": "function"
 		},
 		{
 			"trigger": "warning",
-			"contents": "warning (\"${1:input}\"$2);$0"
+			"contents": "warning (\"${1:input}\"$2);$0",
+			"kind": "function"
 		},
 		{
 			"trigger": "critical",
-			"contents": "critical (\"${1:input}\"$2);$0"
+			"contents": "critical (\"${1:input}\"$2);$0",
+			"kind": "function"
 		},
 		{
 			"trigger": "error",
-			"contents": "error (\"${1:input}\"$2);$0"
+			"contents": "error (\"${1:input}\"$2);$0",
+			"kind": "function"
 		},
 	]
 }
