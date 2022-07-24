@@ -18,6 +18,26 @@
 			"kind": "keyword"
 		},
 		{
+			"trigger": "protected",
+			"contents": "protected",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "override",
+			"contents": "override",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "static",
+			"contents": "static",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "void",
+			"contents": "void",
+			"kind": "keyword"
+		},
+		{
 			"trigger": "async",
 			"contents": "async",
 			"kind": "keyword"
@@ -45,6 +65,16 @@
 		{
 			"trigger": "if",
 			"contents": "if",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "enum",
+			"contents": "enum",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "struct",
+			"contents": "struct",
 			"kind": "keyword"
 		},
 		{
