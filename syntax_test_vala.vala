@@ -516,6 +516,12 @@
 //                    ^ variable.other.readwrite.vala
 
     [ 1, 2, [ 3, 4 ]];
+//  ^^^^^^^^^^^^^^^^ meta.annotation.vala
+//  ^ punctuation.definition.annotation.begin.vala
+//     ^^^^^^^^^ punctuation.separator.annotation.vala
+//                 ^ punctuation.definition.annotation.end.vala
+//                  ^ invalid.illegal.stray.brace.vala
+//                   ^ punctuation.terminator.statement.vala
 //  ^^^^^^^^^^^^^^^^^ meta.brackets.vala
 //  ^ punctuation.section.brackets.begin.vala
 //    ^ constant.numeric.integer.vala
@@ -539,14 +545,24 @@
 //                      ^ punctuation.section.group.begin.vala
 //                       ^^^^^^^^^^^^^ support.type.vala
 //                                    ^ punctuation.section.group.end.vala
+    var hello = thing is int; var other_thing = my_thing as Gtk.Thing;
+//  ^^^ storage.type.variable.vala
+//      ^^^^^ variable.other.vala
+//            ^ keyword.operator.assignment.variable.vala
+//              ^^^^^ variable.other.vala
+//                    ^^ keyword.operator.reflection.vala
+//                       ^^^ storage.type.vala
+//                          ^ punctuation.terminator.statement.vala
+//                            ^^^ storage.type.variable.vala
+//                                ^^^^^^^^^^^ variable.other.vala
+//                                            ^ keyword.operator.assignment.variable.vala
+//                                              ^^^^^^^^ variable.other.vala
+//                                                       ^^ keyword.operator.reflection.vala
+//                                                          ^^^ support.type.vala
+//                                                             ^ punctuation.accessor.dot.namespace.vala
+//                                                              ^^^^^ support.type.vala
+//                                                                   ^ punctuation.terminator.statement.vala
 
-    thing is int; other_thing as Gtk.Thing;
-//  ^^^^^ variable.other.readwrite.vala
-//        ^^ keyword.operator.word.vala
-//           ^^^ storage.type.vala
-//                ^^^^^^^^^^^ variable.other.readwrite.vala
-//                            ^^ keyword.operator.word.vala
-//                               ^^^^^^^^^ support.type.vala
 
     new int[3,4]; new Person (); new Button.with_label ("click me");
 //  ^^^ keyword.operator.word.vala
@@ -620,14 +636,18 @@
 // MEMBER ACCESS
 /////////////////////////////////////////////////////////////////////
 
-    thing.other_thing;
-//  ^^^^^ variable.other.readwrite.vala
-//       ^ punctuation.accessor.dot.vala
-//        ^^^^^^^^^^^ variable.other.member.vala
+    var other_thing_chain = thing.other_thing;
+//  ^^^ storage.type.variable.vala
+//      ^^^^^^^^^^^^^^^^^ variable.other.vala
+//                        ^ keyword.operator.assignment.variable.vala
+//                          ^^^^^ variable.other.vala
+//                               ^ punctuation.accessor.dot.vala
+//                                ^^^^^^^^^^^ variable.other.vala
+//                                           ^ punctuation.terminator.statement.vala
 
 /** Allows chaining of member access. */
 
-    thing.m1.m2.m3;
+    var thing_chain = thing.m1.m2.m3;
 //  ^^^^^ variable.other.readwrite.vala
 //       ^ punctuation.accessor.dot.vala
 //        ^^ variable.other.member.vala
@@ -702,14 +722,52 @@
 
 /** Selection statements. */
 
-    if; else; else if; switch; case; default;
-//  ^^ keyword.control.conditional.vala
-//      ^^^^ keyword.control.conditional.vala
-//            ^^^^ keyword.control.conditional.vala
-//                 ^^ keyword.control.conditional.vala
-//                     ^^^^^^ keyword.control.conditional.vala
-//                             ^^^^ keyword.control.conditional.vala
-//                                   ^^^^^^^ keyword.control.conditional.vala
+if (x) {
+// ^^^ meta.group.vala
+// ^ punctuation.section.group.begin.vala
+//  ^ variable.other.vala
+//   ^ punctuation.section.group.end.vala
+//     ^ meta.block.vala punctuation.section.block.begin.vala
+    y ();
+} else if (xy) {
+//^^^^^^^ keyword.control.conditional.elseif.vala
+//        ^^^^ meta.group.vala
+//        ^ punctuation.section.group.begin.vala
+//         ^^ variable.other.vala
+//           ^ punctuation.section.group.end.vala
+//             ^ meta.block.vala punctuation.section.block.begin.vala
+    yy ();
+} else {
+//^^^^^ keyword.control.conditional.else.vala
+//     ^ meta.block.vala punctuation.section.block.begin.vala
+    z ();
+}
+
+switch (x) {
+//^^^^ keyword.control.flow.switch.vala
+//     ^^^ meta.group.vala
+//     ^ punctuation.section.group.begin.vala
+//      ^ variable.other.vala
+//       ^ punctuation.section.group.end.vala
+//         ^ meta.block.vala punctuation.section.block.begin.vala
+    case 1:
+//^^^^^^^^^ meta.block.vala
+//  ^^^^ keyword.control.switch.case.vala
+//       ^ meta.number.integer.decimal.vala constant.numeric.value.vala
+//        ^ punctuation.separator.case-statement.vala
+        a ()
+        break;
+//^^^^^^^^^^^^ meta.block.vala
+//      ^^^^^ keyword.other.vala
+//           ^ punctuation.terminator.statement.vala
+    default:
+//^^^^^^^^^^ meta.block.vala
+//  ^^^^^^^ keyword.control.switch.case.vala
+//         ^ punctuation.separator.case-statement.vala
+        b ();
+}
+
+
 
 /** While-loop statements. */
 
