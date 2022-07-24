@@ -13,6 +13,8 @@
 
 ## Syntax Highlighting Implementation Progress
 
-  The following language features must be supported before this can really be 
-  usable. Tracking of the syntax support is done below.                       
-                                                                              
+                                                                  
+## Credits
+
+Sublime Text C# Syntax definitions: https://github.com/sublimehq/Packages/blob/master/C%23/C%23.sublime-syntax
+
