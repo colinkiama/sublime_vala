@@ -53,137 +53,211 @@ variables:
 contexts:
   prototype:
     - include: comments
-    - match: '^\s*((#)\s*)'
-      captures:
-        1: keyword.other.preprocessor.vala
-        2: punctuation.definition.preprocessor.vala
-      push: preprocessor_option
 
     # comments
   comments:
-    - match: '^\s*(///)'
-      captures:
-        1: comment.line.documentation.vala punctuation.definition.comment.documentation.vala
-      push: documentation
-    - match: '//'
+    - include: line_comments
+    - include: doc_comments
+    - include: block_comments
+
+  line_comments:
+    - match: //
       scope: punctuation.definition.comment.vala
       push:
-        - meta_scope: comment.line.double-slash.vala
+        - meta_scope: comment.line.vala
         - match: $\n?
           pop: true
-        - include: comments_in
-    - match: '/\*'
+
+  block_comments:
+    - match: /[*]
       scope: punctuation.definition.comment.begin.vala
       push:
         - meta_scope: comment.block.vala
-        - match: '\*/'
+        - match: '[*]/'
           scope: punctuation.definition.comment.end.vala
           pop: true
-        - match: ^\s*(\*)(?!/)
-          captures:
-            1: punctuation.definition.comment.vala
-        - include: comments_in
 
-  comments_in:
-    - match: \b(?i:todo|hack|xxx)\b
-      scope: comment.line.todo.vala
-    - match: '/!\\'
-      scope: comment.line.todo.vala
-    - match: \b(https?://\S*)\b
-      scope: markup.underline.link.vala
-
-  preprocessor_option:
-    - meta_scope: meta.preprocessor.vala
-    - match: '\b(define|undef)\s+({{name}})\b'
-      captures:
-        1: keyword.control.preprocessor.vala
-        2: entity.name.constant.vala
-    - match: '\b(el)?if\b'
-      scope: keyword.control.preprocessor.vala
-      push:
-        - match: '\(|\)'
-          scope: punctuation.section.parens.vala
-        - match: '&&|\|\||!'
-          scope: keyword.operator.logical.vala
-        - match: '\b(true|false)\b'
-          scope: constant.language.vala
-        - match: '{{name}}'
-          scope: constant.other.flag.vala
-        - include: option_done
-    - match: '\b(else|endif)\b'
-      scope: keyword.control.preprocessor.vala
-      push: option_done
-    # error, warning, region and endregion may be followed by any text.
-    # Comments doesn't apply in this case, see ECMA C# specification.
-    - match: '\b(error|warning)\b\s*(.*)'
-      captures:
-        1: keyword.other.preprocessor.vala
-        2: string.unquoted.vala
-    - match: '\b(region)\b\s*(.*)'
-      captures:
-        1: keyword.other.preprocessor.vala
-        2: entity.name.section.vala
-    - match: '\b(endregion)\b\s*(.*)'
-      captures:
-        1: keyword.other.preprocessor.vala
-        2: variable.other.section.vala
-
-    - match: '\b(line)\s+(default|hidden)\b'
-      captures:
-        1: keyword.other.preprocessor.vala
-        2: keyword.other.preprocessor.vala
-      push: option_done
-    - match: '\b(line)\s+(\d*)\s+((").*("))?'
-      captures:
-        1: keyword.other.preprocessor.vala
-        2: meta.number.integer.decimal.vala constant.numeric.value.vala
-        3: string.quoted.double.vala
-        4: punctuation.definition.string.begin.vala
-        5: punctuation.definition.string.end.vala
-      push: option_done
-    - match: '\b(pragma)\s+(checksum)\s+'
-      captures:
-        1: keyword.other.preprocessor.vala
-        2: keyword.other.preprocessor.vala
-      push:
-        - match: '"{'
-          scope: punctuation.definition.string.begin.vala
-          push:
-            - meta_scope: string.quoted.double.hash.vala
-            - match: '[-\h]+'
-              scope: meta.number.integer.hexadecimal.vala constant.numeric.value.vala
-            - match: '}"'
-              scope: punctuation.definition.string.end.vala
-              pop: true
-            - match: \.
-              scope: invalid.illegal.vala
-              pop: true
-        - match: '"'
-          scope: punctuation.definition.string.begin.vala
-          push: string
-        - include: option_done
-
-    - match: '(pragma)\s+(warning)\b'
-      captures:
-        1: keyword.other.preprocessor.vala
-        2: keyword.other.preprocessor.vala
-      push:
-        - match: \b(disable|restore)\b(?:\s+([\p{L}_-]+))?
-          captures:
-            1: keyword.other.preprocessor.vala
-            2: string.unquoted.warning.vala
-        - include: comments
-        - match: $
-          pop: true
-    - match: '\b(nullable)\s+(enable|disable|restore)(?:\s+(annotations|warnings))?\b'
-      captures:
-        1: keyword.other.preprocessor.vala
-        2: keyword.other.preprocessor.vala
-        3: keyword.other.preprocessor.vala
-    - match: .*
-      scope: invalid.illegal.vala
-    - match: $
+  documentation:
+    - meta_include_prototype: false
+    - meta_content_scope: comment.block.documentation.vala
+    - match: '[*]/'
+      scope: comment.block.documentation.vala punctuation.definition.comment.end.vala
       pop: true
+    - include: documentation_block_markup
+    - include: documentation_inline_markup
+
+  documentation_inline_markup:
+    # Force a newline.
+    - match: <<BR>>
+      scope: constant.character.escape.vala
+    - include: documentation_bold_text
+    - include: documentation_italic_text
+    - include: documentation_underline_text
+    - include: documentation_blockquote_text
+    - include: documentation_link
+    - include: documentation_image
+    - include: documentation_link_taglet
+    - include: documentation_inheritdoc_taglet
+
+  documentation_block_markup:
+    - include: documentation_code_block
+    - include: documentation_list_block
+    - include: documentation_table_block
+    - include: documentation_headline_block
+    - include: documentation_deprecated_taglet
+    - include: documentation_see_taglet
+    - include: documentation_param_taglet
+    - include: documentation_since_taglet
+    - include: documentation_return_taglet
+    - include: documentation_throws_taglet
+
+  documentation_list_block:
+    - match: ^\s+(?:\*)[ ]{2,}((\d*\.|#|i\.|I\.|a\.|A\.)|(\*))\s+
+      captures:
+        2: markup.list.numbered.vala
+        3: markup.list.unnumbered.vala
+
+  documentation_code_block:
+    - match: ^\s+(?:\*)[ ]+({{{)
+      captures:
+        1: punctuation.section.braces.begin.vala
+      push:
+        - meta_content_scope: markup.raw.block.vala
+        - match: '}}}'
+          scope: punctuation.section.braces.end.vala
+          pop: true
+
+  documentation_table_block:
+    - match: ^\s+(?:\*)[ ]+([|]{2})\s+
+      captures:
+        1: punctuation.separator.vala
+      push:
+        - include: documentation_inline_markup
+        - match: '[||]'
+          scope: punctuation.separator.vala
+        - match: $\n?
+          pop: true
+
+  documentation_headline_block:
+    - match: ^\s+(?:\*)[ ]+(={1,4})\s+
+      captures:
+        1: punctuation.definition.heading.vala
+      push:
+        - meta_content_scope: markup.heading.vala
+        - match: (={1,4})\s+
+          captures:
+            1: punctuation.definition.heading.vala
+          pop: true
+
+  documentation_bold_text:
+    - match: "''"
+      scope: punctuation.definition.bold.begin.vala
+      push:
+        - meta_scope: markup.bold.vala
+        - match: "''"
+          scope: punctuation.definition.bold.end.vala
+          pop: true
+        - include: documentation_inline_markup
+
+  documentation_italic_text:
+    # Force an immediate non-WS character to avoid mismatching
+    # with single-line comments.
+    - match: //(?!\s)
+      scope: punctuation.definition.italic.begin.vala
+      push:
+        - meta_scope: markup.italic.vala
+        - match: //
+          scope: punctuation.definition.italic.end.vala
+          pop: true
+        - include: documentation_inline_markup
+
+  documentation_underline_text:
+    - match: __
+      scope: punctuation.definition.underline.begin.vala
+      push:
+        - meta_scope: markup.underline.vala
+        - match: __
+          scope: punctuation.definition.underline.end.vala
+          pop: true
+        - include: documentation_inline_markup
+
+  documentation_blockquote_text:
+    - match: '``'
+      scope: punctuation.definition.blockquote.begin.vala
+      push:
+        - meta_scope: markup.quote.vala
+        - match: '``'
+          scope: punctuation.definition.blockquote.end.vala
+          pop: true
+        - include: documentation_inline_markup
+
+  documentation_link:
+    - match: \[\[
+      scope: punctuation.section.brackets.begin.vala
+      push:
+        - match: \|
+          scope: punctuation.separator.vala
+        - match: \]\]
+          scope: punctuation.section.brackets.end.vala
+          pop: true
+
+  documentation_image:
+    - match: \{\{
+      scope: punctuation.section.brackets.begin.vala
+      push:
+        - match: \|
+          scope: punctuation.separator.vala
+        - match: \}\}
+          scope: punctuation.section.brackets.end.vala
+          pop: true
+
+  documentation_link_taglet:
+    - match: ({)(@link)\s+({{name}})(})
+      captures:
+        1: punctuation.section.braces.begin.vala
+        2: storage.type.vala
+        3: entity.name.section.vala
+        4: punctuation.section.braces.end.vala
+
+  documentation_inheritdoc_taglet:
+    - match: ({)(@inheritDoc)(})
+      captures:
+        1: punctuation.section.braces.begin.vala
+        2: storage.type.vala
+        3: punctuation.section.braces.end.vala
+
+  documentation_deprecated_taglet:
+    - match: (@deprecated)\s+
+      captures:
+        1: storage.type.vala
+
+  documentation_see_taglet:
+    - match: (@see)\s+({{name}})
+      captures:
+        1: storage.type.vala
+        2: entity.name.section.vala
+
+  documentation_param_taglet:
+    - match: (@param)\s+({{name}})
+      captures:
+        1: storage.type.vala
+        2: variable.parameter.vala
+
+  documentation_since_taglet:
+    - match: (@since)\s+
+      captures:
+        1: storage.type.vala
+
+  documentation_return_taglet:
+    - match: (@return)\s+
+      captures:
+        1: storage.type.vala
+
+  documentation_throws_taglet:
+    - match: (@throws)\s+({{name}})
+      captures:
+        1: storage.type.vala
+        2: entity.name.type.vala
 
   # Pops out at the end of the line and handles comments.
   # Marks the rest of the line as invalid.
@@ -2289,37 +2363,3 @@ contexts:
         - include: line_of_code_in
     - match: (?=\S)
       pop: true
-
-  documentation:
-    - meta_include_prototype: false
-    - meta_content_scope: comment.line.documentation.vala
-    - match: '(<)({{name}})'
-      captures:
-        1: punctuation.definition.tag.begin.vala
-        2: entity.name.tag.begin.vala
-      push:
-        - meta_include_prototype: false
-        - match: '({{name}})\s*(=)'
-          captures:
-            1: entity.other.attribute-name.vala
-            2: punctuation.separator.argument.value.vala
-        - match: '/?>'
-          scope: punctuation.definition.tag.end.vala
-          pop: true
-        - match: '"[^"]*"'
-          scope: string.quoted.double.vala
-        - match: $
-          pop: true
-    - match: '(</)({{name}})(>)'
-      captures:
-        1: punctuation.definition.tag.begin.vala
-        2: entity.name.tag.end.vala
-        3: punctuation.definition.tag.end.vala
-    - match: '^\s*(///)'
-      captures:
-        1: punctuation.definition.comment.documentation.vala
-    - match: '^\s*(?!///)'
-      pop: true
-    - include: comments_in
-    - match: '[\w\s]+|.'
-      scope: text.documentation.vala

@@ -14,9 +14,9 @@
 ## Syntax Highlighting Implementation Progress
 
 This uses the Sublime Text C# syntax definitions as a base so there are fewer things to implement then usual
-- [ ] Documentation comments (Valadoc)
+- [X] Documentation comments (Valadoc)
 - [X] Using statement list syntax
-
+- [ ] Add tests for Generics
                                                                   
 ## Credits
 
