@@ -23,3 +23,5 @@ This uses the Sublime Text C# syntax definitions as a base so there are fewer th
 
 Sublime Text C# Syntax definitions: https://github.com/sublimehq/Packages/blob/master/C%23/C%23.sublime-syntax
 
+Vala.sublime-syntax comments and documentation comments syntax: https://github.com/patrickrgaffney/Vala.sublime-syntax
+
