@@ -1,0 +1,89 @@
+{
+	"scope": "source.vala",
+
+	"completions": [
+		{ 
+			"trigger": "class", 
+			"contents": "class",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "public",
+			"contents": "public",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "private",
+			"contents": "private",
+			"kind": "keyword"
+		},
+		{
+			"trigger": "ArrayList",
+			"contents": "ArrayList",
+			"kind": "type"
+		},
+		{
+			"trigger": "HashSet",
+			"contents": "HashSet",
+			"kind": "type"
+		},
+		{
+			"trigger": "HashMap",
+			"contents": "HashMap",
+			"kind": "type"
+		},
+		{
+			"trigger": "OptionArg",
+			"contents": "OptionArg",
+			"kind": "type"
+		},
+		{
+			"trigger": "OptionContext",
+			"contents": "OptionContext",
+			"kind": "type"
+		},
+		{
+			"trigger": "OptionEntry",
+			"contents": "OptionEntry",
+			"kind": "type"
+		},
+		{
+			"trigger": "stdout",
+			"contents": "stdout",
+			"kind": "type"
+		},
+		{
+			"trigger": "stderr",
+			"contents": "stdout",
+			"kind": "type"
+		},
+		{
+			"trigger": "print",
+			"contents": "print (\"${1:input}\"$2);$0"
+		},
+		{
+			"trigger": "println",
+			"contents": "print (\"${1:input}\\n\"$2);$0"
+		},
+		{
+			"trigger": "debug",
+			"contents": "debug (\"${1:input}\"$2);$0"
+		},
+		{
+			"trigger": "info",
+			"contents": "info (\"${1:input}\"$2);$0"
+		},
+		{
+			"trigger": "warning",
+			"contents": "warning (\"${1:input}\"$2);$0"
+		},
+		{
+			"trigger": "critical",
+			"contents": "critical (\"${1:input}\"$2);$0"
+		},
+		{
+			"trigger": "error",
+			"contents": "error (\"${1:input}\"$2);$0"
+		},
+	]
+}
