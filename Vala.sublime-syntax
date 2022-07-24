@@ -14,8 +14,9 @@ file_extensions:
   - vala
 
 first_line_match: |-
-  (?xi:
-    ^ \s* // .*? -\*- .*? \b(vala)\b .*? -\*-  # editorconfig
+  (?x:
+    ^ \#! .* \b(vala)\b                  # shebang
+  | ^ \s* // .*? -\*- .*? \bvala\b .*? -\*-  # editorconfig
   )
 
 variables:
