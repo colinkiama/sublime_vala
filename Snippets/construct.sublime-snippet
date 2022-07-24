@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[construct {
+    $0
+}]]></content>
+	<tabTrigger>construct</tabTrigger>
+	<description>Create construct block</description>
+	<scope>source.vala</scope>
+</snippet>

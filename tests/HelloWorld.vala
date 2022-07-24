@@ -3,10 +3,6 @@ int main () {
     return 0;
 }
 
-public void method_name (string args) {
-    print ("Hello World\n");
-}
-
-public class ClassName {
+construct {
     
 }
