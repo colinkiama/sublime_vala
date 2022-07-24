@@ -515,7 +515,7 @@
 //             ^^^^^^ keyword.operator.word.vala
 //                    ^ variable.other.readwrite.vala
 
-    [ 1, 2, [ 3, 4 ]];
+   [ 1, 2, [ 3, 4 ]];
 //  ^^^^^^^^^^^^^^^^ meta.annotation.vala
 //  ^ punctuation.definition.annotation.begin.vala
 //     ^^^^^^^^^ punctuation.separator.annotation.vala
