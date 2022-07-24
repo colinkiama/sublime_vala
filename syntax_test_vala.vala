@@ -1266,7 +1266,7 @@ switch (x) {
 
 /** Putting it all together, over multiple lines. */
 
-    double method_name (int x, double d, string s = "default")
+    double method_name (int x, double d, string s = "default") throws Gtk.SpecialError;
 //  ^^^^^^ storage.type.vala
 //         ^^^^^^^^^^^ meta.function.vala entity.name.function.vala
 //                    ^ punctuation.section.parens.begin.vala
@@ -1282,7 +1282,12 @@ switch (x) {
 //                                               ^ keyword.operator.assignment.vala
 //                                                 ^^^^^^^^^ string.quoted.double.vala
 //                                                          ^ punctuation.section.parens.end.vala
-        throws Gtk.SpecialError
+
+//^^^^^^^^^^^^ meta.method.vala
+//      ^^^^^^ invalid.illegal.vala
+//             ^^^ variable.other.vala
+//                ^ punctuation.accessor.dot.vala
+//                 ^^^^^^^^^^^^ variable.other.vala
 //      ^^^^^^ keyword.control.exception.vala
 //             ^^^^^^^^^^^^^^^^ support.type.vala
         requires (x > 0 && x < 10)
@@ -1296,14 +1301,14 @@ switch (x) {
 //                           ^ keyword.operator.comparison.vala
 //                             ^^ constant.numeric.integer.vala
 //                               ^ punctuation.section.parens.end.vala
-        requires (d >= 0.0)
+        requires (d >= 0.0 && x == 5)
 //      ^^^^^^^^ keyword.control.conditional.vala
 //               ^ punctuation.section.parens.begin.vala
 //                ^ variable.other.readwrite.vala
 //                  ^^ keyword.operator.comparison.vala
 //                     ^^^ constant.numeric.float.vala
 //                        ^ punctuation.section.parens.end.vala
-        ensures (result >= 0.0);
+        ensures (result >= 0.0 && x == 5);
 //      ^^^^^^^ keyword.control.conditional.vala
 //              ^ punctuation.section.parens.begin.vala
 //               ^^^^^^ variable.language.vala
