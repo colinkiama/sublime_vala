@@ -79,7 +79,7 @@
 	- [✓] brackets                                                              
 - [✓] Primitive Literals                                                      
 	- [✓] integers                                                              
-	- [✓] floats                                                                
+	- [✓] floats                                                               
 	- [✓]  true  and  false                                                     
 	- [✓]  null                                                                 
 	- [✓] single-line strings                                                   

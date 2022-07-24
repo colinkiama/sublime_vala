@@ -1260,7 +1260,13 @@
 
 /** Matches basic class declartion **/
 
-    class Bruh.Now {
+    class ClassName {
+
+    }
+
+/** Matches class declaration with access modifier **/
+
+    public class ClassNmae {
 
     }
 

@@ -829,6 +829,9 @@ contexts:
 # Classes
 #####################################################################
   class_declarations:
+    - match: '\b({{access_modifier}})\b\s+'
+      captures:
+        1: storage.modifer.vala
     - match: '\b(class)\b\s+({{identifier}})'
       captures:
         1: storage.type.class.vala
