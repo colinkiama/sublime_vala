@@ -1352,3 +1352,9 @@ switch (x) {
     public class Paragraph<T> {
         T line_type;
     }
+
+
+/////////////////////////////////////////////////////////
+// CCode
+//////////////////////////////////////////////////////
+[CCode (cname = "FOO", cheader_filename = "blah.h")]

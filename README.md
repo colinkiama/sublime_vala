@@ -17,7 +17,7 @@ This uses the Sublime Text C# syntax definitions as a base so there are fewer th
 - [X] Documentation comments (Valadoc)
 - [X] Using statement list syntax
 - [X] Add tests for Generics
-- [] CCode Attributes
+- [X] CCode Attributes
                                                                   
 ## Credits
 
