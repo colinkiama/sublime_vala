@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[public ${1:ClassName} ($2) {
+	$0
+}]]></content>
+	<tabTrigger>ctor</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Creates a constructor</description>
+</snippet>

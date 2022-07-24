@@ -1,0 +1,12 @@
+<snippet>
+	<content><![CDATA[public ${1:ClassName} (${2:string arg}) {
+	Object (${3:o_arg: o_val})
+}
+
+construct {
+	$0
+}]]></content>
+	<tabTrigger>gctor</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Creates a constructor and constrcut block for GObject-Construction</description>
+</snippet>
