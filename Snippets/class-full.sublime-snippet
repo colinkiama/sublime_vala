@@ -1,0 +1,18 @@
+<snippet>
+	<content><![CDATA[${1:public} class ${2:ClassName} : ${3:Object} {
+	public ${4:string} ${5:my_prop_1} { get; construct set; }
+
+	public $2 ($4 $5) {
+		Object (
+			$5: $5,
+		);
+	}
+
+	construct {
+		$0
+	}
+}]]></content>
+	<tabTrigger>classfull</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Creates a fully implemented class</description>
+</snippet>
