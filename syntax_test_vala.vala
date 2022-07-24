@@ -937,9 +937,6 @@ switch (x) {
 
 
 
-
-
-
 /** Handles access modifiers. */
 
     private void func ();
@@ -951,7 +948,6 @@ switch (x) {
 /** Handles nullable checks on return type. */
 
     public string? m ();
-
 
 
 
@@ -1203,10 +1199,38 @@ switch (x) {
         ensures (result >= 0.0 && x == 5);
 
 
+/** Method with body */
+    public void run () {
+        print ("Hello World");
+    }
+
+/** Abstract method */
+    public abstract void walk (string arg);
 
 
+/////////////////////////////////////////////////////////////////////
+// CLASSES
+/////////////////////////////////////////////////////////////////////
 
+/** Basic Class definition */
+    class MyClass {
 
+    }
+
+/** Class with modifier */
+    public class MyModifiedClass {
+
+    }
+
+/** Basic Abstract class definition */
+    abstract class MyClass {
+
+    }
+
+/** Abstract Class with modifier */
+    public abstract class MyModifiedClass {
+
+    }
 
 /////////////////////////////////////////////////////////////////////
 // NAMESPACES
@@ -1311,4 +1335,20 @@ switch (x) {
 
 
 
+////////////////////////////////////////////////////////////////////
+// GENERICS
+////////////////////////////////////////////////////////////////////
 
+/** Generic method */
+
+    public string run<T> () {
+    }
+
+/** Generic object assignment and instantiation **/
+    List<string> list = new List<string> ();
+
+/** Generic class **/
+
+    public class Paragraph<T> {
+        T line_type;
+    }
