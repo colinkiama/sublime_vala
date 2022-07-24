@@ -1267,8 +1267,31 @@
 /** Matches class declaration with access modifier **/
 
     public class ClassNmae {
+//  ^^^^^^
+//         ^^^^^
+//               ^^^^^^^^^^ meta.class.vala storage.type.class.vala
+//                         ^ meta.class.vala meta.class.vala meta.block.vala punctuation.section.block.begin.vala
+        /** static keyword in field declaration **/
+        static string field = "Hello";
+//      ^^^^^^ meta.class.vala meta.block.vala storage.modifier.vala
+//             ^^^^^^ meta.class.vala meta.block.vala storage.type.vala
+//                    ^^^^^ meta.class.vala meta.block.vala variable.other.readwrite.vala
+//                          ^ meta.class.vala meta.block.vala keyword.operator.assignment.vala
+//                            ^ meta.class.vala meta.block.vala string.quoted.double.vala punctuation.definition.string.begin.vala
 
+        /** static keyword in field declaration with access modifier **/ 
+        public static string exposed_field = "Hello World";
+//      ^^^^^^ meta.class.vala meta.block.vala storage.modifer.vala
+//             ^^^^^^ meta.class.vala meta.block.vala storage.modifier.vala
+//                    ^^^^^^ meta.class.vala meta.block.vala storage.type.vala
+//                           ^^^^^^^^^^^^^ meta.class.vala meta.block.vala variable.other.readwrite.vala
+//                                         ^ meta.class.vala meta.block.vala keyword.operator.assignment.vala
+//                                           ^ meta.class.vala meta.block.vala string.quoted.double.vala punctuation.definition.string.begin.vala
+//                                            ^^^^^^^^^^^^ meta.class.vala meta.block.vala string.quoted.double.vala
+//                                                        ^ meta.class.vala meta.block.vala punctuation.terminator.vala
     }
+//  ^ meta.class.vala meta.block.vala punctuation.section.block.end.vala
+/** 
 
 
 /** Matches subclass **/

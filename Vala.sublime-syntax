@@ -32,6 +32,8 @@ variables:
   ownership_modifiers: unowned|owned
   selection_statements: if|else|switch|case|default
   while_statements: do|while
+  method_behaviour_modifier: abstract|override|async
+  base_modifiers: static|abstract
 
   # Lookahead for a paren group followed by an arrow operator.
   lambda_lookahead: (?:\s*(?:\((?:[^()])*\))\s*=>)
@@ -832,7 +834,10 @@ contexts:
     - match: '\b({{access_modifier}})\b\s+'
       captures:
         1: storage.modifer.vala
-    - match: '\b(class)\b\s+({{identifier}})'
+    - match: '\b({{base_modifiers}})\b'
+      captures:
+        1: storage.modifier.vala
+    - match: '(\b(class)\b\s+({{identifier}})\s+)+'
       captures:
         1: storage.type.class.vala
         2: entity.name.class.vala
@@ -892,13 +897,16 @@ contexts:
         (?x:
           (?# optional access_modifier)
           (?:\b({{access_modifier}})\b\s+)?
+          (?# optional static_keyword)
+          (?:\b(static)\b\s+)?
           (?# consume a built-in type or assume its a user type)
           \b(?:({{builtin_type}})|({{identifier}}))\b
         )
       captures:
         1: storage.modifier.vala
         2: storage.type.vala
-        3: support.type.vala
+        3: storage.type.vala
+        4: support.type.vala
       push:
         # Catch the field-name.
         - match: '{{identifier}}'
