@@ -6,3 +6,7 @@ int main () {
 construct {
     
 }
+
+while (true) {
+    
+}

@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[do {
+    $1
+} while (${2:true});
+$0]]></content>
+	<tabTrigger>do</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Create do-while loop</description>
+</snippet>

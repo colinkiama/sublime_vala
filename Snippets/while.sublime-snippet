@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[while (${1:true}) {
+	$0
+}]]></content>
+	<tabTrigger>while</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Create while loop</description>
+</snippet>
