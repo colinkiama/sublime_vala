@@ -1,17 +1,5 @@
-public void main (string[] args) {
-    
-}
+int max_length = 5;
 
-public static void main (string[] args) {
-    
-}
-
-public static int main (string[] args) {
-    
-    return 0;
-}
-
-public int main (string[] args) {
-    
-    return 0;
+for (int i = 0; i < max_length; i++) {
+    print ("Current num: %d\n", i);
 }
