@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[${1:public} struct ${2:MyStruct} {
+    public int x;
+    public int y;
+}]]></content>
+	<tabTrigger>struct</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Create a struct</description>
+</snippet>

@@ -1358,3 +1358,30 @@ switch (x) {
 // CCode
 //////////////////////////////////////////////////////
 [CCode (cname = "FOO", cheader_filename = "blah.h")]
+
+
+/////////////////////////////////////////////////////////
+// Construct
+//////////////////////////////////////////////////////
+
+/** Construct block in class */
+    public class MyClass {
+        construct {
+            print ("Hello World");
+        }
+
+        public void hello_sunshine () {
+            print ("Hello sunshine");
+        }
+
+        construct {
+            print ("Hi construct");
+        }
+
+    }
+
+/** Construct block in main scope */
+
+    construct {
+        print ("Hey world");
+    }

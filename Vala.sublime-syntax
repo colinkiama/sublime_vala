@@ -382,6 +382,7 @@ contexts:
         1: storage.type.class.vala
         2: entity.name.class.vala
       push: [class_signature, data_type_signature]
+    - include: construct_block_declaration
     - match: (?:\b(readonly)\s+)?\b(record)\s+(?:(struct)\s+)?({{name}})
       captures:
         1: storage.modifier.vala
@@ -1012,6 +1013,19 @@ contexts:
     - match: \b(try)\b
       scope: keyword.control.trycatch.try.vala
       set: [finally_block, catch_expr, try_block]
+    - match: \b(construct)\b
+      scope: keyword.context.block.vala
+      push:
+        - match: \{
+          scope: punctuation.section.block.begin.vala
+          set:
+            - meta_scope: meta.block.vala
+            - match: \}
+              scope: punctuation.section.block.end.vala
+              pop: true
+            - include: code_block_in
+        - match: (?=\S)
+          pop: true
     - match: \b(using)\s*(\()
       captures:
         1: keyword.control.using.vala
@@ -1240,8 +1254,6 @@ contexts:
           scope: meta.group.vala punctuation.section.group.end.vala
           pop: true
         - include: type
-    - match: \b(construct)\b
-      scope: keyword.other.vala
     - match: \b(as|is(?:\s+not)?)\s+
       captures:
         1: keyword.operator.reflection.vala
@@ -2373,3 +2385,18 @@ contexts:
         - include: line_of_code_in
     - match: (?=\S)
       pop: true
+
+  construct_block_declaration:
+    - match: \b(construct)\b
+      scope: keyword.context.block.vala
+      push:
+        - match: \{
+          scope: punctuation.section.block.begin.vala
+          set:
+            - meta_scope: meta.block.vala
+            - match: \}
+              scope: punctuation.section.block.end.vala
+              pop: true
+            - include: code_block_in
+        - match: (?=\S)
+          pop: true
