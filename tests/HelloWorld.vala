@@ -1,5 +1,7 @@
 public class Bruh : Object {
     public int my_num { get; construct set; }
+    public string property_name { get; construct set;}
+    
 
     public void run () {
         try {
@@ -18,5 +20,3 @@ public struct MyStruct {
     public int x;
     public int y;
 }
-
-

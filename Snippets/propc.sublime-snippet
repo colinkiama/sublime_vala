@@ -1,0 +1,7 @@
+<snippet>
+	<content><![CDATA[public ${1:string} ${2:property_name} { get; construct set;}
+$0]]></content>
+	<tabTrigger>propc</tabTrigger>
+	<description>Create GObject property</description>
+	<scope>source.vala</scope>
+</snippet>
