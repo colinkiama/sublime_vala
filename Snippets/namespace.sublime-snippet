@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[namespace ${2:NamespaceName} {
+    $0
+}]]></content>
+	<tabTrigger>namespace</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Create a namespace</description>
+</snippet>
