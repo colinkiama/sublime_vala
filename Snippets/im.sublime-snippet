@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[${1:public} int main (string[] args) {
+	$0
+	return 0;
+}]]></content>
+	<tabTrigger>im</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Creates an int main method</description>
+</snippet>

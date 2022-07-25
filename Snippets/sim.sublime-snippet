@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[${1:public} static int main (string[] args) {
+	$0
+	return 0;
+}]]></content>
+	<tabTrigger>sim</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Creates a static int main method</description>
+</snippet>

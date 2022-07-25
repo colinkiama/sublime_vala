@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[${1:public} void main (string[] args) {
+	$0
+}]]></content>
+	<tabTrigger>vm</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Creates a void main method</description>
+</snippet>

@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[${1:public} static void main (string[] args) {
+	$0
+}]]></content>
+	<tabTrigger>svm</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Creates a static void main method</description>
+</snippet>
