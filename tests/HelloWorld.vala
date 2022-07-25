@@ -29,3 +29,11 @@ public struct MyStruct {
     public int x;
     public int y;
 }
+
+public struct MyStruct {
+    public int x;
+}
+
+public interface MyInterface {
+    
+}

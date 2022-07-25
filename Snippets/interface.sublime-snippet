@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[${1:public} interface ${2:MyInterface} {
+    $0
+}]]></content>
+	<tabTrigger>interface</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Create a struct</description>
+</snippet>
