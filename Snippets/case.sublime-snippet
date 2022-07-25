@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[case ${1:my_case}:
+	$0
+	break;]]></content>
+	<tabTrigger>case</tabTrigger>
+	<description>Create case statement</description>
+	<scope>source.vala</scope>
+</snippet>

@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[switch (${1:input}) {
+    $0
+}]]></content>
+	<tabTrigger>switch</tabTrigger>
+	<description>Create switch statement</description>
+	<scope>source.vala</scope>
+</snippet>
