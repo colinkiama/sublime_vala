@@ -1,0 +1,13 @@
+{
+	"shell_cmd": "vala \"$file\"",
+	"variants": [
+		{
+			"name": "Run graphical program (GTK 3)",
+			"shell_cmd": "vala --pkg gtk+-3.0 \"$file\""
+		},
+		{
+			"name": "Run graphical program (GTK 4)",
+			"shell_cmd": "vala --pkg gtk4 \"$file\""
+		}
+	]
+}
