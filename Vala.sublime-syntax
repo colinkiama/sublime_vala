@@ -377,7 +377,7 @@ contexts:
       scope: storage.modifier.vala
     - match: '{{visibility}}'
       scope: storage.modifier.access.vala
-    - match: \b(class)\s+({{name}})
+    - match: \b(class)\s+({{namespaced_name}})
       captures:
         1: storage.type.class.vala
         2: entity.name.class.vala
