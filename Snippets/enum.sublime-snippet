@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[${1:public} enum ${2:MyEnum} {
+    ${3:MY_VALUE}
+}]]></content>
+	<tabTrigger>enum</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Create an enum</description>
+</snippet>
