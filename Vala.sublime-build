@@ -2,12 +2,25 @@
 	"shell_cmd": "vala \"$file\"",
 	"variants": [
 		{
+			"name": "Build Program:",
+			"shell_cmd": "valac \"$file\""
+		},
+		{
 			"name": "Run graphical program (GTK 3)",
 			"shell_cmd": "vala --pkg gtk+-3.0 \"$file\""
 		},
 		{
 			"name": "Run graphical program (GTK 4)",
 			"shell_cmd": "vala --pkg gtk4 \"$file\""
-		}
+		},
+		{
+			"name": "Build graphical program (GTK 3)",
+			"shell_cmd": "valac --pkg gtk+-3.0 \"$file\""
+		},
+		{
+			"name": "Build graphical program (GTK 4)",
+			"shell_cmd": "valac --pkg gtk4 \"$file\""
+		},
+		
 	]
 }
