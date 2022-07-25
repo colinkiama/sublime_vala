@@ -1,0 +1,7 @@
+<snippet>
+	<content><![CDATA[public ${1:string} ${2:property_name} { get; set;}
+$0]]></content>
+	<tabTrigger>prop</tabTrigger>
+	<description>Create property</description>
+	<scope>source.vala</scope>
+</snippet>
