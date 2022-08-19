@@ -1,9 +1,10 @@
 {
-	"shell_cmd": "vala \"$file\"",
+	"shell_cmd": "valac \"$file\"",
+	"selector": "source.vala",
 	"variants": [
 		{
-			"name": "Build Program:",
-			"shell_cmd": "valac \"$file\""
+			"name": "Run Vala Program",
+			"shell_cmd": "vala \"$file\""
 		},
 		{
 			"name": "Run graphical program (GTK 3)",
