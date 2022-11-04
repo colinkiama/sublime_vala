@@ -1,5 +1,6 @@
 # Vala Sublime Text Plugin
 
+**ARCHIVED**: Please fork and carry on work elsewhere.
 ## Goals
 
 - [X] Improved syntax highlighting with the latest language changes, using [sublime-syntax definitions](https://www.sublimetext.com/docs/syntax.html)
