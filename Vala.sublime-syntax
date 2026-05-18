@@ -47,7 +47,11 @@ variables:
   # Keywords from Vala.Scanner (valascanner.vala)
   reserved: '(?:abstract|as|async|base|break|case|catch|class|const|construct|continue|default|delegate|delete|do|dynamic|else|ensures|enum|errordomain|extern|false|finally|for|foreach|get|if|in|inline|interface|internal|is|lock|namespace|new|null|out|override|owned|params|partial|private|protected|public|ref|requires|return|sealed|set|signal|sizeof|static|struct|switch|this|throw|throws|true|try|typeof|unowned|unlock|using|var|virtual|void|volatile|weak|while|with|yield)'
   name: '(?:@{{reserved}}|@{{base_type}}|@var|@?{{name_normal}})'
+  # PascalCase identifiers (Vala types/namespaces), not variables like my_async
+  type_name: '(?:@{{reserved}}|@{{base_type}}|@?\p{Lu}(?:{{other_char}})*)'
   namespaced_name: (?:(?:{{name}}{{generic_declaration}}\s*\.\s*)*{{name}}{{generic_declaration}})
+  # At least Namespace.Type (not variable.member like my_async.say)
+  namespaced_type_name: (?:(?:{{type_name}}{{generic_declaration}}\s*\.\s*)+{{type_name}}{{generic_declaration}})
   identifier: \b[[:alpha:]_](?:[[:alnum:]_])*\b
 
 
@@ -280,6 +284,15 @@ contexts:
       scope: invalid.illegal.vala
 
   main:
+    # Isolated member declarations (LSP hover markdown blocks, etc.)
+    - match: '(?=\s*{{visibility}}\s*(?:(?:static|abstract|virtual|override|inline|async|private|protected|public|internal)\s+)*\b(?:signal|delegate)\b)'
+      push: member_declaration_snippet
+    - match: '(?=\s*(?:{{visibility}}\s+)?{{type_name}}\s*::\s*{{type_name}}\s*\()'
+      push: member_declaration_snippet
+    - match: '(?=\s*{{visibility}}\s+{{type_name}}\s*::)'
+      push: member_declaration_snippet
+    - match: '(?=\s*\b(?:signal|delegate)\b)'
+      push: member_declaration_snippet
     - include: stray_close_bracket
     - match: '\{'
       scope: punctuation.section.block.begin.vala
@@ -622,6 +635,8 @@ contexts:
       pop: true
 
   type_constraint:
+    - match: '(?={{namespaced_type_name}})'
+      push: namespaced_inherited_class_path
     - include: type_constraint_common
     - match: '{{name}}'
       scope: entity.other.inherited-class.vala
@@ -647,10 +662,6 @@ contexts:
       scope: keyword.operator.new.vala
     - match: '{{base_type}}'
       scope: storage.type.vala
-    - match: '({{name}})?(\.)'
-      captures:
-        1: meta.path.vala
-        2: meta.path.vala punctuation.accessor.dot.namespace.vala
     - match: ','
       scope: punctuation.separator.inherited-class.vala
 
@@ -662,7 +673,11 @@ contexts:
     - match: '{{name}}'
       scope: entity.name.function.signal.vala
       set:
-        - match: ';'
+        - match: '\s*(\()'
+          captures:
+            1: meta.function.parameters.vala punctuation.section.parameters.begin.vala
+          push: [signal_handler_after_params, method_params]
+        - match: '\s*;'
           scope: punctuation.terminator.statement.vala
           pop: true
         - match: \{
@@ -683,6 +698,33 @@ contexts:
         - match: (?=\S)
           pop: true
     - match: (?=\S)
+      pop: true
+
+  signal_handler_after_params:
+    - match: '\s*;'
+      scope: punctuation.terminator.statement.vala
+      pop: 2
+    - match: '\s*\{'
+      scope: punctuation.section.block.begin.vala
+      set:
+        - meta_scope: meta.block.vala
+        - match: \}
+          scope: punctuation.section.block.end.vala
+          pop: 2
+        - match: \b(add)\b
+          scope: keyword.declaration.function.accessor.add.vala
+          push: method_body
+        - match: \b(remove)\b
+          scope: keyword.declaration.function.accessor.remove.vala
+          push: method_body
+    - match: '(?=\s*$)'
+      pop: 2
+
+  member_declaration_snippet:
+    - meta_content_scope: meta.class.body.vala meta.block.vala
+    - include: attribute
+    - include: method_declaration
+    - match: '(?=\s*$)'
       pop: true
 
   method_declaration:
@@ -709,6 +751,38 @@ contexts:
         1: meta.function.vala entity.name.function.destructor.vala
         2: meta.function.vala
         3: meta.function.parameters.vala punctuation.section.parameters.begin.vala
+      push: [constructor_prebody, method_params]
+    - match: '(~)({{namespaced_type_name}})\s*(::)\s*({{name}})(\s*)(\()'
+      captures:
+        1: meta.function.vala
+        2: support.type.vala
+        3: meta.function.vala punctuation.accessor.double-colon.namespace.vala
+        4: meta.function.vala entity.name.function.destructor.vala
+        5: meta.function.vala
+        6: meta.function.parameters.vala punctuation.section.parameters.begin.vala
+      push: [constructor_prebody, method_params]
+    - match: '(~)({{type_name}})\s*(::)\s*({{name}})(\s*)(\()'
+      captures:
+        1: meta.function.vala
+        2: support.type.vala
+        3: meta.function.vala punctuation.accessor.double-colon.namespace.vala
+        4: meta.function.vala entity.name.function.destructor.vala
+        5: meta.function.vala
+        6: meta.function.parameters.vala punctuation.section.parameters.begin.vala
+      push: [constructor_prebody, method_params]
+    - match: '({{namespaced_type_name}})\s*(::)\s*((?!{{reserved}}\b){{name}})\s*(\()'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.double-colon.namespace.vala
+        3: entity.name.function.constructor.vala
+        4: meta.function.parameters.vala punctuation.section.parameters.begin.vala
+      push: [constructor_prebody, method_params]
+    - match: '({{type_name}})\s*(::)\s*((?!{{reserved}}\b){{name}})\s*(\()'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.double-colon.namespace.vala
+        3: entity.name.function.constructor.vala
+        4: meta.function.parameters.vala punctuation.section.parameters.begin.vala
       push: [constructor_prebody, method_params]
     - match: '((?!{{reserved}}\b){{name}})\s*(\()'
       captures:
@@ -893,8 +967,13 @@ contexts:
           set: [constructor_initializer, arguments]
         - match: '(?=\{)'
           set: method_body
+    - match: '\s*;'
+      scope: punctuation.terminator.statement.vala
+      pop: true
     - match: '(?=\{|=>)'
       set: method_body
+    - match: '(?=\s*$)'
+      pop: true
 
   constructor_initializer:
     - meta_scope: meta.function.vala
@@ -1377,6 +1456,8 @@ contexts:
       scope: punctuation.accessor.null-coalescing.vala
     - match: \.\.
       scope: keyword.operator.range.vala
+    - match: '(?={{namespaced_type_name}}\s*\.)'
+      push: namespaced_type_path
     - match: \.
       scope: punctuation.accessor.dot.vala
     - include: parenthesized_lambdas
@@ -1650,6 +1731,50 @@ contexts:
       scope: meta.brackets.vala punctuation.section.brackets.end.vala
       pop: true
     - include: line_of_code_in
+
+  namespaced_type_path:
+    - include: namespaced_type_path_common
+    - match: '{{type_name}}'
+      scope: support.type.vala
+      pop: true
+
+  namespaced_inherited_class_path:
+    - include: namespaced_inherited_class_path_common
+    - match: '{{type_name}}'
+      scope: entity.other.inherited-class.vala
+      pop: true
+
+  namespaced_type_path_common:
+    - match: '(?:(global)|({{name}}))(::)'
+      captures:
+        1: support.namespace.vala
+        2: support.namespace.vala
+        3: punctuation.accessor.double-colon.namespace.vala
+    - match: '({{type_name}})(\s*\.\s*)(?={{type_name}}(?:{{generic_declaration}})?\s*\.)'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.namespace.vala
+    - match: '({{type_name}})({{generic_declaration}})'
+      captures:
+        1: support.type.vala
+        2: meta.generic.vala
+      pop: true
+
+  namespaced_inherited_class_path_common:
+    - match: '(?:(global)|({{name}}))(::)'
+      captures:
+        1: support.namespace.vala
+        2: support.namespace.vala
+        3: punctuation.accessor.double-colon.namespace.vala
+    - match: '({{type_name}})(\s*\.\s*)(?={{type_name}}(?:{{generic_declaration}})?\s*\.)'
+      captures:
+        1: entity.other.inherited-class.vala
+        2: punctuation.accessor.dot.namespace.vala
+    - match: '({{type_name}})({{generic_declaration}})'
+      captures:
+        1: entity.other.inherited-class.vala
+        2: meta.generic.vala
+      pop: true
 
   type:
     - include: type_common

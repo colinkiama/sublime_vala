@@ -28,4 +28,9 @@
 //      ^ source.vala meta.class.body.vala meta.block.vala meta.function.vala entity.name.function.constructor.vala
 //           ^ source.vala meta.class.body.vala meta.block.vala meta.function.vala punctuation.separator.function.vala
 //             ^ source.vala meta.class.body.vala meta.block.vala meta.function.vala variable.language.vala
+
+        public AdvancedSample::AdvancedSample (string name) {}
+//             ^^^^^^^^^^^^^^ source.vala meta.class.body.vala meta.block.vala support.type.vala
+//                           ^^ source.vala meta.class.body.vala meta.block.vala punctuation.accessor.double-colon.namespace.vala
+//                             ^^^^^^^^^^^^^^ source.vala meta.class.body.vala meta.block.vala entity.name.function.constructor.vala
     }

@@ -14,3 +14,8 @@
 
     class Child : Parent {
 //                ^^^^^^ source.vala meta.class.vala entity.other.inherited-class.vala
+
+    class Service : GLib.Object {
+//                  ^^^^ source.vala meta.class.vala entity.other.inherited-class.vala
+//                      ^ source.vala meta.class.vala punctuation.accessor.dot.namespace.vala
+//                       ^^^^^^ source.vala meta.class.vala entity.other.inherited-class.vala
