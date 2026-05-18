@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[/${1:pattern}/${2:flags}]]></content>
+	<tabTrigger>regex</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Regex literal</description>
+</snippet>

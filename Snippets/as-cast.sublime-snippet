@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[${1:expr} as ${2:Type}]]></content>
+	<tabTrigger>ascast</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Type cast (as)</description>
+</snippet>

@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[${1:public} enum ${2:EnumName} : ${3:int} {
+	${4:VALUE},
+}
+$0]]></content>
+	<tabTrigger>enumbase</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Enum with underlying type</description>
+</snippet>

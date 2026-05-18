@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[new ${1:Type}[${2:length}]]]></content>
+	<tabTrigger>newarr</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Array creation</description>
+</snippet>

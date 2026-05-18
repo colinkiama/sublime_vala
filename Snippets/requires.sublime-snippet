@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[requires (${1:condition});]]></content>
+	<tabTrigger>requires</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Requires contract</description>
+</snippet>

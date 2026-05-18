@@ -2,155 +2,118 @@
 	"scope": "source.vala",
 
 	"completions": [
-		{ 
-			"trigger": "class", 
-			"contents": "class",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "public",
-			"contents": "public",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "private",
-			"contents": "private",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "protected",
-			"contents": "protected",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "override",
-			"contents": "override",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "static",
-			"contents": "static",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "void",
-			"contents": "void",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "async",
-			"contents": "async",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "await",
-			"contents": "await",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "break",
-			"contents": "break",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "switch",
-			"contents": "switch",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "case",
-			"contents": "case",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "if",
-			"contents": "if",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "enum",
-			"contents": "enum",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "struct",
-			"contents": "struct",
-			"kind": "keyword"
-		},
-		{
-			"trigger": "ArrayList",
-			"contents": "ArrayList",
-			"kind": "type"
-		},
-		{
-			"trigger": "HashSet",
-			"contents": "HashSet",
-			"kind": "type"
-		},
-		{
-			"trigger": "HashMap",
-			"contents": "HashMap",
-			"kind": "type"
-		},
-		{
-			"trigger": "OptionArg",
-			"contents": "OptionArg",
-			"kind": "type"
-		},
-		{
-			"trigger": "OptionContext",
-			"contents": "OptionContext",
-			"kind": "type"
-		},
-		{
-			"trigger": "OptionEntry",
-			"contents": "OptionEntry",
-			"kind": "type"
-		},
-		{
-			"trigger": "stdout",
-			"contents": "stdout",
-			"kind": "type"
-		},
-		{
-			"trigger": "stderr",
-			"contents": "stdout",
-			"kind": "type"
-		},
-		{
-			"trigger": "print",
-			"contents": "print (\"${1:input}\"$2);$0",
-			"kind": "function"
-		},
-		{
-			"trigger": "println",
-			"contents": "print (\"${1:input}\\n\"$2);$0",
-			"kind": "function"
-		},
-		{
-			"trigger": "debug",
-			"contents": "debug (\"${1:input}\"$2);$0",
-			"kind": "function"
-		},
-		{
-			"trigger": "info",
-			"contents": "info (\"${1:input}\"$2);$0",
-			"kind": "function"
-		},
-		{
-			"trigger": "warning",
-			"contents": "warning (\"${1:input}\"$2);$0",
-			"kind": "function"
-		},
-		{
-			"trigger": "critical",
-			"contents": "critical (\"${1:input}\"$2);$0",
-			"kind": "function"
-		},
-		{
-			"trigger": "error",
-			"contents": "error (\"${1:input}\"$2);$0",
-			"kind": "function"
-		},
+		{ "trigger": "abstract", "contents": "abstract", "kind": "keyword" },
+		{ "trigger": "as", "contents": "as", "kind": "keyword" },
+		{ "trigger": "async", "contents": "async", "kind": "keyword" },
+		{ "trigger": "base", "contents": "base", "kind": "keyword" },
+		{ "trigger": "break", "contents": "break", "kind": "keyword" },
+		{ "trigger": "case", "contents": "case", "kind": "keyword" },
+		{ "trigger": "catch", "contents": "catch", "kind": "keyword" },
+		{ "trigger": "class", "contents": "class", "kind": "keyword" },
+		{ "trigger": "const", "contents": "const", "kind": "keyword" },
+		{ "trigger": "construct", "contents": "construct", "kind": "keyword" },
+		{ "trigger": "continue", "contents": "continue", "kind": "keyword" },
+		{ "trigger": "default", "contents": "default", "kind": "keyword" },
+		{ "trigger": "delegate", "contents": "delegate", "kind": "keyword" },
+		{ "trigger": "delete", "contents": "delete", "kind": "keyword" },
+		{ "trigger": "do", "contents": "do", "kind": "keyword" },
+		{ "trigger": "dynamic", "contents": "dynamic", "kind": "keyword" },
+		{ "trigger": "else", "contents": "else", "kind": "keyword" },
+		{ "trigger": "ensures", "contents": "ensures", "kind": "keyword" },
+		{ "trigger": "enum", "contents": "enum", "kind": "keyword" },
+		{ "trigger": "errordomain", "contents": "errordomain", "kind": "keyword" },
+		{ "trigger": "extern", "contents": "extern", "kind": "keyword" },
+		{ "trigger": "false", "contents": "false", "kind": "keyword" },
+		{ "trigger": "finally", "contents": "finally", "kind": "keyword" },
+		{ "trigger": "for", "contents": "for", "kind": "keyword" },
+		{ "trigger": "foreach", "contents": "foreach", "kind": "keyword" },
+		{ "trigger": "get", "contents": "get", "kind": "keyword" },
+		{ "trigger": "if", "contents": "if", "kind": "keyword" },
+		{ "trigger": "in", "contents": "in", "kind": "keyword" },
+		{ "trigger": "inline", "contents": "inline", "kind": "keyword" },
+		{ "trigger": "interface", "contents": "interface", "kind": "keyword" },
+		{ "trigger": "internal", "contents": "internal", "kind": "keyword" },
+		{ "trigger": "is", "contents": "is", "kind": "keyword" },
+		{ "trigger": "lock", "contents": "lock", "kind": "keyword" },
+		{ "trigger": "namespace", "contents": "namespace", "kind": "keyword" },
+		{ "trigger": "new", "contents": "new", "kind": "keyword" },
+		{ "trigger": "null", "contents": "null", "kind": "keyword" },
+		{ "trigger": "out", "contents": "out", "kind": "keyword" },
+		{ "trigger": "override", "contents": "override", "kind": "keyword" },
+		{ "trigger": "owned", "contents": "owned", "kind": "keyword" },
+		{ "trigger": "params", "contents": "params", "kind": "keyword" },
+		{ "trigger": "partial", "contents": "partial", "kind": "keyword" },
+		{ "trigger": "private", "contents": "private", "kind": "keyword" },
+		{ "trigger": "protected", "contents": "protected", "kind": "keyword" },
+		{ "trigger": "public", "contents": "public", "kind": "keyword" },
+		{ "trigger": "ref", "contents": "ref", "kind": "keyword" },
+		{ "trigger": "requires", "contents": "requires", "kind": "keyword" },
+		{ "trigger": "return", "contents": "return", "kind": "keyword" },
+		{ "trigger": "sealed", "contents": "sealed", "kind": "keyword" },
+		{ "trigger": "set", "contents": "set", "kind": "keyword" },
+		{ "trigger": "signal", "contents": "signal", "kind": "keyword" },
+		{ "trigger": "sizeof", "contents": "sizeof", "kind": "keyword" },
+		{ "trigger": "static", "contents": "static", "kind": "keyword" },
+		{ "trigger": "struct", "contents": "struct", "kind": "keyword" },
+		{ "trigger": "switch", "contents": "switch", "kind": "keyword" },
+		{ "trigger": "this", "contents": "this", "kind": "keyword" },
+		{ "trigger": "throw", "contents": "throw", "kind": "keyword" },
+		{ "trigger": "throws", "contents": "throws", "kind": "keyword" },
+		{ "trigger": "true", "contents": "true", "kind": "keyword" },
+		{ "trigger": "try", "contents": "try", "kind": "keyword" },
+		{ "trigger": "typeof", "contents": "typeof", "kind": "keyword" },
+		{ "trigger": "unowned", "contents": "unowned", "kind": "keyword" },
+		{ "trigger": "unlock", "contents": "unlock", "kind": "keyword" },
+		{ "trigger": "using", "contents": "using", "kind": "keyword" },
+		{ "trigger": "var", "contents": "var", "kind": "keyword" },
+		{ "trigger": "virtual", "contents": "virtual", "kind": "keyword" },
+		{ "trigger": "volatile", "contents": "volatile", "kind": "keyword" },
+		{ "trigger": "weak", "contents": "weak", "kind": "keyword" },
+		{ "trigger": "while", "contents": "while", "kind": "keyword" },
+		{ "trigger": "with", "contents": "with", "kind": "keyword" },
+		{ "trigger": "yield", "contents": "yield", "kind": "keyword" },
+
+		{ "trigger": "bool", "contents": "bool", "kind": "type" },
+		{ "trigger": "char", "contents": "char", "kind": "type" },
+		{ "trigger": "uchar", "contents": "uchar", "kind": "type" },
+		{ "trigger": "short", "contents": "short", "kind": "type" },
+		{ "trigger": "ushort", "contents": "ushort", "kind": "type" },
+		{ "trigger": "unichar", "contents": "unichar", "kind": "type" },
+		{ "trigger": "int", "contents": "int", "kind": "type" },
+		{ "trigger": "int8", "contents": "int8", "kind": "type" },
+		{ "trigger": "int16", "contents": "int16", "kind": "type" },
+		{ "trigger": "int32", "contents": "int32", "kind": "type" },
+		{ "trigger": "int64", "contents": "int64", "kind": "type" },
+		{ "trigger": "uint", "contents": "uint", "kind": "type" },
+		{ "trigger": "uint8", "contents": "uint8", "kind": "type" },
+		{ "trigger": "uint16", "contents": "uint16", "kind": "type" },
+		{ "trigger": "uint32", "contents": "uint32", "kind": "type" },
+		{ "trigger": "uint64", "contents": "uint64", "kind": "type" },
+		{ "trigger": "long", "contents": "long", "kind": "type" },
+		{ "trigger": "ulong", "contents": "ulong", "kind": "type" },
+		{ "trigger": "size_t", "contents": "size_t", "kind": "type" },
+		{ "trigger": "ssize_t", "contents": "ssize_t", "kind": "type" },
+		{ "trigger": "float", "contents": "float", "kind": "type" },
+		{ "trigger": "double", "contents": "double", "kind": "type" },
+		{ "trigger": "string", "contents": "string", "kind": "type" },
+		{ "trigger": "void", "contents": "void", "kind": "type" },
+		{ "trigger": "object", "contents": "object", "kind": "type" },
+
+		{ "trigger": "ArrayList", "contents": "ArrayList", "kind": "type" },
+		{ "trigger": "HashSet", "contents": "HashSet", "kind": "type" },
+		{ "trigger": "HashMap", "contents": "HashMap", "kind": "type" },
+		{ "trigger": "OptionArg", "contents": "OptionArg", "kind": "type" },
+		{ "trigger": "OptionContext", "contents": "OptionContext", "kind": "type" },
+		{ "trigger": "OptionEntry", "contents": "OptionEntry", "kind": "type" },
+		{ "trigger": "stdout", "contents": "stdout", "kind": "variable" },
+		{ "trigger": "stderr", "contents": "stderr", "kind": "variable" },
+
+		{ "trigger": "print", "contents": "print (\"${1:input}\"$2);$0", "kind": "function" },
+		{ "trigger": "println", "contents": "print (\"${1:input}\\n\"$2);$0", "kind": "function" },
+		{ "trigger": "debug", "contents": "debug (\"${1:input}\"$2);$0", "kind": "function" },
+		{ "trigger": "info", "contents": "info (\"${1:input}\"$2);$0", "kind": "function" },
+		{ "trigger": "warning", "contents": "warning (\"${1:input}\"$2);$0", "kind": "function" },
+		{ "trigger": "critical", "contents": "critical (\"${1:input}\"$2);$0", "kind": "function" },
+		{ "trigger": "error", "contents": "error (\"${1:input}\"$2);$0", "kind": "function" }
 	]
 }

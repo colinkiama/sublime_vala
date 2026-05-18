@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[${1:public} abstract class ${2:ClassName} : ${3:Object} {
+	$0
+}]]></content>
+	<tabTrigger>abclass</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Abstract class</description>
+</snippet>

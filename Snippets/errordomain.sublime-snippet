@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[errordomain ${1:ErrorDomain} {
+	${2:CODE},
+}
+$0]]></content>
+	<tabTrigger>errordomain</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Error domain</description>
+</snippet>

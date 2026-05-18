@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[[${1:AttributeName}]]]></content>
+	<tabTrigger>attr</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Attribute</description>
+</snippet>

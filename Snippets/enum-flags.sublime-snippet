@@ -1,0 +1,10 @@
+<snippet>
+	<content><![CDATA[[Flags]
+${1:public} enum ${2:FlagsName} : ${3:uint} {
+	${4:FLAG},
+}
+$0]]></content>
+	<tabTrigger>enumflags</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Flags enum</description>
+</snippet>

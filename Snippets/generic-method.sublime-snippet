@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[public ${1:T} ${2:method_name}<${3:T}> (${4:}) {
+	$0
+}]]></content>
+	<tabTrigger>genmethod</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Generic method</description>
+</snippet>

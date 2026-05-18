@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[${1:public} ref struct ${2:StructName} {
+	$0
+}]]></content>
+	<tabTrigger>refstruct</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Ref struct</description>
+</snippet>

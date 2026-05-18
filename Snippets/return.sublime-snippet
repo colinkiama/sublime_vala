@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[return ${1:};]]></content>
+	<tabTrigger>ret</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Return statement</description>
+</snippet>

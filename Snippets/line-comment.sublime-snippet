@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[// ${1:comment}]]></content>
+	<tabTrigger>linecomment</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Line comment</description>
+</snippet>

@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[new ${1:Type} (${2:})]]></content>
+	<tabTrigger>new</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Object creation</description>
+</snippet>

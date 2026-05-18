@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[public override ${1:void} ${2:method_name} (${3:}) {
+	$0
+}]]></content>
+	<tabTrigger>ovrmet</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Override method</description>
+</snippet>

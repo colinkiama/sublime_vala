@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[throw new ${1:Error} ("${2:message}");]]></content>
+	<tabTrigger>throw</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Throw error</description>
+</snippet>

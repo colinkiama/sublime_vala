@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[[CCode (cname = "${1:NAME}", cheader_filename = "${2:header.h}")]]]></content>
+	<tabTrigger>ccode</tabTrigger>
+	<scope>source.vala</scope>
+	<description>CCode attribute</description>
+</snippet>

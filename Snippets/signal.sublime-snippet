@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[public signal ${1:void} ${2:signal_name} (${3:});]]></content>
+	<tabTrigger>sig</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Signal declaration</description>
+</snippet>

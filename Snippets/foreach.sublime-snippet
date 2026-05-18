@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[foreach (${1:var} ${2:item} in ${3:collection}) {
+	$0
+}]]></content>
+	<tabTrigger>foreach</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Foreach loop</description>
+</snippet>

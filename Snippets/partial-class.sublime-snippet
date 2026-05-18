@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[public partial class ${1:ClassName} {
+	$0
+}]]></content>
+	<tabTrigger>partialclass</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Partial class</description>
+</snippet>
