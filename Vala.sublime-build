@@ -22,6 +22,5 @@
 			"name": "Build graphical program (GTK 4)",
 			"shell_cmd": "valac --pkg gtk4 \"$file\""
 		},
-		
 	]
 }
