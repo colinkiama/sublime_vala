@@ -12,22 +12,22 @@ void main () {
     }
 
     switch (x) {
-    case 0:
-        break;
-    case 10:
-        stdout.printf ("ten\n");
-        break;
-    default:
-        stdout.printf ("other\n");
-        break;
+        case 0:
+            break;
+        case 10:
+            stdout.printf ("ten\n");
+            break;
+        default:
+            stdout.printf ("other\n");
+            break;
     }
 
     switch (x) {
-    case > 5:
-        stdout.printf ("large\n");
-        break;
-    default:
-        break;
+        case > 5:
+            stdout.printf ("large\n");
+            break;
+        default:
+            break;
     }
 
     for (int i = 0; i < 3; i++) {

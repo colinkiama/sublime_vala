@@ -10,7 +10,19 @@
 //  ^^^^^^^^^^^ source.vala meta.string.vala string.quoted.double.vala
 
     @"$name";
-//     ^^^^ source.vala meta.string.vala string.quoted.double.vala variable.other.vala
+//    ^ source.vala meta.string.vala string.quoted.double.vala punctuation.definition.template-expression.begin.vala
+//     ^^^^ source.vala meta.template-expression.vala variable.other.vala
+
+    @"$a * $b = $(a * b)";
+//     ^ source.vala meta.string.vala string.quoted.double.vala punctuation.definition.template-expression.begin.vala
+//      ^ source.vala meta.template-expression.vala variable.other.vala
+//          ^ source.vala meta.string.vala string.quoted.double.vala punctuation.definition.template-expression.begin.vala
+//           ^ source.vala meta.template-expression.vala variable.other.vala
+//               ^^ source.vala meta.string.vala string.quoted.double.vala punctuation.section.interpolation.begin.vala
+
+    print (@"Plus one day, three hours and five minutes: $future\n");
+//                                                       ^ source.vala meta.string.vala string.quoted.double.vala punctuation.definition.template-expression.begin.vala
+//                                                        ^^^^^^ source.vala meta.template-expression.vala variable.other.vala
 
     @"$(a + b)";
 //       ^ source.vala meta.interpolation.vala source.vala.embedded

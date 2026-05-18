@@ -70,6 +70,52 @@ contexts:
     - include: doc_comments
     - include: block_comments
 
+  preprocessor:
+    - match: '^\s*(#)\s*\b(if)\b'
+      captures:
+        1: punctuation.definition.preprocessor.vala
+        2: keyword.control.preprocessor.if.vala
+      push: preprocessor_expression_line
+    - match: '^\s*(#)\s*\b(elif)\b'
+      captures:
+        1: punctuation.definition.preprocessor.vala
+        2: keyword.control.preprocessor.elif.vala
+      push: preprocessor_expression_line
+    - match: '^\s*(#)\s*\b(else)\b'
+      captures:
+        1: punctuation.definition.preprocessor.vala
+        2: keyword.control.preprocessor.else.vala
+    - match: '^\s*(#)\s*\b(endif)\b'
+      captures:
+        1: punctuation.definition.preprocessor.vala
+        2: keyword.control.preprocessor.endif.vala
+
+  preprocessor_expression_line:
+    - meta_include_prototype: false
+    - meta_scope: meta.preprocessor.vala
+    - include: line_comments
+    - match: $\n?
+      pop: true
+    - match: '\|\|'
+      scope: keyword.operator.preprocessor.vala
+    - match: '&&'
+      scope: keyword.operator.preprocessor.vala
+    - match: '==|!='
+      scope: keyword.operator.preprocessor.vala
+    - match: '!'
+      scope: keyword.operator.preprocessor.negation.vala
+    - match: '[()]'
+      scope: punctuation.section.preprocessor.vala
+    - match: '\b(true|false)\b'
+      scope: constant.language.preprocessor.vala
+    - match: '\b(POSIX|GOBJECT)\b'
+      scope: constant.language.preprocessor.builtin.vala
+    - match: '\bVALA_\d+_\d+\b'
+      scope: constant.language.preprocessor.builtin.vala
+    - match: '(?!{{reserved}}\b){{identifier}}'
+      scope: constant.other.preprocessor.symbol.vala
+    - match: '\s+'
+
   line_comments:
     - match: //
       scope: punctuation.definition.comment.vala
@@ -293,6 +339,8 @@ contexts:
       push: member_declaration_snippet
     - match: '(?=\s*\b(?:signal|delegate)\b)'
       push: member_declaration_snippet
+    - include: preprocessor
+    - include: construct_block_declaration
     - include: stray_close_bracket
     - match: '\{'
       scope: punctuation.section.block.begin.vala
@@ -592,6 +640,7 @@ contexts:
         - include: interface_declaration
         - include: delegate_declaration
         - include: errordomain_declaration
+        - include: construct_block_declaration
         - include: method_declaration
         - include: stray_close_bracket
     - match: \S*
@@ -1049,7 +1098,13 @@ contexts:
             1: storage.modifier.vala
             2: keyword.declaration.function.accessor.get.vala
           push: method_body
-        - match: \b(?:set\s+construct|construct\s+set|set|init)\b
+        - match: \b(?:set\s+construct|construct\s+set)\b
+          scope: keyword.declaration.function.accessor.set.vala
+          push: method_body
+        - match: \b(construct)\b
+          scope: keyword.declaration.function.accessor.construct.vala
+          push: method_body
+        - match: \b(?:set|init)\b
           scope: keyword.declaration.function.accessor.set.vala
           push: method_body
         - match: \bdefault\b\s*=
@@ -1107,6 +1162,7 @@ contexts:
       push: line_of_code
 
   line_of_code:
+    - include: preprocessor
     # language keywords
     - match: \b(if)\b
       captures:
@@ -1134,19 +1190,7 @@ contexts:
     - match: \b(try)\b
       scope: keyword.control.try.vala
       set: [finally_block, catch_expr, try_block]
-    - match: \b(construct)\b
-      scope: keyword.context.block.vala
-      push:
-        - match: \{
-          scope: punctuation.section.block.begin.vala
-          set:
-            - meta_scope: meta.block.vala
-            - match: \}
-              scope: punctuation.section.block.end.vala
-              pop: true
-            - include: code_block_in
-        - match: (?=\S)
-          pop: true
+    - include: construct_block_declaration
     - match: \b(using)\s*(\()
       captures:
         1: keyword.control.using.vala
@@ -1471,10 +1515,6 @@ contexts:
     - match: '='
       scope: keyword.operator.assignment.vala
     - include: literals
-    # Vala template strings (@"...")
-    - match: '@"'
-      scope: punctuation.definition.string.begin.vala
-      push: vala_template_string
     # regex literals (/pattern/flags)
     - match: (?<=[=,({\[:;?&|+\-*/%<>!])\s*(/)(?=[^/\s])
       scope: punctuation.definition.regex.begin.vala
@@ -1712,6 +1752,12 @@ contexts:
       scope: invalid.illegal.expected-close-paren.vala
       pop: true
     - include: stray_close_bracket
+    - match: '@"'
+      scope: punctuation.definition.string.begin.vala
+      push: vala_template_string
+    - match: '@"""'
+      scope: punctuation.definition.string.begin.vala
+      push: vala_verbatim_template_string
     - match: (?=\S)
       push:
         - include: lambdas
@@ -1908,6 +1954,14 @@ contexts:
       captures:
         1: constant.numeric.base.vala
         2: constant.numeric.value.vala
+    # Vala template strings (@"...") — must precede plain "
+    - match: '@"'
+      scope: punctuation.definition.string.begin.vala
+      push: vala_template_string
+    # Verbatim template strings (@"""...""") with optional $ interpolation
+    - match: '@"""'
+      scope: punctuation.definition.string.begin.vala
+      push: vala_verbatim_template_string
     # verbatim strings (""")
     - match: '"""'
       scope: punctuation.definition.string.begin.vala
@@ -1950,17 +2004,14 @@ contexts:
       scope: punctuation.definition.string.end.vala
       pop: true
 
-  vala_template_string:
+  vala_verbatim_template_string:
     - meta_include_prototype: false
-    - meta_scope: meta.string.vala string.quoted.double.vala
-    - match: '"'
+    - meta_scope: meta.string.vala string.quoted.double.raw.vala
+    - match: '"""'
       scope: punctuation.definition.string.end.vala
       pop: true
     - match: '\$\$'
       scope: constant.character.escape.vala
-    - match: '\$([_[:alpha:]][[:alnum:]_]*)'
-      captures:
-        1: variable.other.vala
     - match: '\$\('
       scope: punctuation.section.interpolation.begin.vala
       push:
@@ -1971,6 +2022,51 @@ contexts:
           scope: punctuation.section.interpolation.end.vala
           pop: true
         - include: line_of_code_in
+    - match: '\$'
+      scope: punctuation.definition.template-expression.begin.vala
+      push:
+        - meta_scope: meta.template-expression.vala
+        - clear_scopes: 2
+        - match: '[[:alpha:]_][[:alnum:]_]*'
+          scope: variable.other.vala
+          pop: true
+        - match: ''
+          scope: invalid.illegal.vala
+          pop: true
+    - match: '[^"$]+'
+
+  vala_template_string:
+    - meta_include_prototype: false
+    - meta_scope: meta.string.vala string.quoted.double.vala
+    - match: '"'
+      scope: punctuation.definition.string.end.vala
+      pop: true
+    # $$ — literal dollar (valascanner: TEMPLATE_STRING_LITERAL)
+    - match: '\$\$'
+      scope: constant.character.escape.vala
+    # $(expression) — embedded Vala expression
+    - match: '\$\('
+      scope: punctuation.section.interpolation.begin.vala
+      push:
+        - meta_scope: meta.interpolation.vala
+        - meta_content_scope: source.vala.embedded
+        - clear_scopes: 2
+        - match: '\)'
+          scope: punctuation.section.interpolation.end.vala
+          pop: true
+        - include: line_of_code_in
+    # $identifier — must start with letter or _ (valascanner.is_ident_char)
+    - match: '\$'
+      scope: punctuation.definition.template-expression.begin.vala
+      push:
+        - meta_scope: meta.template-expression.vala
+        - clear_scopes: 2
+        - match: '[[:alpha:]_][[:alnum:]_]*'
+          scope: variable.other.vala
+          pop: true
+        - match: ''
+          scope: invalid.illegal.vala
+          pop: true
     - include: string_escaped
     - match: $\n?
       scope: invalid.illegal.unclosed-string.vala
@@ -2568,16 +2664,23 @@ contexts:
       pop: true
 
   construct_block_declaration:
-    - match: \b(construct)\b
+    - match: '\b(static)\s+(construct)\b'
+      captures:
+        1: storage.modifier.vala
+        2: keyword.context.block.vala
+      push: construct_block_body
+    - match: '\b(construct)\b'
       scope: keyword.context.block.vala
-      push:
-        - match: \{
-          scope: punctuation.section.block.begin.vala
-          set:
-            - meta_scope: meta.block.vala
-            - match: \}
-              scope: punctuation.section.block.end.vala
-              pop: true
-            - include: code_block_in
-        - match: (?=\S)
+      push: construct_block_body
+
+  construct_block_body:
+    - match: '\{'
+      scope: punctuation.section.block.begin.vala
+      set:
+        - meta_scope: meta.block.vala
+        - match: '\}'
+          scope: punctuation.section.block.end.vala
           pop: true
+        - include: code_block_in
+    - match: '(?=\S)'
+      pop: true
