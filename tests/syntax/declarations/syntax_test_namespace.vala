@@ -5,4 +5,5 @@
     }
 
     namespace Outer.Inner {
-//          ^^^^^ source.vala meta.namespace.vala entity.name.namespace.vala
+//              ^^^^^ source.vala meta.namespace.vala entity.name.namespace.vala
+    }

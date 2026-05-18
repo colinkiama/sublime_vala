@@ -10,13 +10,16 @@
 //  ^^^^^^^^^^^ source.vala meta.string.vala string.quoted.double.vala
 
     @"$name";
-//    ^^^^^ source.vala meta.string.vala string.quoted.double.vala variable.other.vala
+//     ^^^^ source.vala meta.string.vala string.quoted.double.vala variable.other.vala
 
     @"$(a + b)";
-//       ^ source.vala meta.interpolation.vala punctuation.section.interpolation.begin.vala
+//       ^ source.vala meta.interpolation.vala source.vala.embedded
 
     'c';
 //  ^^^ source.vala string.quoted.single.vala
 
     var r = /pat/im;
-//          ^^^^^^^^ source.vala string.regexp.vala
+//          ^ source.vala string.regexp.vala punctuation.definition.regex.begin.vala
+//           ^^^ source.vala string.regexp.vala
+//              ^ source.vala string.regexp.vala punctuation.definition.regex.end.vala
+//               ^^ source.vala string.regexp.vala punctuation.definition.regex.end.vala keyword.other.vala

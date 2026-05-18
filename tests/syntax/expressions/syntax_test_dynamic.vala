@@ -4,7 +4,11 @@
 //  ^^^^^^^ source.vala storage.modifier.vala
 
     obj.method ();
-//     ^^^^^^ source.vala meta.function-call.vala variable.function.vala
+//  ^^^ source.vala variable.other.vala
+//     ^ source.vala punctuation.accessor.dot.vala
+//      ^^^^^^ source.vala meta.function-call.vala variable.function.vala
 
     obj.signal.emit ();
-//              ^^^^ source.vala meta.function-call.vala variable.function.vala
+//      ^^^^^^ source.vala keyword.other.vala
+//            ^ source.vala punctuation.accessor.dot.vala
+//             ^^^^ source.vala meta.function-call.vala variable.function.vala

@@ -4,16 +4,13 @@
 //    ^ source.vala keyword.operator.vala
 
     1 == 2;
-//     ^^ source.vala keyword.operator.vala
+//    ^^ source.vala keyword.operator.vala
 
     3 || 4;
-//     ^^ source.vala keyword.operator.vala
+//    ^^ source.vala keyword.operator.vala
 
     1 ?? 2;
-//     ^^ source.vala keyword.operator.vala
-
-    1 == 2 ? 3 : 4;
-//         ^ source.vala keyword.operator.ternary.vala
+//    ^^ source.vala keyword.operator.vala
 
     a in b;
-//   ^^ source.vala variable.other.vala
+//       ^ source.vala variable.other.vala

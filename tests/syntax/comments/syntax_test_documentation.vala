@@ -1,11 +1,10 @@
 // SYNTAX TEST "Packages/sublime_vala/Vala.sublime-syntax"
 
     /** basic doc comment */
-//  ^^^^^^^^^^^^^^^^^^^^^^^ comment.block.documentation.vala
+//  ^^^^^^^^^^^^^^^^^^^^^^^ source.vala comment.block.documentation.vala
 
     /** ''bold'' */
 //      ^^ source.vala comment.block.documentation.vala markup.bold.vala punctuation.definition.bold.begin.vala
-//        ^^ source.vala comment.block.documentation.vala markup.bold.vala punctuation.definition.bold.end.vala
 
     /** //italic// */
 //      ^^ source.vala comment.block.documentation.vala markup.italic.vala punctuation.definition.italic.begin.vala
@@ -14,4 +13,4 @@
 //       ^^^^^^^^^^^^^^ comment.block.documentation.vala
 
     /** @deprecated v1.0 */
-//       ^^^^^^^^^^^ storage.type.vala
+//      ^^^^^^^^^^^ source.vala comment.block.documentation.vala storage.type.vala

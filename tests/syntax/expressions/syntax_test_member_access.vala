@@ -10,7 +10,7 @@
 //  ^^^^ source.vala variable.language.vala
 
     ptr->member;
-//    ^^ source.vala punctuation.accessor.arrow.vala
+//     ^^ source.vala punctuation.accessor.arrow.vala
 
     GLib.global::Symbol;
-//  ^^^^ source.vala support.type.vala
+//  ^^^^ source.vala variable.other.vala

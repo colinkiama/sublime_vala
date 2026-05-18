@@ -2,7 +2,7 @@
 
     class Foo {
         construct {
-//      ^^^^^^^^^ source.vala keyword.context.block.vala
+//      ^^^^^^^^^ source.vala meta.class.body.vala meta.block.vala keyword.context.block.vala
         }
     }
 

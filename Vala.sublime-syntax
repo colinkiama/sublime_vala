@@ -296,7 +296,6 @@ contexts:
     - include: namespace_declaration
     - include: delegate_declaration
     - include: errordomain_declaration
-    - include: method_declaration
     # allows coloration of code outside a class
     - match: (?=\S)
       push:
@@ -711,7 +710,7 @@ contexts:
         2: meta.function.vala
         3: meta.function.parameters.vala punctuation.section.parameters.begin.vala
       push: [constructor_prebody, method_params]
-    - match: '({{name}})\s*(\()'
+    - match: '((?!{{reserved}}\b){{name}})\s*(\()'
       captures:
         1: entity.name.function.constructor.vala
         2: meta.function.parameters.vala punctuation.section.parameters.begin.vala
@@ -720,7 +719,7 @@ contexts:
       captures:
         1: entity.other.inherited-class.vala
         2: punctuation.accessor.dot.vala
-    - match: \b(?:({{base_type}})|({{name}}))
+    - match: \b(?:({{base_type}})|((?!{{reserved}}\b){{name}}))
       captures:
         1: storage.type.vala
         2: support.type.vala
@@ -1102,6 +1101,9 @@ contexts:
     - match: \b(return|yield\s+return)\b
       scope: keyword.control.return.vala
       set: line_of_code_in
+    - match: \byield\b
+      scope: keyword.other.vala
+      set: line_of_code_in
     - match: \b(continue|break|yield\s+break)\b\s*(;)?
       captures:
         1: keyword.control.break.vala
@@ -1184,7 +1186,7 @@ contexts:
         2: punctuation.separator.vala
       pop: true
     - include: namespace_alias
-    - match: '({{name}})\s+({{name}})'
+    - match: '((?!{{reserved}}\b){{name}})\s+((?!{{reserved}}\b){{name}})'
       captures:
         1: support.type.vala
         2: variable.other.vala
@@ -1278,6 +1280,8 @@ contexts:
       scope: variable.language.vala
     - match: '{{ownership}}'
       scope: storage.modifier.ownership.vala
+    - match: \bdynamic\b
+      scope: storage.modifier.vala
     - match: \b(typeof)(\()
       captures:
         1: keyword.operator.vala
@@ -1518,7 +1522,7 @@ contexts:
 
   tuple_begin:
     - meta_include_prototype: false
-    - match: \(
+    - match: \((?!\s*(?:owned|unowned|weak|void|dynamic)\s*\))
       scope: punctuation.section.sequence.begin.vala
       set: tuple
 
@@ -1835,8 +1839,8 @@ contexts:
     - match: '\$\('
       scope: punctuation.section.interpolation.begin.vala
       push:
-        - meta_scope: meta.string.vala
-        - meta_content_scope: source.vala
+        - meta_scope: meta.interpolation.vala
+        - meta_content_scope: source.vala.embedded
         - clear_scopes: 2
         - match: '\)'
           scope: punctuation.section.interpolation.end.vala

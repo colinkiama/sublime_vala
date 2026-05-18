@@ -13,4 +13,4 @@
 //  ^^^^^^^ source.vala storage.modifier.vala
 
     class Child : Parent {
-//            ^ source.vala meta.class.vala punctuation.separator.type.vala
+//                ^^^^^^ source.vala meta.class.vala entity.other.inherited-class.vala

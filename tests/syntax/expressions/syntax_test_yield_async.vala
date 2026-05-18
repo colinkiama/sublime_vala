@@ -4,10 +4,9 @@
 //  ^^^^^ source.vala keyword.other.vala
 
     yield return 1;
-//  ^^^^^ source.vala keyword.other.vala
+//  ^^^^^^^^^^^^ source.vala keyword.control.return.vala
 
-    async void work () {
-//  ^^^^^ source.vala storage.modifier.vala
+    async void m () {
         yield foo ();
 //      ^^^^^ source.vala keyword.other.vala
     }

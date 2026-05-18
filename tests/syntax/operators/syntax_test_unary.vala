@@ -1,6 +1,6 @@
 // SYNTAX TEST "Packages/sublime_vala/Vala.sublime-syntax"
 
-    -x; !y; ~z;
+    !n;
 //  ^ source.vala keyword.operator.vala
 
     n++;

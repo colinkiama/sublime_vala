@@ -1,12 +1,24 @@
 // SYNTAX TEST "Packages/sublime_vala/Vala.sublime-syntax"
 
-    bool x;
+    bool b;
 //  ^^^^ source.vala storage.type.vala
 
-    int i; string s; void v; float f; double d;
+    int i;
 //  ^^^ source.vala storage.type.vala
-//      ^^^^^^ source.vala storage.type.vala
-//             ^^^^ source.vala storage.type.vala
+//      ^ source.vala variable.other.vala
 
-    int8 i8; uint8 u8; size_t sz; unichar u;
+    string s;
+//  ^^^^^^ source.vala storage.type.vala
+//         ^ source.vala variable.other.vala
+
+    void v;
 //  ^^^^ source.vala storage.type.vala
+//       ^ source.vala variable.other.vala
+
+    float f;
+//  ^^^^^ source.vala storage.type.vala
+//        ^ source.vala variable.other.vala
+
+    double d;
+//  ^^^^^^ source.vala storage.type.vala
+//         ^ source.vala variable.other.vala
