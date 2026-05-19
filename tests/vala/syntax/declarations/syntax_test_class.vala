@@ -19,3 +19,17 @@
 //                  ^^^^ source.vala meta.class.vala entity.other.inherited-class.vala
 //                      ^ source.vala meta.class.vala punctuation.accessor.dot.namespace.vala
 //                       ^^^^^^ source.vala meta.class.vala entity.other.inherited-class.vala
+
+    class Test.Async : GLib.Object {
+//        ^^^^ source.vala meta.class.vala support.type.vala
+//            ^ source.vala meta.class.vala punctuation.accessor.dot.namespace.vala
+//             ^^^^^ source.vala meta.class.vala entity.name.class.vala
+
+    class One.Two.Three.NameN : Object {
+//        ^^^ source.vala meta.class.vala support.type.vala
+//           ^ source.vala meta.class.vala punctuation.accessor.dot.namespace.vala
+//            ^^^ source.vala meta.class.vala support.type.vala
+//               ^ source.vala meta.class.vala punctuation.accessor.dot.namespace.vala
+//                ^^^^^ source.vala meta.class.vala support.type.vala
+//                     ^ source.vala meta.class.vala punctuation.accessor.dot.namespace.vala
+//                      ^^^^^ source.vala meta.class.vala entity.name.class.vala

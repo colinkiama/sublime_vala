@@ -445,19 +445,17 @@ contexts:
       scope: storage.modifier.vala
     - match: '{{visibility}}'
       scope: storage.modifier.access.vala
-    - match: \b(class)\s+({{name}})
+    - match: \b(class)\s+
       captures:
         1: storage.type.class keyword.declaration.class.vala
-        2: entity.name.class.vala
-      push: [class_signature, data_type_signature]
+      push: qualified_class_declaration_name
     - include: construct_block_declaration
-    - match: '(?:\b(readonly)\s+)?(?:\b(ref)\s+)?\b(struct)\s+({{name}})'
+    - match: '(?:\b(readonly)\s+)?(?:\b(ref)\s+)?\b(struct)\s+'
       captures:
         1: storage.modifier.vala
         2: storage.modifier.vala
         3: storage.type.struct keyword.declaration.struct.vala
-        4: entity.name.struct.vala
-      push: [struct_signature, data_type_signature]
+      push: qualified_struct_declaration_name
     - match: '\b(enum)\s+({{name}})\s*(?:(:)\s*(byte|sbyte|short|ushort|int|uint|long|ulong))?'
       scope: meta.enum.vala
       captures:
@@ -526,11 +524,10 @@ contexts:
                 scope: punctuation.separator.errordomain.vala
 
   interface_declaration:
-    - match: '(interface)\s+({{name}})'
+    - match: '(interface)\s+'
       captures:
         1: storage.type.interface keyword.declaration.interface.vala
-        2: entity.name.interface.vala
-      push: [interface_signature, data_type_signature]
+      push: qualified_interface_declaration_name
 
   delegate_declaration:
     - match: \b(delegate)\b\s+
@@ -1839,6 +1836,46 @@ contexts:
         1: support.type.vala
         2: punctuation.accessor.dot.namespace.vala
         3: constant.other.vala
+
+  # Namespace.Type.NameN in class/struct/interface declarations (e.g. class Test.Async)
+  qualified_declaration_name_prefix:
+    - match: '({{type_name}})(\s*\.\s*)(?={{type_name}}(?:{{generic_declaration}})?(?:\s*\.|\s*[:<{;]))'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.namespace.vala
+
+  qualified_class_declaration_name:
+    - include: qualified_declaration_name_prefix
+    - match: '({{type_name}})({{generic_declaration}})'
+      captures:
+        1: entity.name.class.vala
+        2: meta.generic.vala
+      set: [class_signature, data_type_signature]
+    - match: '{{type_name}}'
+      scope: entity.name.class.vala
+      set: [class_signature, data_type_signature]
+
+  qualified_struct_declaration_name:
+    - include: qualified_declaration_name_prefix
+    - match: '({{type_name}})({{generic_declaration}})'
+      captures:
+        1: entity.name.struct.vala
+        2: meta.generic.vala
+      set: [struct_signature, data_type_signature]
+    - match: '{{type_name}}'
+      scope: entity.name.struct.vala
+      set: [struct_signature, data_type_signature]
+
+  qualified_interface_declaration_name:
+    - include: qualified_declaration_name_prefix
+    - match: '({{type_name}})({{generic_declaration}})'
+      captures:
+        1: entity.name.interface.vala
+        2: meta.generic.vala
+      set: [interface_signature, data_type_signature]
+    - match: '{{type_name}}'
+      scope: entity.name.interface.vala
+      set: [interface_signature, data_type_signature]
 
   namespaced_type_path:
     - include: namespaced_type_path_common
