@@ -362,7 +362,7 @@ contexts:
     # allows coloration of code outside a class
     - match: (?=\S)
       push:
-        - match: (?={{visibility}}|\b(?:class|delegate|errordomain|interface|namespace|readonly|record|static)\b)
+        - match: (?={{visibility}}|\b(?:class|delegate|errordomain|interface|namespace|readonly|static)\b)
           pop: true
         - include: line_of_code
 
@@ -450,13 +450,6 @@ contexts:
         2: entity.name.class.vala
       push: [class_signature, data_type_signature]
     - include: construct_block_declaration
-    - match: (?:\b(readonly)\s+)?\b(record)\s+(?:(struct)\s+)?({{name}})
-      captures:
-        1: storage.modifier.vala
-        2: storage.type.class.record.vala
-        3: storage.type.struct.record.vala
-        4: entity.name.class.vala
-      push: [record_signature, data_type_signature]
     - match: '(?:\b(readonly)\s+)?(?:\b(ref)\s+)?\b(struct)\s+({{name}})'
       captures:
         1: storage.modifier.vala
@@ -604,11 +597,6 @@ contexts:
     - match: ''
       set: [class_body, data_type_body]
 
-  record_signature:
-    - meta_scope: meta.class.record.vala
-    - match: ''
-      set: [class_body, record_type_body]
-
   interface_signature:
     - meta_scope: meta.interface.vala
     - match: ''
@@ -647,28 +635,6 @@ contexts:
         - include: stray_close_bracket
     - match: \S*
       scope: invalid.illegal
-      pop: true
-
-  record_type_body:
-    - match: \{
-      scope: punctuation.section.block.begin.vala
-      set:
-        - meta_scope: meta.block.vala
-        - match: \}
-          scope: punctuation.section.block.end.vala
-          pop: true
-        - include: attribute
-        - include: class_declaration
-        - include: interface_declaration
-        - include: delegate_declaration
-        - include: errordomain_declaration
-        - include: method_declaration
-        - include: stray_close_bracket
-    - match: \(
-      scope: punctuation.section.group.begin.vala
-      set: [data_type_signature, method_params]
-    - match: ';'
-      scope: punctuation.terminator.vala
       pop: true
 
   data_type_signature:

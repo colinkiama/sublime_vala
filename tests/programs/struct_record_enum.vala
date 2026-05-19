@@ -26,7 +26,7 @@ public enum Status : int {
     PENDING = 10
 }
 
-public record Rectangle {
+public struct Rectangle {
     public int width;
     public int height;
 }
