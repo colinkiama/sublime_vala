@@ -1,12 +1,37 @@
 // SYNTAX TEST "Packages/sublime_vala/Vala.sublime-syntax"
 
     string run<T> () {}
-//             ^ source.vala meta.function.vala meta.generic.vala support.type.vala
+//            ^ source.vala meta.function.vala meta.generic.vala punctuation.definition.generic.begin.vala
+//             ^ source.vala meta.function.vala meta.generic.vala variable.parameter.type.vala
+//              ^ source.vala meta.function.vala meta.generic.vala punctuation.definition.generic.end.vala
 
     List<string> list;
 //      ^ source.vala meta.generic.vala punctuation.definition.generic.begin.vala
 //       ^^^^^^ source.vala meta.generic.vala storage.type.vala
+//             ^ source.vala meta.generic.vala punctuation.definition.generic.end.vala
 
     class Box<T> {
-//           ^ source.vala meta.class.vala entity.name.class.vala
+//  ^^^^^ source.vala meta.class.vala storage.type.class keyword.declaration.class.vala
+//        ^^^ source.vala meta.class.vala entity.name.class.vala
+//           ^ source.vala meta.class.vala meta.generic.vala punctuation.definition.generic.begin.vala
+//            ^ source.vala meta.class.vala meta.generic.vala variable.parameter.type.vala
+//             ^ source.vala meta.class.vala meta.generic.vala punctuation.definition.generic.end.vala
     }
+
+    public class Pair<A, B> {
+//               ^^^^ source.vala meta.class.vala entity.name.class.vala
+//                   ^ source.vala meta.class.vala meta.generic.vala punctuation.definition.generic.begin.vala
+//                    ^ source.vala meta.class.vala meta.generic.vala variable.parameter.type.vala
+//                     ^ source.vala meta.class.vala meta.generic.vala punctuation.separator.type.vala
+//                       ^ source.vala meta.class.vala meta.generic.vala variable.parameter.type.vala
+//                        ^ source.vala meta.class.vala meta.generic.vala punctuation.definition.generic.end.vala
+    }
+
+    new HashTable<string, string> ();
+//  ^^^ source.vala meta.instance.vala keyword.operator.new.vala
+//      ^^^^^^^^^ source.vala meta.instance.vala support.type.vala
+//               ^ source.vala meta.instance.vala meta.generic.vala punctuation.definition.generic.begin.vala
+//                ^^^^^^ source.vala meta.instance.vala meta.generic.vala storage.type.vala
+//                        ^ source.vala meta.instance.vala meta.generic.vala punctuation.separator.type.vala
+//                          ^^^^^^ source.vala meta.instance.vala meta.generic.vala storage.type.vala
+//                                ^ source.vala meta.instance.vala meta.generic.vala punctuation.definition.generic.end.vala

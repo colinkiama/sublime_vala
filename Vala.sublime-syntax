@@ -403,9 +403,7 @@ contexts:
       scope: entity.name.namespace.vala
     - match: \.
       scope: meta.path.vala punctuation.separator.namespace.vala
-    - match: '<'
-      scope: meta.generic.vala punctuation.definition.generic.begin.vala
-      push: type_argument
+    - include: type_arguments
     - match: \,
       scope: punctuation.separator.vala
     - match: ';'
@@ -446,7 +444,7 @@ contexts:
       scope: storage.modifier.vala
     - match: '{{visibility}}'
       scope: storage.modifier.access.vala
-    - match: \b(class)\s+({{namespaced_name}})
+    - match: \b(class)\s+({{name}})
       captures:
         1: storage.type.class keyword.declaration.class.vala
         2: entity.name.class.vala
@@ -570,7 +568,7 @@ contexts:
             - match: \(
               scope: meta.delegate.parameters.vala punctuation.section.parameters.begin.vala
               set: delegate_params
-        - include: type_parameter
+        - include: inside_type_parameter
     - match: '({{name}})(\s*)(\()'
       captures:
         1: meta.delegate.vala variable.other.member.delegate.vala
@@ -674,11 +672,7 @@ contexts:
       pop: true
 
   data_type_signature:
-    - match: '<'
-      scope: meta.generic.vala punctuation.definition.generic.begin.vala
-      push:
-        - meta_content_scope: meta.generic.vala
-        - include: type_parameter
+    - include: maybe_type_parameters
     - match: ':'
       scope: punctuation.separator.type.vala
       set: type_constraint
@@ -798,7 +792,7 @@ contexts:
       captures:
         1: support.type.vala
         2: meta.generic.vala punctuation.definition.generic.begin.vala
-      push: [method_name_or_member_variable, type_argument]
+      push: [method_name_or_member_variable, inside_type_argument]
     - match: '(~{{name}})(\s*)(\()'
       captures:
         1: meta.function.vala entity.name.function.destructor.vala
@@ -916,7 +910,7 @@ contexts:
       scope: meta.function.vala
       captures:
         1: entity.other.inherited-class.vala
-        2: meta.generic.vala punctuation.section.generic.begin.vala
+        2: meta.generic.vala punctuation.definition.generic.begin.vala
       push:
         - meta_content_scope: meta.function.vala meta.generic.vala
         - match: '(>)\s*(\.)'
@@ -935,7 +929,7 @@ contexts:
       push:
         - meta_scope: meta.function.vala
         - meta_content_scope: meta.generic.vala
-        - include: type_parameter
+        - include: inside_type_parameter
     - match: '(this)\s*(\[)'
       captures:
         1: variable.language.vala
@@ -997,9 +991,10 @@ contexts:
     - include: attribute
     - match: (?=[^\s\[])
       set:
-      - match: '\s*\b(?:{{ownership}}|out|ref|this|params|in|dynamic)\s+'
-        captures:
-          1: storage.modifier.parameter.vala
+      - match: '{{ownership}}\s+'
+        scope: storage.modifier.ownership.vala
+      - match: '\b(?:out|ref|this|params|in|dynamic)\b\s+'
+        scope: storage.modifier.parameter.vala
       - match: \s
         pop: true
       - include: type
@@ -1220,7 +1215,7 @@ contexts:
       captures:
         1: keyword.control.foreach.vala
         2: meta.group.vala punctuation.section.group.begin.vala
-      set: [for_block, foreach_var_assignment, var_declaration_including_tuple]
+      set: [for_block, foreach_var_assignment, foreach_header]
     - match: \b(try)\b
       scope: keyword.control.try.vala
       set: [finally_block, catch_expr, try_block]
@@ -1316,7 +1311,7 @@ contexts:
               set: variables_declaration
             - match: (?=\S)
               set: line_of_code
-        - include: type_argument
+        - include: inside_type_argument
     - match: \bconst\b
       scope: storage.modifier.vala
     - match: '(var|dynamic)\s+({{reserved}}|{{base_type}})\s*(=)'
@@ -1525,7 +1520,7 @@ contexts:
     - include: namespace_alias
     - match: '(?={{namespaced_type_name}}\s*\.)'
       push: namespaced_type_path
-    - match: '(\s*\.\s*)((?!{{reserved}}\b){{name}})(?=\s*\()'
+    - match: '(\s*\.\s*)((?!{{reserved}}\b)(?!{{type_name}}\b){{name}})(?=\s*\()'
       captures:
         1: punctuation.accessor.dot.namespace.vala
         2: entity.name.function.constructor.vala
@@ -1534,7 +1529,7 @@ contexts:
         1: support.type.vala
         2: punctuation.accessor.dot.namespace.vala
         3: constant.other.errordomain.vala
-    - match: '({{type_name}})(\s*\.\s*)((?!{{reserved}}\b){{name}})(?=\s*\()'
+    - match: '({{type_name}})(\s*\.\s*)((?!{{reserved}}\b)(?!{{type_name}}\b){{name}})(?=\s*\()'
       captures:
         1: support.type.vala
         2: punctuation.accessor.dot.namespace.vala
@@ -1932,7 +1927,7 @@ contexts:
         - match: (?=\S)
           push: var_declaration_explicit
 
-  type_common:
+  type_common_except_bare_custom_type:
     - include: namespace_alias
     - match: '{{ownership}}'
       scope: storage.modifier.ownership.vala
@@ -1969,20 +1964,21 @@ contexts:
     - match: \s*(<)
       captures:
         1: meta.generic.vala punctuation.definition.generic.begin.vala
-      push: type_argument
+      push: inside_type_argument
     - match: '({{errordomain_type_name}})(\s*\.\s*)((?!{{reserved}}\b){{name}})'
       captures:
         1: support.type.vala
         2: punctuation.accessor.dot.namespace.vala
         3: constant.other.errordomain.vala
-    - match: '{{name}}'
-      scope: support.type.vala
     - match: (?=[]})>,;>:]|=>)
       pop: true
 
+  type_common:
+    - include: type_common_except_bare_custom_type
+    - match: '{{name}}'
+      scope: support.type.vala
+
   type_arg_param_common:
-    - match: ','
-      scope: punctuation.separator.type.vala
     - match: '(>){{type_suffix_capture}}'
       captures:
         1: meta.generic.vala punctuation.definition.generic.end.vala
@@ -1993,18 +1989,32 @@ contexts:
         6: punctuation.section.brackets.end.vala
         7: keyword.operator.pointer.vala
       pop: true
-    - include: type
+    - match: ','
+      scope: punctuation.separator.type.vala
 
-  type_argument:
+  type_arguments:
+    - match: '<'
+      scope: meta.generic.vala punctuation.definition.generic.begin.vala
+      push: inside_type_argument
+
+  inside_type_argument:
     - meta_content_scope: meta.generic.vala
     - include: type_arg_param_common
+    - include: type
 
-  type_parameter:
+  maybe_type_parameters:
+    - match: '<'
+      scope: meta.generic.vala punctuation.definition.generic.begin.vala
+      push: inside_type_parameter
+
+  inside_type_parameter:
+    - meta_content_scope: meta.generic.vala
+    - include: type_arg_param_common
+    - include: type_common_except_bare_custom_type
     - match: '(in|out)\b'
       scope: storage.modifier.vala
-    - include: type_arg_param_common
     - match: '{{name}}'
-      scope: support.type.vala
+      scope: variable.parameter.type.vala
 
   type_no_space:
     - include: type
@@ -2639,12 +2649,56 @@ contexts:
           scope: variable.other.vala
         - match: ','
           scope: punctuation.separator.sequence.vala
-    - match: '(var)\s+({{name}})\s*'
+    - match: '(var)\s+({{name}})\s*(?!=>)'
       captures:
         1: storage.type.variable.vala
         2: variable.other.vala
       pop: true
     - include: var_declaration_explicit
+
+  foreach_header:
+    - include: foreach_index_value_form
+    - include: var_declaration_including_tuple
+    - match: (?=\s*\bin\b)
+      pop: true
+
+  foreach_index_value_form:
+    - match: '(var)\s+({{name}})\s*(=>)\s*'
+      captures:
+        1: storage.type.variable.vala
+        2: variable.other.vala
+        3: keyword.operator.vala
+      push: foreach_index_value_tail
+    - match: '({{base_type}}){{type_suffix_capture}}\s+({{name}})\s*(=>)\s*'
+      captures:
+        1: storage.type.vala
+        2: storage.type.nullable.vala
+        3: meta.brackets.vala
+        4: punctuation.section.brackets.begin.vala
+        5: punctuation.separator.vala
+        6: punctuation.section.brackets.end.vala
+        7: keyword.operator.pointer.vala
+        8: variable.other.vala
+        9: keyword.operator.vala
+      push: foreach_index_value_tail
+
+  foreach_index_value_tail:
+    - match: '{{ownership}}\s+'
+      scope: storage.modifier.ownership.vala
+    - match: '({{base_type}})\s+({{name}})(?=\s*\bin\b)'
+      captures:
+        1: storage.type.vala
+        2: variable.other.vala
+      pop: true
+    - match: '({{type_name}})\s+({{name}})(?=\s*\bin\b)'
+      captures:
+        1: support.type.vala
+        2: variable.other.vala
+      pop: true
+    - include: type_no_space
+    - match: '{{name}}\s*'
+      scope: variable.other.vala
+      pop: true
 
   var_declaration_including_tuple:
     - include: var_declaration
@@ -2670,7 +2724,7 @@ contexts:
               pop: true
             - match: (?=[,);}])
               pop: true
-        - include: type_argument
+        - include: inside_type_argument
     - match: '({{base_type}}){{type_suffix_capture}}'
       captures:
         1: storage.type.vala

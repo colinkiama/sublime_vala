@@ -22,7 +22,7 @@ async void list_dir () {
 }
 
 void main () {
-    var loop = new GLib.MainLoop ();
+    GLib.MainLoop loop = new GLib.MainLoop ();
     list_dir.begin ((obj, res) => {
         list_dir.end (res);
         loop.quit ();

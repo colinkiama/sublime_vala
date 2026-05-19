@@ -14,3 +14,6 @@
 
     (owned) x;
 //   ^^^^^ source.vala storage.modifier.ownership.vala
+
+    void run (owned SourceFunc callback) {}
+//            ^^^^^ source.vala meta.function.vala meta.function.parameters.vala storage.modifier.ownership.vala

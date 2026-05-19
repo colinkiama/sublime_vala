@@ -10,6 +10,14 @@
 //          ^ source.vala meta.instance.vala punctuation.accessor.dot.namespace.vala
 //           ^^^^^^^^ source.vala meta.instance.vala support.type.vala
 
+    GLib.MainLoop loop = new GLib.MainLoop ();
+//  ^^^^ source.vala support.type.vala
+//      ^ source.vala punctuation.accessor.dot.namespace.vala
+//       ^^^^^^^^ source.vala support.type.vala
+//                      ^^^^ source.vala meta.instance.vala support.type.vala
+//                          ^ source.vala meta.instance.vala punctuation.accessor.dot.namespace.vala
+//                           ^^^^^^^^ source.vala meta.instance.vala support.type.vala
+
     FileUtils.get_contents (path, out content);
 //  ^^^^^^^^^ source.vala meta.function-call.vala support.type.vala
 //           ^ source.vala meta.function-call.vala punctuation.accessor.dot.namespace.vala

@@ -8,3 +8,11 @@
 
     foreach (var x in list) { }
 //  ^^^^^^^ source.vala keyword.control.foreach.vala
+
+    foreach (var index => int value in list) { }
+//           ^^^ source.vala storage.type.variable.vala
+//               ^^^^^ source.vala variable.other.vala
+//                     ^^ source.vala keyword.operator.vala
+//                        ^^^ source.vala storage.type.vala
+//                            ^^^^^ source.vala variable.other.vala
+//                                  ^^ source.vala keyword.control.vala
