@@ -9,7 +9,15 @@
 //  ^^^^^^^ source.vala storage.modifier.access.vala
 
     void f () throws Error;
-//                   ^^^^^ source.vala variable.other.vala
+//            ^^^^^^ source.vala meta.function.vala keyword.control.exception.vala
+//                   ^^^^^ source.vala meta.function.vala support.type.vala
+
+    void parse (string input) throws ParseError {
+//                            ^^^^^^ source.vala meta.function.vala keyword.control.exception.vala
+//                                   ^^^^^^^^^^ source.vala meta.function.vala support.type.vala
+        if (input == null) {}
+//      ^^ source.vala meta.function.vala meta.block.vala keyword.control.conditional.if.vala
+    }
 
     int g (int x)
         requires (x > 0)
@@ -34,3 +42,11 @@
 //                           ^^ source.vala meta.class.body.vala meta.block.vala punctuation.accessor.double-colon.namespace.vala
 //                             ^^^^^^^^^^^^^^ source.vala meta.class.body.vala meta.block.vala entity.name.function.constructor.vala
     }
+
+    class Parser {
+        public void parse (string input) throws ParseError {
+            if (input == null) {
+            }
+        }
+    }
+//  ^ source.vala meta.block.vala punctuation.section.block.end.vala

@@ -49,6 +49,8 @@ variables:
   name: '(?:@{{reserved}}|@{{base_type}}|@var|@?{{name_normal}})'
   # PascalCase identifiers (Vala types/namespaces), not variables like my_async
   type_name: '(?:@{{reserved}}|@{{base_type}}|@?\p{Lu}(?:{{other_char}})*)'
+  # Errordomain types (IOError, DemoError, ErrorType1, …) — name contains "Error"
+  errordomain_type_name: '(?:@?\p{Lu}(?:{{other_char}})*Error(?:{{other_char}})*)'
   namespaced_name: (?:(?:{{name}}{{generic_declaration}}\s*\.\s*)*{{name}}{{generic_declaration}})
   # At least Namespace.Type (not variable.member like my_async.say)
   namespaced_type_name: (?:(?:{{type_name}}{{generic_declaration}}\s*\.\s*)+{{type_name}}{{generic_declaration}})
@@ -393,10 +395,12 @@ contexts:
 
   using_namespace:
     - include: namespace_alias
+    - match: '({{name}})\s*(=)'
+      captures:
+        1: variable.other.namespace.vala
+        2: keyword.operator.assignment.vala
     - match: '{{name}}'
-      scope: meta.path.vala
-    - match: '='
-      scope: keyword.operator.assignment.vala
+      scope: entity.name.namespace.vala
     - match: \.
       scope: meta.path.vala punctuation.separator.namespace.vala
     - match: '<'
@@ -502,7 +506,7 @@ contexts:
     - match: '\b(errordomain)\s+({{name}})'
       scope: meta.errordomain.vala
       captures:
-        1: storage.type.errordomain.vala
+        1: storage.type.errordomain keyword.declaration.errordomain.vala
         2: entity.name.errordomain.vala
       push:
         - meta_content_scope: meta.errordomain.vala
@@ -1009,6 +1013,13 @@ contexts:
       set:
         - match: \s+
           scope: meta.function.vala
+        - match: '(this|base)\s*(\.)\s*((?!{{reserved}}\b){{name}})\s*(\()'
+          captures:
+            1: variable.language.vala
+            2: punctuation.accessor.dot.vala
+            3: entity.name.function.constructor.vala
+            4: meta.group.vala punctuation.section.group.begin.vala
+          set: [constructor_initializer, arguments]
         - match: (this|base)\s*(\()
           captures:
             1: variable.language.vala
@@ -1044,15 +1055,10 @@ contexts:
     - match: (?=where\b)
       scope: storage.modifier.other.vala
       push: type_constraint
-    - match: (?=ensures\b)
-      scope: keyword.control.conditional.vala
-      set: line_of_code
     - match: (?=throws\b)
-      scope: keyword.control.exception.vala
-      set: line_of_code
-    - match: (?=requires\b)
-      set: line_of_code
-      scope: keyword.control.conditional.vala
+      push: method_throws_clause
+    - match: (?=requires\b|ensures\b)
+      push: method_contract_tail
     - match: (=>)
       scope: keyword.declaration.function.arrow.vala
       set:
@@ -1076,6 +1082,30 @@ contexts:
       scope: invalid.illegal.vala
       pop: true
 
+  method_throws_clause:
+    - meta_content_scope: meta.function.vala
+    - match: \bthrows\b
+      scope: keyword.control.exception.vala
+    - match: (?=\s*\{|\s*;|\s*=>)
+      pop: true
+    - match: '(?={{namespaced_type_name}}\s*[,;{])'
+      push: namespaced_type_path
+    - match: ','
+      scope: punctuation.separator.type.vala
+    - match: '{{type_name}}'
+      scope: support.type.vala
+    - match: '{{name}}'
+      scope: support.type.vala
+    - match: \s+
+
+  method_contract_tail:
+    - meta_content_scope: meta.function.vala
+    - match: (?=\s*\{|\s*;|\s*=>)
+      pop: true
+    - match: \b(requires|ensures)\b
+      scope: keyword.control.conditional.vala
+    - include: line_of_code_in_no_semicolon
+
   method_accessor:
     - meta_scope: meta.property.vala
     - match: \{
@@ -1098,6 +1128,10 @@ contexts:
             1: storage.modifier.vala
             2: keyword.declaration.function.accessor.get.vala
           push: method_body
+        - match: \b(?:set\s+construct|construct\s+set)\b(?=\s*;)
+          scope: keyword.declaration.function.accessor.construct.vala
+        - match: \b(construct)\b(?=\s*;)
+          scope: keyword.declaration.function.accessor.construct.vala
         - match: \b(?:set\s+construct|construct\s+set)\b
           scope: keyword.declaration.function.accessor.set.vala
           push: method_body
@@ -1390,6 +1424,12 @@ contexts:
       pop: true
 
   keywords:
+    - match: '\b(Object)\s*(\()'
+      scope: meta.gobject-construction.vala
+      captures:
+        1: support.type.vala
+        2: meta.group.vala punctuation.section.group.begin.vala
+      push: gobject_constructor_arguments
     - match: \b(sizeof|typeof)\b
       scope: keyword.operator.vala
     - match: \b(requires|ensures)\b
@@ -1479,7 +1519,41 @@ contexts:
         - match: \(
           scope: meta.group.vala punctuation.section.group.begin.vala
           set: [constructor_arguments, arguments]
-        - include: type
+        - include: object_creation_type
+
+  object_creation_type:
+    - include: namespace_alias
+    - match: '(?={{namespaced_type_name}}\s*\.)'
+      push: namespaced_type_path
+    - match: '(\s*\.\s*)((?!{{reserved}}\b){{name}})(?=\s*\()'
+      captures:
+        1: punctuation.accessor.dot.namespace.vala
+        2: entity.name.function.constructor.vala
+    - match: '({{errordomain_type_name}})(\s*\.\s*)((?!{{reserved}}\b){{name}})(?=\s*\()'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.namespace.vala
+        3: constant.other.errordomain.vala
+    - match: '({{type_name}})(\s*\.\s*)((?!{{reserved}}\b){{name}})(?=\s*\()'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.namespace.vala
+        3: entity.name.function.constructor.vala
+    - include: type_common
+    - match: (?=\()
+      push: type_tuple
+
+  gobject_constructor_arguments:
+    - meta_content_scope: meta.gobject-construction.vala meta.group.vala
+    - match: \)
+      scope: meta.gobject-construction.vala punctuation.section.group.end.vala
+      pop: true
+    - match: '({{name}})\s*(:)'
+      captures:
+        1: variable.parameter.construct.vala
+        2: punctuation.separator.key-value.parameter.vala
+      push: line_of_code_in
+    - include: arguments
 
   line_of_code_in:
     - include: lambdas
@@ -1502,6 +1576,24 @@ contexts:
       scope: keyword.operator.range.vala
     - match: '(?={{namespaced_type_name}}\s*\.)'
       push: namespaced_type_path
+    - match: '({{type_name}})(\s*\.\s*)((?!{{reserved}}\b){{name}})\s*(\()'
+      scope: meta.function-call.vala
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.namespace.vala
+        3: variable.function.vala
+        4: meta.group.vala punctuation.section.group.begin.vala
+      push: [function_call_arguments, arguments]
+    - match: '({{errordomain_type_name}})(\s*\.\s*)((?!{{reserved}}\b){{name}})(?!\s*\()'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.namespace.vala
+        3: constant.other.errordomain.vala
+    - match: '({{type_name}})(\s*\.\s*)((?!{{reserved}}\b){{name}})(?!\s*\()'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.namespace.vala
+        3: constant.other.enum.vala
     - match: \.
       scope: punctuation.accessor.dot.vala
     - include: parenthesized_lambdas
@@ -1878,6 +1970,11 @@ contexts:
       captures:
         1: meta.generic.vala punctuation.definition.generic.begin.vala
       push: type_argument
+    - match: '({{errordomain_type_name}})(\s*\.\s*)((?!{{reserved}}\b){{name}})'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.namespace.vala
+        3: constant.other.errordomain.vala
     - match: '{{name}}'
       scope: support.type.vala
     - match: (?=[]})>,;>:]|=>)
