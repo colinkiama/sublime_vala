@@ -3,7 +3,7 @@
 ## Goals
 
 - [X] Improved syntax highlighting with the latest language changes, using [sublime-syntax definitions](https://www.sublimetext.com/docs/syntax.html)
-	- [ ] Genie syntax highlighting
+	- [X] Genie syntax highlighting (`Genie.sublime-syntax`, `.gs` files)
 - [X] Completions with the latest language changes using [sublime-completions definitions](https://www.sublimetext.com/docs/completions.html)
 - [X] Updated code snippets using [sublime-snippet defintions](https://www.sublimetext.com/docs/completions.html#snippets). e.g `prop` should output `public string prop_name { get; set; }` and `propfull` should also `get` and `set` their own scope to define behaviours
 

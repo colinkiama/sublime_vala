@@ -25,10 +25,9 @@ variables:
   unary_op: '(?:\+\+|--|-|~|!|&|\*)'
 
   # numbers
-  dec_digits: (?:[\d_]*\d)
-  dec_exponent: (?:[eE][-+]??{{dec_digits}})
-  float_suffix: '[fFdDmM]'
-  integer_suffix: '[uU][lL]?|[lL][uU]?'
+  dec_exponent: '(?i)(?:[eE][-+]?(\d+))'
+  float_suffix: '[fFdD]'
+  integer_suffix: '(?i)(?:ULL|UL|U|LL|L)'
 
   # characters
   unicode_char: '(?:\\u\h{4}|\\U\h{8})'
@@ -54,6 +53,8 @@ variables:
   namespaced_name: (?:(?:{{name}}{{generic_declaration}}\s*\.\s*)*{{name}}{{generic_declaration}})
   # At least Namespace.Type (not variable.member like my_async.say)
   namespaced_type_name: (?:(?:{{type_name}}{{generic_declaration}}\s*\.\s*)+{{type_name}}{{generic_declaration}})
+  # ALL_CAPS members (Math.PI, Status.OK) — not PascalCase types (Gtk.Button)
+  constant_member: '(?:[A-Z][A-Z0-9_]*|[A-Z])\b'
   identifier: \b[[:alpha:]_](?:[[:alnum:]_])*\b
 
 
@@ -1535,6 +1536,7 @@ contexts:
       scope: punctuation.accessor.null-coalescing.vala
     - match: \.\.
       scope: keyword.operator.range.vala
+    - include: qualified_constant_access
     - match: '(?={{namespaced_type_name}}\s*\.)'
       push: namespaced_type_path
     - match: '({{type_name}})(\s*\.\s*)((?!{{reserved}}\b){{name}})\s*(\()'
@@ -1831,6 +1833,13 @@ contexts:
       pop: true
     - include: line_of_code_in
 
+  qualified_constant_access:
+    - match: '({{type_name}})(\s*\.\s*)((?!{{reserved}}\b){{constant_member}})(?!\s*\()'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.namespace.vala
+        3: constant.other.vala
+
   namespaced_type_path:
     - include: namespaced_type_path_common
     - match: '{{type_name}}'
@@ -2012,21 +2021,39 @@ contexts:
     - match: (')[^']+(')
       scope: invalid.illegal.not_a_char.vala
     # numbers
-    - match: (0[xX])([\h_]*\h)
+    - match: '(0[xX])([\h]+)(?:(\.)([\h]+))?((?i)[pP][-+]?\d+)({{float_suffix}})?'
+      scope: constant.numeric.float.hexadecimal.vala
+      captures:
+        1: constant.numeric.base.vala
+        2: constant.numeric.value.vala
+        3: punctuation.separator.decimal.vala
+        4: constant.numeric.value.vala
+        5: constant.numeric.value.exponent.vala
+        6: constant.numeric.suffix.vala
+    - match: '(0[xX])([\h]+)({{integer_suffix}})?'
       scope: constant.numeric.integer.hexadecimal.vala
       captures:
         1: constant.numeric.base.vala
         2: constant.numeric.value.vala
-    - match: (0[bB])([01_]*[01])
+        3: constant.numeric.suffix.vala
+    - match: '(0[bB])([01]+)({{integer_suffix}})?'
       scope: constant.numeric.integer.binary.vala
       captures:
         1: constant.numeric.base.vala
         2: constant.numeric.value.vala
-    - match: (0[oO])([0-7_]*[0-7])
+        3: constant.numeric.suffix.vala
+    - match: '(0[oO])([0-7]+)({{integer_suffix}})?'
       scope: constant.numeric.integer.octal.vala
       captures:
         1: constant.numeric.base.vala
         2: constant.numeric.value.vala
+        3: constant.numeric.suffix.vala
+    - match: '(0)([0-7]+)({{integer_suffix}})?'
+      scope: constant.numeric.integer.octal.vala
+      captures:
+        1: constant.numeric.base.vala
+        2: constant.numeric.value.vala
+        3: constant.numeric.suffix.vala
     # Vala template strings (@"...") — must precede plain "
     - match: '@"'
       scope: punctuation.definition.string.begin.vala
@@ -2039,17 +2066,21 @@ contexts:
     - match: '"""'
       scope: punctuation.definition.string.begin.vala
       push: vala_verbatim_string
-    - match: '({{dec_digits}})(?:(?:((\.){{dec_digits}})({{dec_exponent}})?|({{dec_exponent}}))({{float_suffix}})?|({{float_suffix}}))'
+    - match: '(\d+)(\.)(\d*)({{dec_exponent}})?({{float_suffix}})?'
       scope: constant.numeric.float.decimal.vala
       captures:
         1: constant.numeric.value.vala
-        2: constant.numeric.value.vala
-        3: punctuation.separator.decimal.vala
+        2: punctuation.separator.decimal.vala
+        3: constant.numeric.value.vala
         4: constant.numeric.value.exponent.vala
-        5: constant.numeric.value.exponent.vala
-        6: constant.numeric.suffix.vala
-        7: constant.numeric.suffix.vala
-    - match: (0|[1-9]{{dec_digits}}?)({{integer_suffix}})?
+        5: constant.numeric.suffix.vala
+    - match: '(\d+)({{dec_exponent}})({{float_suffix}})?'
+      scope: constant.numeric.float.decimal.vala
+      captures:
+        1: constant.numeric.value.vala
+        2: constant.numeric.value.exponent.vala
+        3: constant.numeric.suffix.vala
+    - match: '(0|[1-9]\d*)({{integer_suffix}})?'
       scope: constant.numeric.integer.decimal.vala
       captures:
         1: constant.numeric.value.vala

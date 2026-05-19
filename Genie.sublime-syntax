@@ -1,0 +1,237 @@
+%YAML 1.2
+---
+# Genie — vala/valageniescanner.vala, vala/valagenietokentype.vala
+# Shares literal/preprocessor lexing with Vala where scanners agree.
+
+name: Genie
+scope: source.genie
+file_extensions:
+  - gs
+
+variables:
+  bin_op: '(?:\+|->|-|\*|/|%|\|\||&&|\||&|\^|<<|>>|<=|>=|<|>|==|!=)'
+  unary_op: '(?:\+\+|--|-|~|!|&|\*)'
+  dec_exponent: '(?i)(?:[eE][-+]?(\d+))'
+  float_suffix: '[fFdD]'
+  integer_suffix: '(?i)(?:ULL|UL|U|LL|L)'
+  escaped_char: '\\(?:[bfnrtv"$\\0]|u\h{4}|x\h{1,2})'
+  visibility: \b(?:public|private|protected|internal)\b
+  ownership: \b(?:owned|unowned|weak)\b
+  base_type: (?:(?:void|bool|char|uchar|unichar|short|ushort|int|uint|long|ulong|int8|uint8|int16|uint16|int32|uint32|int64|uint64|size_t|ssize_t|float|double|string|object)\b)
+  generic_declaration: \s*(<[^(={};]*>)?\s*
+  # valageniescanner.vala get_identifier_or_keyword
+  genie_reserved: '(?:abstract|array|as|assert|async|break|case|class|const|construct|continue|def|default|delegate|delete|dict|do|downto|dynamic|else|enum|ensures|event|except|exception|extern|false|final|finally|for|get|if|implements|init|inline|interface|internal|in|isa|list|lock|namespace|new|null|of|out|override|owned|params|pass|print|private|prop|protected|public|raise|raises|readonly|ref|requires|return|sealed|self|set|sizeof|static|struct|super|to|true|try|typeof|unowned|uses|var|virtual|void|volatile|weak|when|while|yield)'
+  genie_operator_word: '(?:and|or|not)\b'
+  name: '(?:@{{genie_reserved}}|@{{base_type}}|@var|@?{{name_normal}})'
+  type_name: '(?:@{{genie_reserved}}|@{{base_type}}|@?\p{Lu}(?:{{other_char}})*)'
+  namespaced_name: (?:(?:{{name}}{{generic_declaration}}\s*\.\s*)*{{name}}{{generic_declaration}})
+  namespaced_type_name: (?:(?:{{type_name}}{{generic_declaration}}\s*\.\s*)+{{type_name}}{{generic_declaration}})
+  start_char: '(?:[_\p{L}])'
+  other_char: '(?:[_0-9\p{L}])'
+  name_normal: '{{start_char}}{{other_char}}*\b'
+
+contexts:
+  prototype:
+    - include: comments
+    - include: preprocessor
+
+  comments:
+    - include: scope:source.vala#comments
+
+  preprocessor:
+    - include: scope:source.vala#preprocessor
+
+  main:
+    - include: comments
+    - include: preprocessor
+    - match: ^[ \t]*$
+    - match: (?=\S)
+      push: block
+
+  block:
+    - match: ^([ \t]*)(?=[^ \t#])
+      captures:
+        1: meta.indentation.genie
+      push: line
+
+  line:
+    - match: $
+      pop: true
+    - include: statement
+    - match: \S
+
+  statement:
+    - include: class_declaration
+    - include: namespace_declaration
+    - include: def_declaration
+    - include: init_declaration
+    - include: uses_declaration
+    - include: keywords
+    - include: scope:source.vala#literals
+    - include: expressions
+
+  init_declaration:
+    - match: \b(init)\b
+      scope: keyword.other.genie
+      push: suite_header
+
+  def_declaration:
+    - match: \b(def)\s+({{name}})\s*(\()
+      captures:
+        1: storage.type.function.genie
+        2: entity.name.function.genie
+        3: meta.group.genie punctuation.section.group.begin.genie
+      push:
+        - meta_scope: meta.function.genie
+        - match: \)
+          scope: punctuation.section.group.end.genie
+          set: def_signature_tail
+        - include: parameter_list
+
+  def_signature_tail:
+    - match: ':'
+      scope: punctuation.separator.type.genie
+      push: def_return_type
+    - include: raises_clause
+    - match: $
+      pop: true
+
+  def_return_type:
+    - include: type_annotation
+    - match: $
+      pop: true
+
+  raises_clause:
+    - match: \b(raises)\b
+      scope: keyword.other.genie
+    - match: '{{type_name}}'
+      scope: support.type.genie
+    - match: ','
+      scope: punctuation.separator.genie
+
+  class_declaration:
+    - match: '(?={{visibility}}?\s*(?:(?:abstract|sealed)\s+)*\bclass\b)'
+      push: class
+
+  class:
+    - match: \b(class)\b
+      scope: storage.type.class.genie
+    - match: '{{type_name}}'
+      scope: entity.name.type.class.genie
+    - match: ':'
+      scope: punctuation.separator.class.inheritance.genie
+    - match: '{{type_name}}'
+      scope: entity.name.type.class.genie
+    - match: $
+      pop: true
+
+  namespace_declaration:
+    - match: \b(namespace)\b
+      scope: storage.type.namespace.genie
+    - match: '{{type_name}}'
+      scope: entity.name.namespace.genie
+    - match: $
+      pop: true
+
+  uses_declaration:
+    - match: \b(uses)\b
+      scope: keyword.control.import.genie
+    - match: '{{namespaced_name}}'
+      scope: meta.path.genie entity.name.namespace.genie
+    - match: $
+      pop: true
+
+  parameter_list:
+    - match: '{{name}}(\s*)(:)'
+      captures:
+        1: variable.parameter.genie
+        2: punctuation.separator.type.genie
+      push: type_annotation
+    - match: '{{name}}'
+      scope: variable.parameter.genie
+    - match: ','
+      scope: punctuation.separator.parameter.genie
+
+  type_annotation:
+    - match: ':'
+      scope: punctuation.separator.type.genie
+    - match: '{{base_type}}'
+      scope: storage.type.genie
+    - match: '{{type_name}}'
+      scope: support.type.genie
+    - match: '\?'
+      scope: storage.modifier.nullable.genie
+
+  keywords:
+    - match: \b({{genie_reserved}})\b
+      scope: keyword.other.genie
+    - match: \b({{genie_operator_word}})\b
+      scope: keyword.operator.word.genie
+    - match: \b(self|super)\b
+      scope: variable.language.genie
+    - match: \b(prop)\b
+      scope: storage.type.property.genie
+    - match: \b(get|set|construct)\b
+      scope: storage.type.accessor.genie
+
+  expressions:
+    - include: keywords
+    - include: scope:source.vala#literals
+    - match: '({{type_name}})(\s*\.\s*)((?!{{genie_reserved}}\b){{name}})\s*(\()'
+      scope: meta.function-call.genie
+      captures:
+        1: support.type.genie
+        2: punctuation.accessor.dot.genie
+        3: entity.name.function.genie
+        4: meta.group.genie punctuation.section.group.begin.genie
+      push:
+        - meta_scope: meta.function-call.genie
+        - match: \)
+          scope: punctuation.section.group.end.genie
+          pop: true
+        - include: expressions
+    - match: '(\.)((?!{{genie_reserved}}\b){{name}})'
+      captures:
+        1: punctuation.accessor.dot.genie
+        2: variable.other.member.genie
+    - match: '{{bin_op}}'
+      scope: keyword.operator.genie
+    - match: '{{unary_op}}'
+      scope: keyword.operator.genie
+    - match: '='
+      scope: keyword.operator.assignment.genie
+    - match: '=>'
+      scope: storage.type.function.lambda.genie
+    - match: '{{name}}'
+      scope: variable.other.genie
+    - match: \(
+      scope: punctuation.section.group.begin.genie
+    - match: \)
+      scope: punctuation.section.group.end.genie
+    - match: \[
+      scope: punctuation.section.brackets.begin.genie
+    - match: \]
+      scope: punctuation.section.brackets.end.genie
+    - match: \{
+      scope: punctuation.section.braces.begin.genie
+    - match: \}
+      scope: punctuation.section.braces.end.genie
+    - match: ','
+      scope: punctuation.separator.genie
+    - match: ';'
+      scope: punctuation.terminator.statement.genie
+    - match: /(?=[^/\s])
+      scope: punctuation.definition.regex.begin.genie
+      push: regex_literal
+
+  regex_literal:
+    - meta_include_prototype: false
+    - meta_scope: string.regexp.genie
+    - match: '(/)([imsxo]*)'
+      scope: punctuation.definition.regex.end.genie
+      captures:
+        2: keyword.other.genie
+      pop: true
+    - match: '\\.'
+      scope: constant.character.escape.genie
+    - match: '[^/\n]+'
