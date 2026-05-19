@@ -21,7 +21,7 @@ void main () {
     }
 
     switch (x) {
-        case > 5:
+        case 5:
             stdout.printf ("large\n");
             break;
         default:

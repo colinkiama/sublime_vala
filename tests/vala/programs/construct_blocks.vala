@@ -14,10 +14,6 @@ public class Widget : Object {
     }
 }
 
-construct {
-    stdout.printf ("translation-unit construct block\n");
-}
-
 void main () {
     var w = new Widget () { label = "Hello" };
 }
