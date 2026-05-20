@@ -10,7 +10,7 @@
 
     public override string speak () {
 //  ^^^^^^ source.vala storage.modifier.access.vala
-//         ^^^^^^^^ source.vala support.type.vala
+//         ^^^^^^^^ source.vala storage.modifier.vala
 //                  ^^^^^^ source.vala storage.type.vala
 //                         ^^^^^ source.vala meta.function.vala entity.name.function.vala
 //                               ^ source.vala meta.function.parameters.vala punctuation.section.parameters.begin.vala

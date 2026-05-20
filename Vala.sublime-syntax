@@ -443,7 +443,7 @@ contexts:
           pop: true
 
   class_declaration:
-    - match: '\b(static|abstract|partial|sealed|inline)\b'
+    - match: '\b(static|abstract|partial|sealed|inline|override|virtual)\b'
       scope: storage.modifier.vala
     - match: '{{visibility}}'
       scope: storage.modifier.access.vala
