@@ -20,14 +20,16 @@
 
     Object (name: "Ada");
 //  ^^^^^^ source.vala meta.gobject-construction.vala support.type.vala
-//         ^^^^ source.vala meta.gobject-construction.vala variable.parameter.construct.vala
-//             ^ source.vala meta.gobject-construction.vala punctuation.separator.key-value.parameter.vala
+//         ^ source.vala meta.gobject-construction.vala meta.group.vala punctuation.section.group.begin.vala
+//          ^^^^ source.vala meta.gobject-construction.vala meta.group.vala variable.parameter.construct.vala
 
     public Person (string name) {
         Object (name: name, age: 1);
 //      ^^^^^^ source.vala meta.gobject-construction.vala support.type.vala
-//             ^^^^ source.vala meta.gobject-construction.vala variable.parameter.construct.vala
-//                        ^^^ source.vala meta.gobject-construction.vala variable.parameter.construct.vala
+//             ^ source.vala meta.gobject-construction.vala meta.group.vala punctuation.section.group.begin.vala
+//              ^^^^ source.vala meta.gobject-construction.vala meta.group.vala variable.parameter.construct.vala
+//                           ^ source.vala meta.gobject-construction.vala meta.group.vala punctuation.separator.argument.vala
+//                            ^^^ source.vala meta.gobject-construction.vala meta.group.vala variable.parameter.construct.vala
     }
 
     public Point.rectangular (double x, double y) {
@@ -36,5 +38,5 @@
         this.polar (1.0, 0.5);
 //      ^^^^ source.vala variable.language.vala
 //          ^ source.vala punctuation.accessor.dot.vala
-//           ^^^^^ source.vala entity.name.function.constructor.vala
+//           ^^^^^ source.vala meta.function-call.vala variable.function.vala
     }

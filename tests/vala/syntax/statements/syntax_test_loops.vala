@@ -20,5 +20,3 @@
     foreach (int value in list) {
         value;
     }
-//          ^^^^^ source.vala variable.other.vala
-//                ^^^^^ source.vala variable.other.vala

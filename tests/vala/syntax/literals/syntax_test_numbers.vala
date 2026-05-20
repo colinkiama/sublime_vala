@@ -5,20 +5,20 @@
 //  ^^ source.vala constant.numeric.integer.decimal.vala constant.numeric.value.vala
 
     100u;
-//  ^^^^ source.vala constant.numeric.integer.decimal.vala constant.numeric.value.vala
-//      ^ source.vala constant.numeric.integer.decimal.vala constant.numeric.suffix.vala
+//  ^^^ source.vala constant.numeric.integer.decimal.vala constant.numeric.value.vala
+//     ^ source.vala constant.numeric.integer.decimal.vala constant.numeric.suffix.vala
 
     1000L;
-//  ^^^^^ source.vala constant.numeric.integer.decimal.vala constant.numeric.value.vala
-//       ^ source.vala constant.numeric.integer.decimal.vala constant.numeric.suffix.vala
+//  ^^^^ source.vala constant.numeric.integer.decimal.vala constant.numeric.value.vala
+//      ^ source.vala constant.numeric.integer.decimal.vala constant.numeric.suffix.vala
 
     23LL;
 //  ^^ source.vala constant.numeric.integer.decimal.vala constant.numeric.value.vala
 //    ^^ source.vala constant.numeric.integer.decimal.vala constant.numeric.suffix.vala
 
     42UL;
-//  ^^^^ source.vala constant.numeric.integer.decimal.vala constant.numeric.value.vala
-//      ^^ source.vala constant.numeric.integer.decimal.vala constant.numeric.suffix.vala
+//  ^^ source.vala constant.numeric.integer.decimal.vala constant.numeric.value.vala
+//    ^^ source.vala constant.numeric.integer.decimal.vala constant.numeric.suffix.vala
 
     0xFF;
 //  ^^ source.vala constant.numeric.integer.hexadecimal.vala constant.numeric.base.vala
@@ -26,8 +26,8 @@
 
     0xdeadbeefLL;
 //  ^^ source.vala constant.numeric.integer.hexadecimal.vala constant.numeric.base.vala
-//    ^^^^^^^^^^ source.vala constant.numeric.integer.hexadecimal.vala constant.numeric.value.vala
-//              ^^ source.vala constant.numeric.integer.hexadecimal.vala constant.numeric.suffix.vala
+//    ^^^^^^^^ source.vala constant.numeric.integer.hexadecimal.vala constant.numeric.value.vala
+//            ^^ source.vala constant.numeric.integer.hexadecimal.vala constant.numeric.suffix.vala
 
     0b1010;
 //  ^^ source.vala constant.numeric.integer.binary.vala constant.numeric.base.vala
@@ -42,22 +42,35 @@
 //   ^^ source.vala constant.numeric.integer.octal.vala constant.numeric.value.vala
 
     23.42F;
-//  ^^^^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
-//       ^ source.vala constant.numeric.float.decimal.vala constant.numeric.suffix.vala
+//  ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//    ^ source.vala constant.numeric.float.decimal.vala punctuation.separator.decimal.vala
+//     ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//       ^ source.vala constant.numeric.float.decimal.vala
 
     47.11;
-//  ^^^^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//  ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//    ^ source.vala constant.numeric.float.decimal.vala punctuation.separator.decimal.vala
+//     ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
 
     23.42e+12d;
-//  ^^^^^^^^^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
-//            ^ source.vala constant.numeric.float.decimal.vala constant.numeric.suffix.vala
+//  ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//    ^ source.vala constant.numeric.float.decimal.vala punctuation.separator.decimal.vala
+//     ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//       ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.exponent.vala
+//         ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.exponent.vala constant.numeric.suffix.vala
 
     47.11E-4f;
-//  ^^^^^^^^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
-//           ^ source.vala constant.numeric.float.decimal.vala constant.numeric.suffix.vala
+//  ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//    ^ source.vala constant.numeric.float.decimal.vala punctuation.separator.decimal.vala
+//     ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//       ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.exponent.vala
+//         ^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.exponent.vala constant.numeric.suffix.vala
 
     1.0e10;
-//  ^^^^^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//  ^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//   ^ source.vala constant.numeric.float.decimal.vala punctuation.separator.decimal.vala
+//    ^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//     ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.exponent.vala constant.numeric.suffix.vala
 
     1.e10;
 //  ^ source.vala constant.numeric.integer.decimal.vala constant.numeric.value.vala

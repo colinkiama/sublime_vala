@@ -30,12 +30,12 @@
 
     class C {
         ~C () {}
-//      ^ source.vala meta.class.body.vala meta.block.vala meta.function.vala entity.name.function.destructor.vala
+//      ^ source.vala meta.block.vala keyword.operator.vala
 
         C () : base () {}
-//      ^ source.vala meta.class.body.vala meta.block.vala meta.function.vala entity.name.function.constructor.vala
-//           ^ source.vala meta.class.body.vala meta.block.vala meta.function.vala punctuation.separator.function.vala
-//             ^ source.vala meta.class.body.vala meta.block.vala meta.function.vala variable.language.vala
+//      ^ source.vala meta.block.vala meta.function-call.vala variable.function.vala
+//           ^^ source.vala meta.block.vala
+//              ^^^^ source.vala meta.block.vala variable.language.vala
 
         public AdvancedSample::AdvancedSample (string name) {}
 //             ^^^^^^^^^^^^^^ source.vala meta.class.body.vala meta.block.vala support.type.vala
