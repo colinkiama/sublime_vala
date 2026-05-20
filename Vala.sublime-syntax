@@ -34,7 +34,7 @@ variables:
   escaped_char: \\[bfnrtv"$\\]
 
   visibility: \b(?:public|private|protected|internal)\b
-  ownership: \b(?:owned|unowned|weak)\b
+  ownership: \b(?:unowned|owned|weak)\b
   base_type: (?:(?:bool|char|uchar|short|ushort|unichar|double|float|int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|long|ulong|size_t|ssize_t|object|string|void)\b)
   type_suffix: (?:\s*(?:\[,*\]|\*|\?)*)
   generic_declaration: \s*(<[^(={};]*>)?\s*
@@ -2783,7 +2783,7 @@ contexts:
 
   foreach_header:
     - include: foreach_index_value_form
-    - match: '{{ownership}}\s+({{base_type}}){{type_suffix_capture}}\s+({{name}})(?=\s*\bin\b)'
+    - match: '({{ownership}})\s+({{base_type}}){{type_suffix_capture}}\s+({{name}})(?=\s*\bin\b)'
       captures:
         1: storage.modifier.ownership.vala
         2: storage.type.vala
@@ -2903,7 +2903,7 @@ contexts:
           pop: true
         - match: '(?=[,);}])'
           pop: true
-    - match: '(?:({{name}}){{type_suffix_capture}})(?:\s+((?!{{reserved}}\b){{name}}))?\s*'
+    - match: '(?!(?:{{ownership}}\s+){{base_type}}\b)(?:({{name}}){{type_suffix_capture}})(?:\s+((?!{{reserved}}\b){{name}}))?\s*'
       captures:
         1: support.type.vala
         2: storage.type.nullable.vala
