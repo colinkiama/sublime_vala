@@ -11,9 +11,9 @@
 
     public override void sig () {
 //  ^^^^^^ source.vala meta.class.body.vala meta.block.vala storage.modifier.access.vala
-//                 ^^^^^^^^ source.vala meta.class.body.vala meta.block.vala storage.modifier.vala
-//                         ^^^^ source.vala meta.class.body.vala meta.block.vala storage.type.vala
-//                              ^^^ source.vala meta.class.body.vala meta.block.vala meta.function.vala entity.name.function.vala
-//                                 ^ source.vala meta.class.body.vala meta.block.vala meta.function.vala meta.function.parameters.vala punctuation.section.parameters.begin.vala
-//                                  ^ source.vala meta.class.body.vala meta.block.vala meta.function.vala meta.function.parameters.vala punctuation.section.parameters.end.vala
+//         ^^^^^^^^ source.vala meta.class.body.vala meta.block.vala storage.modifier.vala
+//                  ^^^^ source.vala meta.class.body.vala meta.block.vala storage.type.vala
+//                       ^^^ source.vala meta.class.body.vala meta.block.vala meta.function.vala entity.name.function.vala
+//                           ^ source.vala meta.class.body.vala meta.block.vala meta.function.parameters.vala punctuation.section.parameters.begin.vala
+//                            ^ source.vala meta.class.body.vala meta.block.vala meta.function.parameters.vala punctuation.section.parameters.end.vala
     }

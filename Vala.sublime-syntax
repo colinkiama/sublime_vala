@@ -1319,8 +1319,10 @@ contexts:
             - match: (?=\S)
               set: line_of_code
         - include: inside_type_argument
-    - match: \bconst\b
-      scope: storage.modifier.vala
+    - match: '(\bconst\b)\s+(?={{namespaced_name}}{{type_suffix}}\s+{{name}}(?!\s*(?:[(:])))'
+      captures:
+        1: storage.modifier.vala
+      set: [variables_declaration_const, type_no_space]
     - match: '(var|dynamic)\s+({{reserved}}|{{base_type}})\s*(=)'
       captures:
         1: storage.type.variable.vala
@@ -1415,6 +1417,31 @@ contexts:
       scope: punctuation.terminator.statement.vala
       pop: true
     - match: (?=[]})>;])
+      pop: true
+
+  variables_declaration_const:
+    - match: '='
+      scope: keyword.operator.assignment.variable.vala
+      push:
+        - match: (?=;|,)
+          pop: true
+        - match: (?=\{)
+          push:
+            - match: (?=[^,\s{}])
+              pop: true
+            - include: initializer_constructor
+        - include: line_of_code_in
+    - match: '{{name}}'
+      scope: constant.other.vala
+    - match: '(\[)'
+      scope: meta.brackets.vala punctuation.section.brackets.begin.vala
+      push: inline_fixed_array_length
+    - match: ','
+      scope: punctuation.separator.variables.vala
+    - match: ';'
+      scope: punctuation.terminator.statement.vala
+      pop: true
+    - match: (?=\{|\)|>)
       pop: true
 
   variables_declaration:
@@ -1687,6 +1714,9 @@ contexts:
         1: support.namespace.vala
         2: support.namespace.vala
         3: punctuation.accessor.double-colon.namespace.vala
+    # Unqualified imported constants (e.g. using GLib.Math; … PI)
+    - match: '(?!(?:{{reserved}})\b){{constant_member}}(?!\s*\()'
+      scope: constant.other.vala
     - match: '{{name}}'
       scope: variable.other.vala
     - match: '@'

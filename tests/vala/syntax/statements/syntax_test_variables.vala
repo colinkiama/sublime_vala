@@ -5,6 +5,11 @@
 
     const int MAX = 100;
 //  ^^^^^ source.vala storage.modifier.vala
+//            ^^^ source.vala constant.other.vala
+
+    const string APP_NAME = "demo";
+//  ^^^^^ source.vala storage.modifier.vala
+//               ^^^^^^^^ source.vala constant.other.vala
 
     var y = compute ();
 //  ^^^ source.vala storage.type.variable.vala

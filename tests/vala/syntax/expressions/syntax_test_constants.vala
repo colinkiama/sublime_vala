@@ -12,3 +12,9 @@
 //            ^^^^ source.vala meta.function-call.vala support.type.vala
 //                ^ source.vala meta.function-call.vala punctuation.accessor.dot.namespace.vala
 //                 ^^ source.vala meta.function-call.vala constant.other.vala
+
+    assert (PI > 3.0);
+//          ^^ source.vala constant.other.vala
+
+    stdout.printf ("%g", PI);
+//                       ^^ source.vala constant.other.vala
