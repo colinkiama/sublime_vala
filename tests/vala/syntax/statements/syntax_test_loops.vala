@@ -16,3 +16,9 @@
 //                        ^^^ source.vala storage.type.vala
 //                            ^^^^^ source.vala variable.other.vala
 //                                  ^^ source.vala keyword.control.vala
+
+    foreach (int value in list) {
+        value;
+    }
+//          ^^^^^ source.vala variable.other.vala
+//                ^^^^^ source.vala variable.other.vala

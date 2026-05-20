@@ -5,6 +5,14 @@
 //     ^ source.vala punctuation.accessor.dot.vala
 //      ^^^^^ source.vala variable.other.vala
 
+    entry.key;
+    entry.value;
+//  ^^^^^ source.vala variable.other.vala
+//       ^ source.vala punctuation.accessor.dot.vala
+//        ^^^ source.vala variable.other.vala
+//             ^ source.vala punctuation.accessor.dot.vala
+//              ^^^^^ source.vala variable.other.vala
+
     my_async.say.begin ();
 //  ^^^^^^^^ source.vala variable.other.vala
 
@@ -13,6 +21,10 @@
 
     base.method ();
 //  ^^^^ source.vala variable.language.vala
+
+    root.child?.value;
+//              ^ source.vala punctuation.accessor.null-safe.vala
+//               ^ source.vala punctuation.accessor.dot.vala
 
     ptr->member;
 //     ^^ source.vala punctuation.accessor.arrow.vala

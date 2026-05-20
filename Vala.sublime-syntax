@@ -55,6 +55,8 @@ variables:
   namespaced_type_name: (?:(?:{{type_name}}{{generic_declaration}}\s*\.\s*)+{{type_name}}{{generic_declaration}})
   # ALL_CAPS members (Math.PI, Status.OK) — not PascalCase types (Gtk.Button)
   constant_member: '(?:[A-Z][A-Z0-9_]*|[A-Z])\b'
+  # At least Namespace.Type.CONSTANT (n segments: n−1 type names, one constant member)
+  namespaced_constant_path_lookahead: (?=(?:{{type_name}}\s*\.\s*)+{{constant_member}}\b(?!\s*\())
   identifier: \b[[:alpha:]_](?:[[:alnum:]_])*\b
 
 
@@ -587,17 +589,20 @@ contexts:
 
   struct_signature:
     - meta_scope: meta.struct.vala
-    - match: ''
+    - include: data_type_signature
+    - match: '(?=\s*\{)'
       set: [struct_body, data_type_body]
 
   class_signature:
     - meta_scope: meta.class.vala
-    - match: ''
+    - include: data_type_signature
+    - match: '(?=\s*\{)'
       set: [class_body, data_type_body]
 
   interface_signature:
     - meta_scope: meta.interface.vala
-    - match: ''
+    - include: data_type_signature
+    - match: '(?=\s*\{)'
       set: [interface_body, data_type_body]
 
   struct_body:
@@ -637,25 +642,24 @@ contexts:
 
   data_type_signature:
     - include: maybe_type_parameters
-    - match: ':'
+    - match: '\s*:\s*'
       scope: punctuation.separator.type.vala
-      set: type_constraint
-    - match: (?=where\b)
-      set: type_constraint
-    - match: (?=[{;(])
-      pop: true
+      push: type_constraint
+    - match: '\s+where\b'
+      push: type_constraint
 
   type_constraint:
     - match: '(?={{namespaced_type_name}})'
       push: namespaced_inherited_class_path
     - include: type_constraint_common
+    - match: '{{type_name}}'
+      scope: entity.other.inherited-class.vala
     - match: '{{name}}'
       scope: entity.other.inherited-class.vala
-    - include: type
+    - match: '(?=\s*[,{])'
+      pop: true
 
   type_constraint_common:
-    - match: (?=\{)
-      pop: true
     - match: '\b(where)\s+(?:({{base_type}})|({{name}}))\s*(:)'
       captures:
         1: storage.modifier.vala
@@ -749,6 +753,8 @@ contexts:
       scope: storage.type keyword.declaration.function.vala
     - match: '{{visibility}}'
       scope: storage.modifier.access.vala
+    - match: '{{ownership}}'
+      scope: storage.modifier.ownership.vala
     - match: '\boperator\b'
       scope: storage.modifier.vala
       push: method_name_or_member_variable
@@ -1009,6 +1015,12 @@ contexts:
     - match: '(?=\S)'
       pop: true
 
+  method_body_brace_block:
+    - match: \}
+      scope: punctuation.section.block.end.vala
+      pop: true
+    - include: stray_close_bracket
+
   method_body:
     - meta_scope: meta.function.vala
     - match: (?=where\b)
@@ -1029,10 +1041,42 @@ contexts:
           scope: punctuation.section.block.begin.vala
           set:
             - meta_scope: meta.function.vala meta.block.vala
-            - match: \}
-              scope: punctuation.section.block.end.vala
-              pop: true
-            - include: stray_close_bracket
+            - include: method_body_brace_block
+            - include: code_block_in
+    - match: ;
+      scope: punctuation.terminator.vala
+      pop: true
+    - match: \S+
+      scope: invalid.illegal.vala
+      pop: true
+
+  property_setter_implicit_value:
+    - match: (?<!\.)\b(value)\b
+      scope: variable.language.vala
+
+  property_setter_body:
+    - meta_scope: meta.function.vala
+    - match: (?=where\b)
+      scope: storage.modifier.other.vala
+      push: type_constraint
+    - match: (?=throws\b)
+      push: method_throws_clause
+    - match: (?=requires\b|ensures\b)
+      push: method_contract_tail
+    - match: (=>)
+      scope: keyword.declaration.function.arrow.vala
+      set:
+        - meta_content_scope: meta.function.vala
+        - include: property_setter_implicit_value
+        - include: line_of_code_in
+    - match: '(?=\{)'
+      set:
+        - match: \{
+          scope: punctuation.section.block.begin.vala
+          set:
+            - meta_scope: meta.function.vala meta.block.vala
+            - include: method_body_brace_block
+            - include: property_setter_implicit_value
             - include: code_block_in
     - match: ;
       scope: punctuation.terminator.vala
@@ -1093,13 +1137,13 @@ contexts:
           scope: keyword.declaration.function.accessor.construct.vala
         - match: \b(?:set\s+construct|construct\s+set)\b
           scope: keyword.declaration.function.accessor.set.vala
-          push: method_body
+          push: property_setter_body
         - match: \b(construct)\b
           scope: keyword.declaration.function.accessor.construct.vala
-          push: method_body
+          push: property_setter_body
         - match: \b(?:set|init)\b
           scope: keyword.declaration.function.accessor.set.vala
-          push: method_body
+          push: property_setter_body
         - match: \bdefault\b\s*=
           scope: keyword.other.vala
           push: line_of_code_in
@@ -1341,6 +1385,17 @@ contexts:
               pop: true
             - include: line_of_code_in
 
+  inline_fixed_array_length:
+    - meta_content_scope: meta.brackets.vala
+    - match: '(\d+)'
+      scope: constant.numeric.integer.decimal.vala
+    - match: '(:)'
+      scope: punctuation.separator.type.vala
+      push: type_no_space
+    - match: '(\])'
+      scope: punctuation.section.brackets.end.vala
+      pop: true
+
   member_variables_declaration:
     - match: '='
       scope: keyword.operator.assignment.variable.vala
@@ -1352,6 +1407,9 @@ contexts:
       push: method_accessor
     - match: '{{name}}'
       scope: variable.other.member.vala
+    - match: '(\[)'
+      scope: meta.brackets.vala punctuation.section.brackets.begin.vala
+      push: inline_fixed_array_length
     - match: ','
       scope: punctuation.separator.variables.vala
     - match: ';'
@@ -1374,12 +1432,15 @@ contexts:
         - include: line_of_code_in
     - match: '{{name}}'
       scope: variable.other.vala
+    - match: '(\[)'
+      scope: meta.brackets.vala punctuation.section.brackets.begin.vala
+      push: inline_fixed_array_length
     - match: ','
       scope: punctuation.separator.variables.vala
     - match: ';'
       scope: punctuation.terminator.statement.vala
       pop: true
-    - match: (?=\{|\}|\)|>|\])
+    - match: (?=\{|\)|>)
       pop: true
 
   keywords:
@@ -1524,13 +1585,12 @@ contexts:
       pop: true
 
   line_of_code_in_no_semicolon:
-    - match: \b(value)\b
-      scope: variable.language.vala
     - include: keywords
     - match: \b(in)\b(?!\s*[.,;+=&\|\[\]\)])
       scope: keyword.operator.word.in.vala
-    - match: \?\.
-      scope: punctuation.accessor.null-coalescing.vala
+    # Null-safe member/index access (? then . or [); not ?? (null coalescing, in bin_op)
+    - match: '\?(?=\.|\[)'
+      scope: punctuation.accessor.null-safe.vala
     - match: \.\.
       scope: keyword.operator.range.vala
     - include: qualified_constant_access
@@ -1831,11 +1891,25 @@ contexts:
     - include: line_of_code_in
 
   qualified_constant_access:
+    - match: '{{namespaced_constant_path_lookahead}}'
+      push: namespaced_constant_path
     - match: '({{type_name}})(\s*\.\s*)((?!{{reserved}}\b){{constant_member}})(?!\s*\()'
       captures:
         1: support.type.vala
         2: punctuation.accessor.dot.namespace.vala
         3: constant.other.vala
+
+  namespaced_constant_path:
+    - match: '({{type_name}})(\s*\.\s*)(?={{type_name}}\s*\.)'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.namespace.vala
+    - match: '({{type_name}})(\s*\.\s*)((?!{{reserved}}\b){{constant_member}})(?!\s*\()'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.namespace.vala
+        3: constant.other.enum.vala
+      pop: true
 
   # Namespace.Type.NameN in class/struct/interface declarations (e.g. class Test.Async)
   qualified_declaration_name_prefix:
@@ -1846,36 +1920,21 @@ contexts:
 
   qualified_class_declaration_name:
     - include: qualified_declaration_name_prefix
-    - match: '({{type_name}})({{generic_declaration}})'
-      captures:
-        1: entity.name.class.vala
-        2: meta.generic.vala
-      set: [class_signature, data_type_signature]
     - match: '{{type_name}}'
       scope: entity.name.class.vala
-      set: [class_signature, data_type_signature]
+      set: class_signature
 
   qualified_struct_declaration_name:
     - include: qualified_declaration_name_prefix
-    - match: '({{type_name}})({{generic_declaration}})'
-      captures:
-        1: entity.name.struct.vala
-        2: meta.generic.vala
-      set: [struct_signature, data_type_signature]
     - match: '{{type_name}}'
       scope: entity.name.struct.vala
-      set: [struct_signature, data_type_signature]
+      set: struct_signature
 
   qualified_interface_declaration_name:
     - include: qualified_declaration_name_prefix
-    - match: '({{type_name}})({{generic_declaration}})'
-      captures:
-        1: entity.name.interface.vala
-        2: meta.generic.vala
-      set: [interface_signature, data_type_signature]
     - match: '{{type_name}}'
       scope: entity.name.interface.vala
-      set: [interface_signature, data_type_signature]
+      set: interface_signature
 
   namespaced_type_path:
     - include: namespaced_type_path_common
@@ -2772,8 +2831,10 @@ contexts:
         - match: '({{name}})\s*'
           captures:
             1: variable.other.vala
-          pop: true
-        - match: (?=[,);}])
+        - match: '(\[)'
+          scope: meta.brackets.vala punctuation.section.brackets.begin.vala
+          push: inline_fixed_array_length
+        - match: '(?=[,);}])'
           pop: true
     - match: '(?:({{name}}){{type_suffix_capture}})(?:\s+({{name}}))?\s*'
       captures:

@@ -16,4 +16,9 @@
             set { }
 //          ^^^ source.vala meta.class.body.vala meta.block.vala meta.property.vala meta.block.vala meta.function.vala keyword.declaration.function.accessor.set.vala
         }
+
+        public string name {
+            set { _name = value; }
+//                        ^^^^^ source.vala meta.class.body.vala meta.block.vala meta.property.vala meta.block.vala meta.function.vala meta.block.vala variable.language.vala
+        }
     }

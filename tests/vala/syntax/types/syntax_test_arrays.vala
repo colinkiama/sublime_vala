@@ -8,3 +8,9 @@
 
     arr[0];
 //     ^ source.vala meta.brackets.vala punctuation.section.brackets.begin.vala
+
+    int stack_buf[3];
+//      ^^^^^^^^^ source.vala variable.other.vala
+//               ^ source.vala meta.brackets.vala punctuation.section.brackets.begin.vala
+//                ^ source.vala meta.brackets.vala constant.numeric.integer.decimal.vala
+//                 ^ source.vala punctuation.section.brackets.end.vala

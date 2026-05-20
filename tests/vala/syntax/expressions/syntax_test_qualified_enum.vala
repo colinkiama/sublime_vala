@@ -16,3 +16,23 @@
 //             ^^^^^^ source.vala support.type.vala
 //                   ^ source.vala punctuation.accessor.dot.namespace.vala
 //                    ^^ source.vala constant.other.enum.vala
+
+    GLib.Priority.DEFAULT;
+//  ^^^^ source.vala support.type.vala
+//      ^ source.vala punctuation.accessor.dot.namespace.vala
+//       ^^^^^^^^ source.vala support.type.vala
+//               ^ source.vala punctuation.accessor.dot.namespace.vala
+//                ^^^^^^^ source.vala constant.other.enum.vala
+
+    A.B.C.D.E.CONSTANT;
+//  ^ source.vala support.type.vala
+//   ^ source.vala punctuation.accessor.dot.namespace.vala
+//    ^ source.vala support.type.vala
+//     ^ source.vala punctuation.accessor.dot.namespace.vala
+//      ^ source.vala support.type.vala
+//       ^ source.vala punctuation.accessor.dot.namespace.vala
+//        ^ source.vala support.type.vala
+//         ^ source.vala punctuation.accessor.dot.namespace.vala
+//          ^ source.vala support.type.vala
+//           ^ source.vala punctuation.accessor.dot.namespace.vala
+//            ^ source.vala constant.other.enum.vala

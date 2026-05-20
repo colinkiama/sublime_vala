@@ -12,6 +12,14 @@
     partial class Qux {
 //  ^^^^^^^ source.vala storage.modifier.vala
 
+    public class Node : Object {
+        public int value;
+    }
+//  ^ source.vala meta.class.vala meta.block.vala punctuation.section.block.end.vala
+
+    class Node : Object {
+//               ^^^^^^ source.vala meta.class.vala entity.other.inherited-class.vala
+
     class Child : Parent {
 //                ^^^^^^ source.vala meta.class.vala entity.other.inherited-class.vala
 

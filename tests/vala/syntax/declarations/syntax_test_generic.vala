@@ -10,12 +10,13 @@
 //       ^^^^^^ source.vala meta.generic.vala storage.type.vala
 //             ^ source.vala meta.generic.vala punctuation.definition.generic.end.vala
 
-    class Box<T> {
-//  ^^^^^ source.vala meta.class.vala storage.type.class keyword.declaration.class.vala
-//        ^^^ source.vala meta.class.vala entity.name.class.vala
-//           ^ source.vala meta.class.vala meta.generic.vala punctuation.definition.generic.begin.vala
-//            ^ source.vala meta.class.vala meta.generic.vala variable.parameter.type.vala
-//             ^ source.vala meta.class.vala meta.generic.vala punctuation.definition.generic.end.vala
+    public class Box<T> {
+//  ^^^^^^ source.vala storage.modifier.access.vala
+//         ^^^^^ source.vala meta.class.vala storage.type.class keyword.declaration.class.vala
+//               ^^^ source.vala meta.class.vala entity.name.class.vala
+//                  ^ source.vala meta.class.vala meta.generic.vala punctuation.definition.generic.begin.vala
+//                   ^ source.vala meta.class.vala meta.generic.vala variable.parameter.type.vala
+//                    ^ source.vala meta.class.vala meta.generic.vala punctuation.definition.generic.end.vala
     }
 
     public class Pair<A, B> {
