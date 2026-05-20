@@ -695,19 +695,9 @@ contexts:
         - match: '\s*;'
           scope: punctuation.terminator.statement.vala
           pop: true
-        - match: \{
+        - match: '\s*\{'
           scope: punctuation.section.block.begin.vala
-          set:
-            - meta_scope: meta.block.vala
-            - match: \}
-              scope: punctuation.section.block.end.vala
-              pop: true
-            - match: \b(add)\b
-              scope: keyword.declaration.function.accessor.add.vala
-              push: method_body
-            - match: \b(remove)\b
-              scope: keyword.declaration.function.accessor.remove.vala
-              push: method_body
+          push: signal_handler_body
         - match: (?==)
           set: member_variables_declaration
         - match: (?=\S)
@@ -715,23 +705,26 @@ contexts:
     - match: (?=\S)
       pop: true
 
+  signal_handler_body:
+    - meta_scope: meta.block.vala
+    - match: \}
+      scope: punctuation.section.block.end.vala
+      pop: 2
+    - match: \b(add)\b
+      scope: keyword.declaration.function.accessor.add.vala
+      push: method_body
+    - match: \b(remove)\b
+      scope: keyword.declaration.function.accessor.remove.vala
+      push: method_body
+    - include: code_block_in
+
   signal_handler_after_params:
     - match: '\s*;'
       scope: punctuation.terminator.statement.vala
       pop: 2
     - match: '\s*\{'
       scope: punctuation.section.block.begin.vala
-      set:
-        - meta_scope: meta.block.vala
-        - match: \}
-          scope: punctuation.section.block.end.vala
-          pop: 2
-        - match: \b(add)\b
-          scope: keyword.declaration.function.accessor.add.vala
-          push: method_body
-        - match: \b(remove)\b
-          scope: keyword.declaration.function.accessor.remove.vala
-          push: method_body
+      push: signal_handler_body
     - match: '(?=\s*$)'
       pop: 2
 
@@ -836,12 +829,12 @@ contexts:
         1: storage.modifier.other.vala
         2: meta.function.vala entity.name.function.vala
         3: meta.function.parameters.vala punctuation.section.parameters.begin.vala
-      set: [method_body_transition, method_params]
+      set: method_params_declaration
     - match: (?={{name}})
       branch_point: method_or_member_variable_name
       branch:
-        - member_lambda_or_plain
         - method_name
+        - member_lambda_or_plain
       pop: true
 
   member_lambda_or_plain:
@@ -856,7 +849,7 @@ contexts:
         - include: line_of_code_in
     - match: (?={{namespaced_name}}\s+{{name}}\s+=>)
       pop: true
-    - match: '{{name}}'
+    - match: '{{name}}(?!\s*\()'
       scope: variable.other.member.vala
     - match: (?==[^>])
       set: member_variables_declaration
@@ -865,6 +858,8 @@ contexts:
       pop: true
     - match: (?=\})
       pop: true
+    - match: (?=\s*\()
+      fail: method_or_member_variable_name
     - match: (?=\S)
       fail: method_or_member_variable_name
 
@@ -875,7 +870,7 @@ contexts:
       captures:
         1: meta.function.vala entity.name.function.vala
         2: meta.function.parameters.vala punctuation.section.parameters.begin.vala
-      set: [method_body_transition, method_params]
+      set: method_params_declaration
     - match: '({{name}})\s*(<)(?=[^(]*>\.)'
       scope: meta.function.vala
       captures:
@@ -925,9 +920,13 @@ contexts:
       scope: punctuation.terminator.statement.vala
       pop: true
 
-  method_body_transition:
-    - match: ''
+  method_params_declaration:
+    - meta_content_scope: meta.function.parameters.vala
+    - match: \)
+      scope: meta.function.parameters.vala punctuation.section.parameters.end.vala
       set: method_body
+    - match: (?=\S)
+      push: [method_param, method_param_type]
 
   method_params:
     - meta_content_scope: meta.function.parameters.vala

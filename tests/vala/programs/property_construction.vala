@@ -1,5 +1,4 @@
 public class MyProperty : Object {
-
     private int _construct_only;
     private int _construct_get_set;
     private int _get_set;
@@ -35,6 +34,21 @@ public class MyProperty : Object {
 
 void main () {
     var demo = new MyProperty (1, 2, 3);
-    demo.construct_get_set_prop = 222;
-    demo.get_set_prop = 333;
+
+    assert (demo.construct_only_prop == 1);
+    assert (demo.construct_get_set_prop == 2);
+    assert (demo.get_set_prop == 3);
+
+    demo.construct_get_set_prop = 22;
+    demo.get_set_prop = 33;
+
+    assert (demo.construct_only_prop == 1);
+    assert (demo.construct_get_set_prop == 22);
+    assert (demo.get_set_prop == 33);
+
+    stdout.printf (
+        "property construction ok: only=%d cgs=%d gs=%d (construct block ran before ctor body)\n",
+        demo.construct_only_prop,
+        demo.construct_get_set_prop,
+        demo.get_set_prop);
 }
