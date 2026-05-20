@@ -33,6 +33,8 @@
 //      ^^^^^^^^^ source.vala meta.instance.vala support.type.vala
 //               ^ source.vala meta.instance.vala meta.generic.vala punctuation.definition.generic.begin.vala
 //                ^^^^^^ source.vala meta.instance.vala meta.generic.vala storage.type.vala
-//                          ^^^^^^ source.vala meta.instance.vala meta.generic.vala storage.type.vala
-//                                ^ source.vala meta.instance.vala meta.generic.vala punctuation.definition.generic.end.vala
-//                                 ^ source.vala meta.instance.vala meta.group.vala punctuation.section.group.begin.vala
+//                      ^ source.vala meta.instance.vala meta.generic.vala punctuation.separator.type.vala
+//                        ^^^^^^ source.vala meta.instance.vala meta.generic.vala storage.type.vala
+//                              ^ source.vala meta.instance.vala meta.generic.vala punctuation.definition.generic.end.vala
+//                                ^ source.vala meta.instance.vala meta.group.vala punctuation.section.group.begin.vala
+//                                 ^ source.vala meta.instance.vala meta.group.vala punctuation.section.group.end.vala

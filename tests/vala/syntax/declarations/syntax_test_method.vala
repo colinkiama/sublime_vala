@@ -34,8 +34,8 @@
 
         C () : base () {}
 //      ^ source.vala meta.block.vala meta.function-call.vala variable.function.vala
-//           ^^ source.vala meta.block.vala
-//              ^^^^ source.vala meta.block.vala variable.language.vala
+//        ^^ source.vala meta.block.vala
+//             ^^^^ source.vala meta.block.vala variable.language.vala
 
         public AdvancedSample::AdvancedSample (string name) {}
 //             ^^^^^^^^^^^^^^ source.vala meta.class.body.vala meta.block.vala support.type.vala

@@ -2181,11 +2181,8 @@ contexts:
         2: constant.numeric.value.vala
         3: constant.numeric.suffix.vala
     # decimal float: digits required after '.'; 1.e10 is invalid (Vala scanner)
-    - match: '(\d+)(\.)(?={{dec_exponent}})'
+    - match: '(\d+\.(?![0-9]){{dec_exponent}})'
       scope: invalid.illegal.numeric-float-decimal.vala
-      captures:
-        1: constant.numeric.integer.decimal.vala constant.numeric.value.vala
-        2: invalid.illegal.stray-punctuation.vala
     - match: '(\d+)(\.)(\d+)({{dec_exponent}})?({{float_suffix}})?'
       scope: constant.numeric.float.decimal.vala
       captures:

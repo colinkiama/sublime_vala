@@ -18,10 +18,10 @@
 //  ^ source.vala meta.block.vala meta.block.vala meta.block.vala meta.block.vala meta.block.vala punctuation.section.block.end.vala
 
     class Node : Object {
-//               ^^^^^^ source.vala meta.block.vala meta.block.vala meta.block.vala meta.block.vala meta.block.vala meta.class.vala
+//               ^^^^^^ source.vala meta.block.vala meta.block.vala meta.block.vala meta.block.vala meta.class.vala entity.other.inherited-class.vala
 
     class Child : Parent {
-//                ^^^^^^ source.vala meta.block.vala meta.block.vala meta.block.vala meta.block.vala meta.block.vala meta.class.vala
+//                ^^^^^^ source.vala meta.block.vala meta.block.vala meta.block.vala meta.block.vala meta.class.vala entity.other.inherited-class.vala
 
     class Service : GLib.Object {
 //                  ^^^^ source.vala meta.block.vala meta.block.vala meta.block.vala meta.block.vala meta.block.vala meta.class.vala

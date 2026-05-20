@@ -28,8 +28,9 @@
 //      ^^^^^^ source.vala meta.gobject-construction.vala support.type.vala
 //             ^ source.vala meta.gobject-construction.vala meta.group.vala punctuation.section.group.begin.vala
 //              ^^^^ source.vala meta.gobject-construction.vala meta.group.vala variable.parameter.construct.vala
-//                           ^ source.vala meta.gobject-construction.vala meta.group.vala punctuation.separator.argument.vala
-//                            ^^^ source.vala meta.gobject-construction.vala meta.group.vala variable.parameter.construct.vala
+//                        ^ source.vala meta.gobject-construction.vala meta.group.vala punctuation.separator.argument.vala
+//                          ^^^ source.vala meta.gobject-construction.vala meta.group.vala variable.parameter.construct.vala
+//                             ^ source.vala meta.gobject-construction.vala meta.group.vala punctuation.separator.key-value.parameter.vala
     }
 
     public Point.rectangular (double x, double y) {

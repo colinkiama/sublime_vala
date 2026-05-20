@@ -21,14 +21,14 @@
     #if ! NOFOO && (FOOBAR || FOO)
 //  ^ punctuation.definition.preprocessor.vala
 //   ^^ keyword.control.preprocessor.if.vala
-//      ^ source.vala meta.preprocessor.vala
-//       ^^^^^ source.vala meta.preprocessor.vala constant.other.preprocessor.symbol.vala
-//             ^^ source.vala meta.preprocessor.vala keyword.operator.preprocessor.vala
-//                ^ source.vala meta.preprocessor.vala
-//                 ^^^^^^ source.vala meta.preprocessor.vala constant.other.preprocessor.symbol.vala
-//                        ^^ source.vala meta.preprocessor.vala keyword.operator.preprocessor.vala
-//                           ^^^ source.vala meta.preprocessor.vala constant.other.preprocessor.symbol.vala
-//                              ^ source.vala meta.preprocessor.vala
+//      ^ source.vala meta.preprocessor.vala keyword.operator.preprocessor.negation.vala
+//        ^^^^^ source.vala meta.preprocessor.vala constant.other.preprocessor.symbol.vala
+//              ^^ source.vala meta.preprocessor.vala keyword.operator.preprocessor.vala
+//                 ^ source.vala meta.preprocessor.vala punctuation.section.preprocessor.vala
+//                  ^^^^^^ source.vala meta.preprocessor.vala constant.other.preprocessor.symbol.vala
+//                         ^^ source.vala meta.preprocessor.vala keyword.operator.preprocessor.vala
+//                            ^^^ source.vala meta.preprocessor.vala constant.other.preprocessor.symbol.vala
+//                               ^ source.vala meta.preprocessor.vala punctuation.section.preprocessor.vala
 
 #if ( FOOBAR || FOO || BAR ) && (FOOBAR == FOO && FOO == BAR)
 //    ^^^^^^ constant.other.preprocessor.symbol.vala

@@ -70,11 +70,11 @@
 //  ^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
 //   ^ source.vala constant.numeric.float.decimal.vala punctuation.separator.decimal.vala
 //    ^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
-//     ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.exponent.vala constant.numeric.suffix.vala
+//     ^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.exponent.vala
+//      ^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.exponent.vala constant.numeric.suffix.vala
 
     1.e10;
-//  ^ source.vala constant.numeric.integer.decimal.vala constant.numeric.value.vala
-//   ^ source.vala invalid.illegal.numeric-float-decimal.vala invalid.illegal.stray-punctuation.vala
+//  ^^^^^ source.vala invalid.illegal.numeric-float-decimal.vala
 
     0x1.8p3;
 //  ^^ source.vala constant.numeric.float.hexadecimal.vala constant.numeric.base.vala

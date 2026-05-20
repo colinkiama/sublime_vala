@@ -14,11 +14,11 @@
 //     ^^^^ source.vala meta.template-expression.vala variable.other.vala
 
     @"$a * $b = $(a * b)";
-//     ^ source.vala meta.template-expression.vala punctuation.definition.template-expression.begin.vala
-//      ^ source.vala meta.template-expression.vala variable.other.vala
-//          ^ source.vala meta.template-expression.vala punctuation.definition.template-expression.begin.vala
-//           ^ source.vala meta.template-expression.vala variable.other.vala
-//               ^^ source.vala meta.interpolation.vala punctuation.section.interpolation.begin.vala
+//    ^ source.vala meta.template-expression.vala punctuation.definition.template-expression.begin.vala
+//     ^ source.vala meta.template-expression.vala variable.other.vala
+//         ^ source.vala meta.template-expression.vala punctuation.definition.template-expression.begin.vala
+//          ^ source.vala meta.template-expression.vala variable.other.vala
+//              ^^ source.vala meta.interpolation.vala punctuation.section.interpolation.begin.vala
 
     print (@"Plus one day, three hours and five minutes: $future\n");
 //                                                       ^ source.vala meta.function-call.vala meta.group.vala meta.template-expression.vala punctuation.definition.template-expression.begin.vala
