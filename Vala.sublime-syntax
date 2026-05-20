@@ -2783,6 +2783,39 @@ contexts:
 
   foreach_header:
     - include: foreach_index_value_form
+    - match: '{{ownership}}\s+({{base_type}}){{type_suffix_capture}}\s+({{name}})(?=\s*\bin\b)'
+      captures:
+        1: storage.modifier.ownership.vala
+        2: storage.type.vala
+        3: storage.type.nullable.vala
+        4: meta.brackets.vala
+        5: punctuation.section.brackets.begin.vala
+        6: punctuation.separator.vala
+        7: punctuation.section.brackets.end.vala
+        8: keyword.operator.pointer.vala
+        9: variable.other.vala
+      pop: true
+    - match: '({{base_type}}){{type_suffix_capture}}\s+({{name}})(?=\s*\bin\b)'
+      captures:
+        1: storage.type.vala
+        2: storage.type.nullable.vala
+        3: meta.brackets.vala
+        4: punctuation.section.brackets.begin.vala
+        5: punctuation.separator.vala
+        6: punctuation.section.brackets.end.vala
+        7: keyword.operator.pointer.vala
+        8: variable.other.vala
+      pop: true
+    - match: '({{type_name}})\s+({{name}})(?=\s*\bin\b)'
+      captures:
+        1: support.type.vala
+        2: variable.other.vala
+      pop: true
+    - match: '(var)\s+({{name}})(?=\s*\bin\b)'
+      captures:
+        1: storage.type.variable.vala
+        2: variable.other.vala
+      pop: true
     - include: var_declaration_including_tuple
     - match: (?=\s*\bin\b)
       pop: true
@@ -2866,9 +2899,11 @@ contexts:
         - match: '(\[)'
           scope: meta.brackets.vala punctuation.section.brackets.begin.vala
           push: inline_fixed_array_length
+        - match: '(?=\s*\bin\b)'
+          pop: true
         - match: '(?=[,);}])'
           pop: true
-    - match: '(?:({{name}}){{type_suffix_capture}})(?:\s+({{name}}))?\s*'
+    - match: '(?:({{name}}){{type_suffix_capture}})(?:\s+((?!{{reserved}}\b){{name}}))?\s*'
       captures:
         1: support.type.vala
         2: storage.type.nullable.vala
