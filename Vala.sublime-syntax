@@ -822,6 +822,7 @@ contexts:
       push: [method_name_or_member_variable, type_tuple]
 
   method_name_or_member_variable:
+    - match: '\s+'
     - match: '\.'
       scope: punctuation.accessor.dot.vala
     - match: '(operator)\s*({{unary_op}}|{{bin_op}})\s*(\()'
@@ -864,9 +865,7 @@ contexts:
       fail: method_or_member_variable_name
 
   method_name:
-    - match: '({{name}})?\s*(\()'
-      # here the name is optional since it may already have been matched by
-      # '{{name}}\s*(<)' (see rule below)
+    - match: '({{name}})\s*(\()'
       captures:
         1: meta.function.vala entity.name.function.vala
         2: meta.function.parameters.vala punctuation.section.parameters.begin.vala
@@ -905,7 +904,7 @@ contexts:
       captures:
         1: entity.other.inherited-class.vala
         2: punctuation.accessor.dot.vala
-    - match: '{{name}}'
+    - match: '{{name}}(?!\s*\()'
       scope: meta.property.vala variable.other.member.vala
       push:
         - match: \s*(,)
