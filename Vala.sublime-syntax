@@ -2116,7 +2116,8 @@ contexts:
         3: punctuation.definition.string.end.vala
     - match: (')[^']+(')
       scope: invalid.illegal.not_a_char.vala
-    # numbers
+    # numbers (see tests/vala/programs/number_literals.vala)
+    # hex float: 0x1.fP1, 0x0.8P1, 0xab.cdp20, 0x47.11p9 (requires p/P exponent)
     - match: '(0[xX])([\h]+)(?:(\.)([\h]+))?((?i)[pP][-+]?\d+)({{float_suffix}})?'
       scope: constant.numeric.float.hexadecimal.vala
       captures:
@@ -2150,19 +2151,13 @@ contexts:
         1: constant.numeric.base.vala
         2: constant.numeric.value.vala
         3: constant.numeric.suffix.vala
-    # Vala template strings (@"...") — must precede plain "
-    - match: '@"'
-      scope: punctuation.definition.string.begin.vala
-      push: vala_template_string
-    # Verbatim template strings (@"""...""") with optional $ interpolation
-    - match: '@"""'
-      scope: punctuation.definition.string.begin.vala
-      push: vala_verbatim_template_string
-    # verbatim strings (""")
-    - match: '"""'
-      scope: punctuation.definition.string.begin.vala
-      push: vala_verbatim_string
-    - match: '(\d+)(\.)(\d*)({{dec_exponent}})?({{float_suffix}})?'
+    # decimal float: digits required after '.'; 1.e10 is invalid (Vala scanner)
+    - match: '(\d+)(\.)(?={{dec_exponent}})'
+      scope: invalid.illegal.numeric-float-decimal.vala
+      captures:
+        1: constant.numeric.integer.decimal.vala constant.numeric.value.vala
+        2: invalid.illegal.stray-punctuation.vala
+    - match: '(\d+)(\.)(\d+)({{dec_exponent}})?({{float_suffix}})?'
       scope: constant.numeric.float.decimal.vala
       captures:
         1: constant.numeric.value.vala
@@ -2181,6 +2176,18 @@ contexts:
       captures:
         1: constant.numeric.value.vala
         2: constant.numeric.suffix.vala
+    # Vala template strings (@"...") — must precede plain "
+    - match: '@"'
+      scope: punctuation.definition.string.begin.vala
+      push: vala_template_string
+    # Verbatim template strings (@"""...""") with optional $ interpolation
+    - match: '@"""'
+      scope: punctuation.definition.string.begin.vala
+      push: vala_verbatim_template_string
+    # verbatim strings (""")
+    - match: '"""'
+      scope: punctuation.definition.string.begin.vala
+      push: vala_verbatim_string
     # strings
     - match: '"'
       scope: punctuation.definition.string.begin.vala
