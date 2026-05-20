@@ -75,6 +75,13 @@ contexts:
       scope: keyword.other.genie
       push: suite_header
 
+  suite_header:
+    - match: $
+      pop: 2
+    - match: \S
+      scope: invalid.illegal.unexpected-after-init.genie
+      pop: true
+
   def_declaration:
     - match: \b(def)\s+({{name}})\s*(\()
       captures:
