@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[${1:int}[] ${2:array_name} = ${3:{}};]]></content>
+	<tabTrigger>arrfield</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Array field</description>
+</snippet>

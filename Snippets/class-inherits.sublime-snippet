@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[${1:public} class ${2:ClassName} : ${3:Parent}, ${4:Interface} {
+	$0
+}]]></content>
+	<tabTrigger>classimp</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Class with base and interface</description>
+</snippet>

@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[ensures (${1:condition});]]></content>
+	<tabTrigger>ensures</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Ensures contract</description>
+</snippet>

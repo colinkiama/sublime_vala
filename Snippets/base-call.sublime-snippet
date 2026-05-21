@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[base (${1:});]]></content>
+	<tabTrigger>basecall</tabTrigger>
+	<scope>source.vala</scope>
+	<description>base() call</description>
+</snippet>

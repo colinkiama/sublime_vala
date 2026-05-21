@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA["""${1:text}"""]]></content>
+	<tabTrigger>verbatim</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Verbatim string</description>
+</snippet>

@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[${1:Type}? ${2:name};]]></content>
+	<tabTrigger>nullable</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Nullable type variable</description>
+</snippet>

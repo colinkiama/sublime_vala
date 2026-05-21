@@ -1,0 +1,14 @@
+<snippet>
+	<content><![CDATA[switch (${1:input}) {
+	case ${2:my_case}:
+		$3
+		break;
+	default:
+		$4
+		break;
+}
+$0]]></content>
+	<tabTrigger>switchfull</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Switch with case and default</description>
+</snippet>

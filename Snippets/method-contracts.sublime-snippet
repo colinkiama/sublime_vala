@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[public ${1:ReturnType} ${2:method_name} (${3:}) throws ${4:Error}
+	requires (${5:condition})
+	ensures (${6:condition})
+{
+	$0
+}]]></content>
+	<tabTrigger>methodfull</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Method with requires/ensures contracts</description>
+</snippet>

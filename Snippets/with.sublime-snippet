@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[with (${1:expression}) {
+	$0
+}]]></content>
+	<tabTrigger>with</tabTrigger>
+	<scope>source.vala</scope>
+	<description>With block</description>
+</snippet>

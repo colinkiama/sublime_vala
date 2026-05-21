@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[public delegate ${1:T} ${2:DelegateName}<${3:T}> (${4:T} ${5:item});]]></content>
+	<tabTrigger>gendelegate</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Generic delegate</description>
+</snippet>

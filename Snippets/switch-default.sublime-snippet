@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[default:
+	$0
+	break;]]></content>
+	<tabTrigger>default</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Switch default case</description>
+</snippet>

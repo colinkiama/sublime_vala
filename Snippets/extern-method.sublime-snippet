@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[extern ${1:void} ${2:method_name} (${3:});]]></content>
+	<tabTrigger>extmet</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Extern method</description>
+</snippet>

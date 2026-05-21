@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+
+# valac generated C (when emitted beside sources or in cwd)
+*.vala.c
+*.vala.h

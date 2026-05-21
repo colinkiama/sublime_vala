@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[typeof (${1:Type})]]></content>
+	<tabTrigger>typeofx</tabTrigger>
+	<scope>source.vala</scope>
+	<description>typeof expression</description>
+</snippet>

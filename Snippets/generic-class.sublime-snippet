@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[public class ${1:ClassName}<${2:T}> {
+	$0
+}]]></content>
+	<tabTrigger>genclass</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Generic class</description>
+</snippet>

@@ -1,20 +1,11 @@
 # Vala Sublime Text Plugin
 
-## Goals
+## Features
 
-- [X] Improved syntax highlighting with the latest language changes, using [sublime-syntax definitions](https://www.sublimetext.com/docs/syntax.html)
-	- [ ] Genie syntax highlighting
-- [X] Completions with the latest language changes using [sublime-completions definitions](https://www.sublimetext.com/docs/completions.html)
-- [X] Updated code snippets using [sublime-snippet defintions](https://www.sublimetext.com/docs/completions.html#snippets). e.g `prop` should output `public string prop_name { get; set; }` and `propfull` should also `get` and `set` their own scope to define behaviours
+- **Syntax highlighting** for Vala (`.vala`) and Genie (`.gs`), aligned with current language features via [sublime-syntax](https://www.sublimetext.com/docs/syntax.html) (`Vala.sublime-syntax`, `Genie.sublime-syntax`)
+- **Completions** for Vala and Genie keywords and primitives via [sublime-completions](https://www.sublimetext.com/docs/completions.html) (`Vala.sublime-completions`, `Genie.sublime-completions`)
+- **Snippets** for common Vala patterns via [sublime-snippet](https://www.sublimetext.com/docs/completions.html#snippets) — e.g. `prop` expands to a property with `{ get; set; }`, and `propfull` adds scoped `get` / `set` blocks for custom behaviour
 
-## Syntax Highlighting Implementation Progress
-
-This uses the Sublime Text C# syntax definitions as a base so there are fewer things to implement then usual
-- [X] Documentation comments (Valadoc)
-- [X] Using statement list syntax
-- [X] Add tests for Generics
-- [X] CCode Attributes
-                                                                  
 ## Credits
 
 Sublime Text C# Syntax definitions: https://github.com/sublimehq/Packages/blob/master/C%23/C%23.sublime-syntax

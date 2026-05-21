@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[public owned ${1:string} ${2:property_name} { get; set; }]]></content>
+	<tabTrigger>propown</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Owned property</description>
+</snippet>

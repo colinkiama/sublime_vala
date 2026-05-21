@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[${1:public} delegate ${2:ReturnType} ${3:DelegateName} (${4:params});]]></content>
+	<tabTrigger>delegate</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Delegate declaration</description>
+</snippet>

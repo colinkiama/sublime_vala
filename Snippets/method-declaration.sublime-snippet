@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[public ${1:void} ${2:method_name} (${3:});]]></content>
+	<tabTrigger>metdecl</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Method declaration without body</description>
+</snippet>

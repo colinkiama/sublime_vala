@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[using (${1:var} ${2:resource} = ${3:expression}) {
+	$0
+}]]></content>
+	<tabTrigger>usingblock</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Using resource block</description>
+</snippet>

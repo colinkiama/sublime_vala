@@ -1,0 +1,719 @@
+%YAML 1.2
+---
+# Genie — vala/valageniescanner.vala, vala/valagenietokentype.vala
+# Standalone grammar (alternative Vala surface syntax); not embedded in Vala.sublime-syntax.
+
+name: Genie
+scope: source.genie
+file_extensions:
+  - gs
+
+variables:
+  bin_op: '(?:\+|->|-|\*|/|%|\|\||&&|\||&|\^|<<|>>|<=|>=|<|>|==|!=)'
+  unary_op: '(?:\+\+|--|-|~|!|&|\*)'
+  dec_exponent: '(?i)(?:[eE][-+]?(\d+))'
+  float_suffix: '[fFdD]'
+  integer_suffix: '(?i)(?:ULL|UL|U|LL|L)'
+  escaped_char: '\\(?:[bfnrtv"$\\0]|u\h{4}|x\h{1,2})'
+  visibility: \b(?:public|private|protected|internal)\b
+  ownership: \b(?:owned|unowned|weak)\b
+  base_type: (?:(?:void|bool|char|uchar|unichar|short|ushort|int|uint|long|ulong|int8|uint8|int16|uint16|int32|uint32|int64|uint64|size_t|ssize_t|float|double|string|object)\b)
+  generic_declaration: \s*(<[^(={};]*>)?\s*
+  # valageniescanner.vala get_identifier_or_keyword
+  genie_reserved: '(?:abstract|array|as|async|break|case|class|const|construct|continue|def|default|delegate|delete|dict|do|downto|dynamic|else|enum|ensures|event|except|exception|extern|false|final|finally|for|get|if|implements|init|inline|interface|internal|in|isa|list|lock|namespace|new|null|of|out|override|owned|params|pass|print|private|prop|protected|public|raise|raises|readonly|ref|requires|return|sealed|self|set|sizeof|static|struct|super|to|true|try|typeof|unowned|uses|var|virtual|void|volatile|weak|when|while|yield)'
+  genie_operator_word: '(?:and|or|not)\b'
+  name: '(?:@{{genie_reserved}}|@{{base_type}}|@var|@?{{name_normal}})'
+  type_name: '(?:@{{genie_reserved}}|@{{base_type}}|@?\p{Lu}(?:{{other_char}})*)'
+  namespaced_name: (?:(?:{{name}}{{generic_declaration}}\s*\.\s*)*{{name}}{{generic_declaration}})
+  namespaced_type_name: (?:(?:{{type_name}}{{generic_declaration}}\s*\.\s*)+{{type_name}}{{generic_declaration}})
+  start_char: '(?:[_\p{L}])'
+  other_char: '(?:[_0-9\p{L}])'
+  name_normal: '{{start_char}}{{other_char}}*\b'
+  identifier: \b[[:alpha:]_](?:[[:alnum:]_])*\b
+
+contexts:
+  prototype:
+    - include: comments
+    - include: preprocessor
+    - include: merge-conflict-markers
+
+  comments:
+    - include: line_comments
+    - include: block_comments
+
+  line_comments:
+    - match: //
+      scope: punctuation.definition.comment.genie
+      push:
+        - meta_scope: comment.line.genie
+        - match: $\n?
+          pop: true
+
+  block_comments:
+    - match: /[*]
+      scope: punctuation.definition.comment.begin.genie
+      push:
+        - meta_scope: comment.block.genie
+        - match: '[*]/'
+          scope: punctuation.definition.comment.end.genie
+          pop: true
+        - include: merge-conflict-markers
+
+  merge-conflict-markers:
+    - match: ^(<{7})(?:\s+(\S.*?))?$\n?
+      scope: meta.block.conflict.begin.diff
+      captures:
+        1: punctuation.section.block.begin.diff
+        2: entity.name.section.diff
+    - match: ^(>{7})(?:\s+(\S.*?))?$\n?
+      scope: meta.block.conflict.end.diff
+      captures:
+        1: punctuation.section.block.end.diff
+        2: entity.name.section.diff
+    - match: ^(\|{7}|={7})(?:\s+(\S.*?))?$\n?
+      scope: meta.block.conflict.separator.diff
+      captures:
+        1: punctuation.section.block.diff
+        2: entity.name.section.diff
+
+  preprocessor:
+    - match: '^\s*(#)\s*\b(if)\b'
+      captures:
+        1: punctuation.definition.preprocessor.genie
+        2: keyword.control.preprocessor.if.genie
+      push: preprocessor_expression_line
+    - match: '^\s*(#)\s*\b(elif)\b'
+      captures:
+        1: punctuation.definition.preprocessor.genie
+        2: keyword.control.preprocessor.elif.genie
+      push: preprocessor_expression_line
+    - match: '^\s*(#)\s*\b(else)\b'
+      captures:
+        1: punctuation.definition.preprocessor.genie
+        2: keyword.control.preprocessor.else.genie
+    - match: '^\s*(#)\s*\b(endif)\b'
+      captures:
+        1: punctuation.definition.preprocessor.genie
+        2: keyword.control.preprocessor.endif.genie
+
+  preprocessor_expression_line:
+    - meta_include_prototype: false
+    - meta_scope: meta.preprocessor.genie
+    - include: line_comments
+    - match: $\n?
+      pop: true
+    - match: '\|\|'
+      scope: keyword.operator.preprocessor.genie
+    - match: '&&'
+      scope: keyword.operator.preprocessor.genie
+    - match: '==|!='
+      scope: keyword.operator.preprocessor.genie
+    - match: '!'
+      scope: keyword.operator.preprocessor.negation.genie
+    - match: '[()]'
+      scope: punctuation.section.preprocessor.genie
+    - match: '\b(true|false)\b'
+      scope: constant.language.preprocessor.genie
+    - match: '\b(POSIX|GOBJECT)\b'
+      scope: constant.language.preprocessor.builtin.genie
+    - match: '\bVALA_\d+_\d+\b'
+      scope: constant.language.preprocessor.builtin.genie
+    - match: '(?!{{genie_reserved}}\b){{identifier}}'
+      scope: constant.other.preprocessor.symbol.genie
+    - match: '\s+'
+
+  literals:
+    - match: \b(true|false|null)\b
+      scope: constant.language.genie
+    - match: '''\'''
+      scope: invalid.illegal.lone-escape.genie
+    - match: (')({{escaped_char}})(')
+      scope: meta.string.genie string.quoted.single.genie
+      captures:
+        1: punctuation.definition.string.begin.genie
+        2: constant.character.escape.genie
+        3: punctuation.definition.string.end.genie
+    - match: (')(.)(')
+      scope: meta.string.genie string.quoted.single.genie
+      captures:
+        1: punctuation.definition.string.begin.genie
+        2: constant.character.literal.genie
+        3: punctuation.definition.string.end.genie
+    - match: (')[^']+(')
+      scope: invalid.illegal.not_a_char.genie
+    - match: '(0[xX])([\h]+)(?:(\.)([\h]+))?((?i)[pP][-+]?\d+)({{float_suffix}})?'
+      scope: constant.numeric.float.hexadecimal.genie
+      captures:
+        1: constant.numeric.base.genie
+        2: constant.numeric.value.genie
+        3: punctuation.separator.decimal.genie
+        4: constant.numeric.value.genie
+        5: constant.numeric.value.exponent.genie
+        6: constant.numeric.suffix.genie
+    - match: '(0[xX])([\h]+)({{integer_suffix}})?'
+      scope: constant.numeric.integer.hexadecimal.genie
+      captures:
+        1: constant.numeric.base.genie
+        2: constant.numeric.value.genie
+        3: constant.numeric.suffix.genie
+    - match: '(0[bB])([01]+)({{integer_suffix}})?'
+      scope: constant.numeric.integer.binary.genie
+      captures:
+        1: constant.numeric.base.genie
+        2: constant.numeric.value.genie
+        3: constant.numeric.suffix.genie
+    - match: '(0[oO])([0-7]+)({{integer_suffix}})?'
+      scope: constant.numeric.integer.octal.genie
+      captures:
+        1: constant.numeric.base.genie
+        2: constant.numeric.value.genie
+        3: constant.numeric.suffix.genie
+    - match: '(0)([0-7]+)({{integer_suffix}})?'
+      scope: constant.numeric.integer.octal.genie
+      captures:
+        1: constant.numeric.base.genie
+        2: constant.numeric.value.genie
+        3: constant.numeric.suffix.genie
+    - match: '(\d+\.(?![0-9]){{dec_exponent}})'
+      scope: invalid.illegal.numeric-float-decimal.genie
+    - match: '(\d+)(\.)(\d+)({{dec_exponent}})?({{float_suffix}})?'
+      scope: constant.numeric.float.decimal.genie
+      captures:
+        1: constant.numeric.value.genie
+        2: punctuation.separator.decimal.genie
+        3: constant.numeric.value.genie
+        4: constant.numeric.value.exponent.genie
+        5: constant.numeric.suffix.genie
+    - match: '(\d+)({{dec_exponent}})({{float_suffix}})?'
+      scope: constant.numeric.float.decimal.genie
+      captures:
+        1: constant.numeric.value.genie
+        2: constant.numeric.value.exponent.genie
+        3: constant.numeric.suffix.genie
+    - match: '(0|[1-9]\d*)({{integer_suffix}})?'
+      scope: constant.numeric.integer.decimal.genie
+      captures:
+        1: constant.numeric.value.genie
+        2: constant.numeric.suffix.genie
+    - match: '@"""'
+      scope: punctuation.definition.string.begin.genie
+      push: genie_verbatim_template_string
+    - match: '@"'
+      scope: punctuation.definition.string.begin.genie
+      push: genie_template_string
+    - match: '"""'
+      scope: punctuation.definition.string.begin.genie
+      push: genie_verbatim_string
+    - match: '"'
+      scope: punctuation.definition.string.begin.genie
+      push: genie_string
+
+  genie_string:
+    - meta_include_prototype: false
+    - meta_scope: string.quoted.double.genie
+    - include: string_escaped
+    - match: '"'
+      scope: punctuation.definition.string.end.genie
+      pop: true
+    - match: $\n?
+      scope: invalid.illegal.unclosed-string.genie
+      pop: true
+
+  genie_verbatim_string:
+    - meta_include_prototype: false
+    - meta_scope: string.quoted.double.raw.genie
+    - match: '"""'
+      scope: punctuation.definition.string.end.genie
+      pop: true
+
+  genie_verbatim_template_string:
+    - meta_include_prototype: false
+    - meta_scope: meta.string.genie string.quoted.double.raw.genie
+    - match: '"""'
+      scope: punctuation.definition.string.end.genie
+      pop: true
+    - match: '\$\$'
+      scope: constant.character.escape.genie
+    - match: '\$\('
+      scope: punctuation.section.interpolation.begin.genie
+      embed: scope:source.genie
+      embed_scope: source.genie.embedded
+      escape: '\)'
+      escape_captures:
+        0: punctuation.section.interpolation.end.genie
+    - match: '\$'
+      scope: punctuation.definition.template-expression.begin.genie
+      push:
+        - meta_scope: meta.template-expression.genie
+        - clear_scopes: 2
+        - match: '[[:alpha:]_][[:alnum:]_]*'
+          scope: variable.other.genie
+          pop: true
+        - match: ''
+          scope: invalid.illegal.genie
+          pop: true
+    - match: '[^"$]+'
+
+  genie_template_string:
+    - meta_include_prototype: false
+    - meta_scope: meta.string.genie string.quoted.double.genie
+    - match: '"'
+      scope: punctuation.definition.string.end.genie
+      pop: true
+    - match: '\$\$'
+      scope: constant.character.escape.genie
+    - match: '\$\('
+      scope: punctuation.section.interpolation.begin.genie
+      embed: scope:source.genie
+      embed_scope: source.genie.embedded
+      escape: '\)'
+      escape_captures:
+        0: punctuation.section.interpolation.end.genie
+    - match: '\$'
+      scope: punctuation.definition.template-expression.begin.genie
+      push:
+        - meta_scope: meta.template-expression.genie
+        - clear_scopes: 2
+        - match: '[[:alpha:]_][[:alnum:]_]*'
+          scope: variable.other.genie
+          pop: true
+        - match: ''
+          scope: invalid.illegal.genie
+          pop: true
+    - include: string_escaped
+    - match: $\n?
+      scope: invalid.illegal.unclosed-string.genie
+      pop: true
+
+  string_escaped:
+    - match: '{{escaped_char}}'
+      scope: constant.character.escape.genie
+    - match: \\
+      scope: invalid.illegal.lone-escape.genie
+
+  syntax_test_assertion_line:
+    - match: ^([ \t]*)//(?=\s*(?:\^|<-|@))
+      captures:
+        1: meta.indentation.genie
+      push:
+        - meta_scope: comment.line.syntax-test-assertion.genie
+        - match: $
+          pop: true
+
+  main:
+    # syntax_test_*.gs: assertion lines may share the code line's leading spaces
+    - include: syntax_test_assertion_line
+    - include: comments
+    - include: preprocessor
+    - match: ^[ \t]*$
+    - match: ^([ \t]*)(?=[^ \t#])
+      captures:
+        1: meta.indentation.genie
+      push: line
+
+  line:
+    - match: $
+      pop: true
+    - include: statement
+    - match: \S
+
+  statement:
+    - include: attribute_declaration
+    - include: interface_declaration
+    - include: enum_declaration
+    - include: delegate_declaration
+    - include: class_declaration
+    - include: namespace_declaration
+    - include: def_declaration
+    - include: init_declaration
+    - include: property_declaration
+    - include: assignment_statement
+    - include: uses_declaration
+    - include: keywords
+    - include: literals
+    - include: expressions
+
+  property_declaration:
+    - match: \b(prop)\b\s+(readonly)\s+({{name}})\s*(:)\s*({{base_type}}|{{type_name}})
+      captures:
+        1: storage.type.property.genie
+        2: storage.modifier.genie
+        3: variable.other.member.genie
+        4: punctuation.separator.type.genie
+        5: storage.type.genie
+    - match: \b(prop)\b\s+({{name}})\s*(:)\s*({{base_type}}|{{type_name}})
+      captures:
+        1: storage.type.property.genie
+        2: variable.other.member.genie
+        3: punctuation.separator.type.genie
+        4: storage.type.genie
+
+  assignment_statement:
+    - match: '({{name}})\s*(:)\s*({{base_type}})\s*(=)\s*'
+      captures:
+        1: variable.other.genie
+        2: punctuation.separator.type.genie
+        3: storage.type.genie
+        4: keyword.operator.assignment.genie
+      push: expression_remainder
+    - match: '({{name}})\s*(=)\s*'
+      captures:
+        1: variable.other.genie
+        2: keyword.operator.assignment.genie
+      push: expression_remainder
+
+  expression_remainder:
+    - include: literals
+    - match: /(?=[^/\s])
+      scope: punctuation.definition.regex.begin.genie
+      push: regex_literal
+    - include: expressions
+    - match: $
+      pop: 2
+
+  init_declaration:
+    - match: \b(init)\b
+      scope: keyword.other.genie
+      push: suite_header
+
+  suite_header:
+    - match: $
+      pop: 2
+    - match: \S
+      scope: invalid.illegal.unexpected-after-init.genie
+      pop: true
+
+  def_declaration:
+    - match: \b(def)\s+({{name}})\s*(\()
+      captures:
+        1: storage.type.function.genie
+        2: entity.name.function.genie
+        3: meta.group.genie punctuation.section.group.begin.genie
+      push:
+        - meta_scope: meta.function.genie
+        - match: \s+
+        - include: parameter_list
+        - match: \)
+          scope: meta.function.genie meta.group.genie punctuation.section.group.end.genie
+          set: def_signature_tail
+
+  def_signature_tail:
+    - match: ':'
+      scope: punctuation.separator.type.genie
+      push: def_return_type
+    - include: raises_clause
+    - match: $
+      pop: true
+
+  def_return_type:
+    - include: type_annotation
+    - match: $
+      pop: true
+
+  raises_clause:
+    - match: \b(raises)\b
+      scope: keyword.other.genie
+    - match: '{{type_name}}'
+      scope: support.type.genie
+    - match: ','
+      scope: punctuation.separator.genie
+
+  class_declaration:
+    - match: '(?=(?:{{visibility}}\s*)?(?:(?:abstract|sealed)\s+)*\bclass\b)'
+      push: class
+
+  class:
+    - match: \b(class)\b
+      scope: storage.type.class.genie
+    - match: '{{type_name}}'
+      scope: entity.name.type.class.genie
+    - match: ':'
+      scope: punctuation.separator.class.inheritance.genie
+    - match: '{{type_name}}'
+      scope: entity.name.type.class.genie
+    - match: $
+      pop: true
+
+  namespace_declaration:
+    - match: \b(namespace)\b
+      scope: storage.type.namespace.genie
+    - match: '{{type_name}}'
+      scope: entity.name.namespace.genie
+    - match: $
+      pop: true
+
+  attribute_declaration:
+    # Declarations only (e.g. [Flags]); exclude "…" and numeric indexers like [0] or ["one"]
+    - match: '\[([^"\d\]][^\]]*)\]'
+      scope: meta.attribute.genie
+      captures:
+        1: entity.other.attribute-name.genie
+
+  interface_declaration:
+    - match: '(?=\binterface\b)'
+      push: interface
+
+  interface:
+    - match: \b(interface)\b
+      scope: storage.type.interface.genie
+    - match: '{{type_name}}'
+      scope: entity.name.type.interface.genie
+    - match: $
+      pop: true
+
+  enum_declaration:
+    - match: '(?=\benum\b)'
+      push: enum
+
+  enum:
+    - match: \b(enum)\b
+      scope: storage.type.enum.genie
+    - match: '{{type_name}}'
+      scope: entity.name.type.enum.genie
+    - match: $
+      pop: true
+
+  delegate_declaration:
+    - match: '(?=\bdelegate\b)'
+      push: delegate_signature
+
+  delegate_signature:
+    - match: '\b(delegate)\s+({{type_name}})\s*(\()'
+      captures:
+        1: storage.type.delegate.genie
+        2: entity.name.function.delegate.genie
+        3: meta.delegate.genie punctuation.section.group.begin.genie
+      set: delegate_parameters
+
+  delegate_parameters:
+    - meta_scope: meta.delegate.genie
+    - match: \s+
+    - include: parameter_list
+    - match: \)
+      scope: meta.delegate.genie punctuation.section.group.end.genie
+      set: delegate_return_type
+
+  delegate_return_type:
+    - match: ':'
+      scope: punctuation.separator.type.genie
+      push: type_annotation
+    - match: $
+      pop: true
+
+  uses_declaration:
+    - match: \b(uses)\b\s+
+      scope: keyword.control.import.genie
+      push: uses_path
+
+  uses_path:
+    - match: '{{namespaced_name}}'
+      scope: meta.path.genie entity.name.namespace.genie
+    - match: $
+      pop: 2
+
+  parameter_list:
+    - match: '{{name}}(?=\s*:)'
+      scope: variable.parameter.genie
+    - match: ':'
+      scope: punctuation.separator.type.genie
+      push: type_annotation
+    - match: '{{name}}'
+      scope: variable.parameter.genie
+    - match: ','
+      scope: punctuation.separator.parameter.genie
+
+  collection_type_arguments:
+    - match: '{{base_type}}'
+      scope: storage.type.genie
+    - match: '{{type_name}}'
+      scope: support.type.genie
+    - match: ','
+      scope: punctuation.separator.genie
+    - match: (?=\s*[\[;,=)\]\}]|$)
+      pop: true
+
+  type_annotation:
+    - match: ':'
+      scope: punctuation.separator.type.genie
+    - match: '{{base_type}}'
+      scope: storage.type.genie
+      pop: true
+    - match: '{{type_name}}'
+      scope: support.type.genie
+      pop: true
+    - match: '\?'
+      scope: storage.modifier.nullable.genie
+      pop: true
+    - match: (?=\s*[),]|$)
+      pop: true
+
+  keywords:
+    - match: \bis\s+not\b
+      scope: keyword.operator.relational.genie
+    - match: \b(is)\b
+      scope: keyword.operator.relational.genie
+    - match: \b(isa)\b
+      scope: keyword.operator.type.genie
+    - match: \b(case)\b
+      scope: keyword.control.case.genie
+    - match: \b(when)\b
+      scope: keyword.control.when.genie
+    - match: \b(default)\b
+      scope: keyword.control.default.genie
+    - match: \b(try|except|raise|finally)\b
+      scope: keyword.control.exception.genie
+    - match: \b(break|continue|return|pass)\b
+      scope: keyword.control.flow.genie
+    - match: \b(async|yield)\b
+      scope: keyword.control.async.genie
+    - match: \b(assert(?:_not_reached)?)\s*(\()
+      scope: meta.function-call.genie
+      captures:
+        1: entity.name.function.genie
+        2: meta.group.genie punctuation.section.group.begin.genie
+      push:
+        - meta_scope: meta.function-call.genie
+        - match: \)
+          scope: punctuation.section.group.end.genie
+          pop: true
+        - include: expressions
+    - match: \b(print)\s*(\()
+      scope: meta.function-call.genie
+      captures:
+        1: support.function.builtin.genie
+        2: meta.group.genie punctuation.section.group.begin.genie
+      push:
+        - meta_scope: meta.function-call.genie
+        - match: \)
+          scope: punctuation.section.group.end.genie
+          pop: true
+        - include: expressions
+    - match: \b(print)\b
+      scope: support.function.builtin.genie
+    - match: \b(downto)\b
+      scope: keyword.control.loop.genie
+    - match: \bto\b(?=\s*[\d\w])
+      scope: keyword.control.loop.genie
+    - match: \b(list|dict|array)\s+(of)\b
+      captures:
+        1: storage.type.collection.genie
+        2: keyword.other.of.genie
+      push: collection_type_arguments
+    - match: \b(prop)\b
+      scope: storage.type.property.genie
+    - match: \b(get|set|construct)\b
+      scope: storage.type.accessor.genie
+    - match: \b({{genie_reserved}})\b
+      scope: keyword.other.genie
+    - match: \b({{genie_operator_word}})\b
+      scope: keyword.operator.word.genie
+    - match: \b(self|super)\b
+      scope: variable.language.genie
+
+  expressions:
+    - include: literals
+    - include: keywords
+    - match: '((?!{{genie_reserved}}\b){{name}})\s*(\()'
+      scope: meta.function-call.genie
+      captures:
+        1: entity.name.function.genie
+        2: meta.group.genie punctuation.section.group.begin.genie
+      push:
+        - meta_scope: meta.function-call.genie
+        - match: \)
+          scope: punctuation.section.group.end.genie
+          pop: true
+        - include: expressions
+    - match: '((?!{{genie_reserved}}\b){{name}})(\s*\.\s*)((?!{{genie_reserved}}\b){{name}})\s*(\()'
+      scope: meta.function-call.genie
+      captures:
+        1: variable.other.genie
+        2: punctuation.accessor.dot.genie
+        3: entity.name.function.genie
+        4: meta.group.genie punctuation.section.group.begin.genie
+      push:
+        - meta_scope: meta.function-call.genie
+        - match: \)
+          scope: punctuation.section.group.end.genie
+          pop: true
+        - include: expressions
+    - match: '({{type_name}})(\s*\.\s*)((?!{{genie_reserved}}\b){{name}})\s*(\()'
+      scope: meta.function-call.genie
+      captures:
+        1: support.type.genie
+        2: punctuation.accessor.dot.genie
+        3: entity.name.function.genie
+        4: meta.group.genie punctuation.section.group.begin.genie
+      push:
+        - meta_scope: meta.function-call.genie
+        - match: \)
+          scope: punctuation.section.group.end.genie
+          pop: true
+        - include: expressions
+    - match: '(\.)((?!{{genie_reserved}}\b){{name}})'
+      captures:
+        1: punctuation.accessor.dot.genie
+        2: variable.other.member.genie
+    - match: /(?=[^/\s])
+      scope: punctuation.definition.regex.begin.genie
+      push: regex_literal
+    - match: '{{bin_op}}'
+      scope: keyword.operator.genie
+    - match: '{{unary_op}}'
+      scope: keyword.operator.genie
+    - match: '='
+      scope: keyword.operator.assignment.genie
+    - match: '=>'
+      scope: storage.type.function.lambda.genie
+    - match: '{{name}}'
+      scope: variable.other.genie
+    - match: \(
+      scope: punctuation.section.group.begin.genie
+    - match: \)
+      scope: punctuation.section.group.end.genie
+    - match: \[
+      scope: punctuation.section.brackets.begin.genie
+      push: bracket_index
+    - match: \]
+      scope: punctuation.section.brackets.end.genie
+
+  bracket_index:
+    - meta_scope: meta.brackets.genie
+    - match: \]
+      scope: punctuation.section.brackets.end.genie
+      pop: true
+    - include: literals
+    - include: expressions
+    - match: \{
+      scope: punctuation.section.braces.begin.genie
+    - match: \}
+      scope: punctuation.section.braces.end.genie
+    - match: ','
+      scope: punctuation.separator.genie
+    - match: ';'
+      scope: punctuation.terminator.statement.genie
+
+  regex_literal:
+    - meta_include_prototype: false
+    - match: '(?=/)'
+      set: regex_literal_end
+    - meta_content_scope: meta.string.regexp.genie string.regexp.genie
+    - match: $\n?
+      pop: true
+    - match: '\\.'
+      scope: constant.character.escape.genie
+    - match: '\('
+      scope: punctuation.section.group.begin.genie
+    - match: '\)'
+      scope: punctuation.section.group.end.genie
+    - match: '[+?*]'
+      scope: keyword.operator.genie
+    - match: '[^/\n()+*?\\]+'
+
+  regex_literal_end:
+    - meta_include_prototype: false
+    - match: '(/)([imsxo]*)'
+      scope: punctuation.definition.regex.end.genie
+      captures:
+        2: keyword.other.genie
+      pop: true

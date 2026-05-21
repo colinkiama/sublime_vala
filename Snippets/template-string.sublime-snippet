@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[@"${1:text}"]]></content>
+	<tabTrigger>tpl</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Template string</description>
+</snippet>

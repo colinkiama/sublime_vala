@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[using ${1:Alias} = ${2:Full.Type};]]></content>
+	<tabTrigger>usealias</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Using type alias</description>
+</snippet>

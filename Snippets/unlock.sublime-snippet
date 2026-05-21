@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[unlock (${1:resource});]]></content>
+	<tabTrigger>unlock</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Unlock statement</description>
+</snippet>

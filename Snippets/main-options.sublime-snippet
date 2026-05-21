@@ -1,0 +1,19 @@
+<snippet>
+	<content><![CDATA[const OptionEntry[] options = {
+	{ "${1:option}", 0, OptionArg.NONE, null, null, "${2:Description}", null },
+	{ null }
+};
+
+public static int main (string[] args) {
+	var ctx = new OptionContext ("${3:Usage}");
+	ctx.set_help_enabled (true);
+	ctx.add_main_entries (options, null);
+	ctx.parse (ref args);
+
+	$0
+	return 0;
+}]]></content>
+	<tabTrigger>mainopts</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Main with OptionContext</description>
+</snippet>

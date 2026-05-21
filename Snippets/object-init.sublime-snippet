@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[Object (
+	${1:property}: ${2:value},
+)]]></content>
+	<tabTrigger>objectinit</tabTrigger>
+	<scope>source.vala</scope>
+	<description>GObject Object() initializer</description>
+</snippet>

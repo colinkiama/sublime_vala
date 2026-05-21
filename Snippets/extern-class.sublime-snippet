@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[${1:public} extern class ${2:ClassName};]]></content>
+	<tabTrigger>extclass</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Extern class</description>
+</snippet>

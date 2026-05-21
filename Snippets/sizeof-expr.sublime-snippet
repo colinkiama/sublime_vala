@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[sizeof (${1:Type})]]></content>
+	<tabTrigger>sizeofx</tabTrigger>
+	<scope>source.vala</scope>
+	<description>sizeof expression</description>
+</snippet>

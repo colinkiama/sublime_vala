@@ -1,0 +1,6 @@
+<snippet>
+	<content><![CDATA[@"$(${1:expression})"]]></content>
+	<tabTrigger>tplexpr</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Template string expression</description>
+</snippet>

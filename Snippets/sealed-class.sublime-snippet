@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[${1:public} sealed class ${2:ClassName} : ${3:Object} {
+	$0
+}]]></content>
+	<tabTrigger>sealedc</tabTrigger>
+	<scope>source.vala</scope>
+	<description>Sealed class</description>
+</snippet>
