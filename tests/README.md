@@ -158,10 +158,12 @@ That satisfies the whitespace rule (assertion line has no extra indent vs. a non
 | Area | Examples in repo | Suggested assertion |
 |------|------------------|---------------------|
 | Keywords / control flow | `syntax_test_control_flow`, `syntax_test_case_when.gs` | `^` or Genie `<-` on first char |
-| Declarations | `syntax_test_class`, `syntax_test_def.gs` | `^` per token; include `meta.*` on Vala |
+| Declarations | `syntax_test_class`, `syntax_test_def.gs`, `syntax_test_class_method.gs`, `syntax_test_delegate.gs` | `^` per token; `def` signatures, class methods, delegates |
+| Function calls | `syntax_test_function_calls.gs` | `^` on `entity.name.function.genie`, qualified `Type.method()` |
 | Types / ownership | `syntax_test_ownership`, `syntax_test_nullable` | `^` on modifiers and type names |
 | Literals | `syntax_test_numbers`, `syntax_test_strings`, `syntax_test_character_literals.gs` | `^` on base/value/suffix; Genie `\x`/`\u` char escapes |
-| Strings / templates / regex | `syntax_test_strings` | `^`; use `- comment` if `//` appears inside a string |
+| Strings / templates | `syntax_test_strings.gs` | `<-` on quotes, escapes, `$` templates |
+| Regex literals | `syntax_test_regex.gs` | `<-` on `/…/` delimiters, `imsxo` flags; pattern body uses embedded `source.regexp` (groups, quantifiers, escapes) |
 | Operators | `syntax_test_binary`, `syntax_test_operators.gs` | `^` on operator tokens |
 | Preprocessor | `syntax_test_conditional_compilation` | `^` in `meta.preprocessor` regions |
 | Comments / docs | `syntax_test_block`, `syntax_test_documentation` | `^` / `<-` on `punctuation.definition.comment.*` |

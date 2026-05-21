@@ -20,7 +20,7 @@ variables:
   base_type: (?:(?:void|bool|char|uchar|unichar|short|ushort|int|uint|long|ulong|int8|uint8|int16|uint16|int32|uint32|int64|uint64|size_t|ssize_t|float|double|string|object)\b)
   generic_declaration: \s*(<[^(={};]*>)?\s*
   # valageniescanner.vala get_identifier_or_keyword
-  genie_reserved: '(?:abstract|array|as|assert|async|break|case|class|const|construct|continue|def|default|delegate|delete|dict|do|downto|dynamic|else|enum|ensures|event|except|exception|extern|false|final|finally|for|get|if|implements|init|inline|interface|internal|in|isa|list|lock|namespace|new|null|of|out|override|owned|params|pass|print|private|prop|protected|public|raise|raises|readonly|ref|requires|return|sealed|self|set|sizeof|static|struct|super|to|true|try|typeof|unowned|uses|var|virtual|void|volatile|weak|when|while|yield)'
+  genie_reserved: '(?:abstract|array|as|async|break|case|class|const|construct|continue|def|default|delegate|delete|dict|do|downto|dynamic|else|enum|ensures|event|except|exception|extern|false|final|finally|for|get|if|implements|init|inline|interface|internal|in|isa|list|lock|namespace|new|null|of|out|override|owned|params|pass|print|private|prop|protected|public|raise|raises|readonly|ref|requires|return|sealed|self|set|sizeof|static|struct|super|to|true|try|typeof|unowned|uses|var|virtual|void|volatile|weak|when|while|yield)'
   genie_operator_word: '(?:and|or|not)\b'
   name: '(?:@{{genie_reserved}}|@{{base_type}}|@var|@?{{name_normal}})'
   type_name: '(?:@{{genie_reserved}}|@{{base_type}}|@?\p{Lu}(?:{{other_char}})*)'
@@ -334,6 +334,13 @@ contexts:
     - include: expressions
 
   property_declaration:
+    - match: \b(prop)\b\s+(readonly)\s+({{name}})\s*(:)\s*({{base_type}}|{{type_name}})
+      captures:
+        1: storage.type.property.genie
+        2: storage.modifier.genie
+        3: variable.other.member.genie
+        4: punctuation.separator.type.genie
+        5: storage.type.genie
     - match: \b(prop)\b\s+({{name}})\s*(:)\s*({{base_type}}|{{type_name}})
       captures:
         1: storage.type.property.genie
@@ -385,6 +392,7 @@ contexts:
         3: meta.group.genie punctuation.section.group.begin.genie
       push:
         - meta_scope: meta.function.genie
+        - match: \s+
         - include: parameter_list
         - match: \)
           scope: meta.function.genie meta.group.genie punctuation.section.group.end.genie
@@ -436,7 +444,8 @@ contexts:
       pop: true
 
   attribute_declaration:
-    - match: '\[([^\]]+)\]'
+    # Declarations only (e.g. [Flags]); exclude "…" and numeric indexers like [0] or ["one"]
+    - match: '\[([^"\d\]][^\]]*)\]'
       scope: meta.attribute.genie
       captures:
         1: entity.other.attribute-name.genie
@@ -479,9 +488,17 @@ contexts:
 
   delegate_parameters:
     - meta_scope: meta.delegate.genie
+    - match: \s+
     - include: parameter_list
     - match: \)
       scope: meta.delegate.genie punctuation.section.group.end.genie
+      set: delegate_return_type
+
+  delegate_return_type:
+    - match: ':'
+      scope: punctuation.separator.type.genie
+      push: type_annotation
+    - match: $
       pop: true
 
   uses_declaration:
@@ -506,6 +523,16 @@ contexts:
     - match: ','
       scope: punctuation.separator.parameter.genie
 
+  collection_type_arguments:
+    - match: '{{base_type}}'
+      scope: storage.type.genie
+    - match: '{{type_name}}'
+      scope: support.type.genie
+    - match: ','
+      scope: punctuation.separator.genie
+    - match: (?=\s*[\[;,=)\]\}]|$)
+      pop: true
+
   type_annotation:
     - match: ':'
       scope: punctuation.separator.type.genie
@@ -518,7 +545,7 @@ contexts:
     - match: '\?'
       scope: storage.modifier.nullable.genie
       pop: true
-    - match: (?=[),]|$)
+    - match: (?=\s*[),]|$)
       pop: true
 
   keywords:
@@ -540,6 +567,17 @@ contexts:
       scope: keyword.control.flow.genie
     - match: \b(async|yield)\b
       scope: keyword.control.async.genie
+    - match: \b(assert(?:_not_reached)?)\s*(\()
+      scope: meta.function-call.genie
+      captures:
+        1: entity.name.function.genie
+        2: meta.group.genie punctuation.section.group.begin.genie
+      push:
+        - meta_scope: meta.function-call.genie
+        - match: \)
+          scope: punctuation.section.group.end.genie
+          pop: true
+        - include: expressions
     - match: \b(print)\s*(\()
       scope: meta.function-call.genie
       captures:
@@ -561,6 +599,7 @@ contexts:
       captures:
         1: storage.type.collection.genie
         2: keyword.other.of.genie
+      push: collection_type_arguments
     - match: \b(prop)\b
       scope: storage.type.property.genie
     - match: \b(get|set|construct)\b
@@ -575,6 +614,30 @@ contexts:
   expressions:
     - include: literals
     - include: keywords
+    - match: '((?!{{genie_reserved}}\b){{name}})\s*(\()'
+      scope: meta.function-call.genie
+      captures:
+        1: entity.name.function.genie
+        2: meta.group.genie punctuation.section.group.begin.genie
+      push:
+        - meta_scope: meta.function-call.genie
+        - match: \)
+          scope: punctuation.section.group.end.genie
+          pop: true
+        - include: expressions
+    - match: '((?!{{genie_reserved}}\b){{name}})(\s*\.\s*)((?!{{genie_reserved}}\b){{name}})\s*(\()'
+      scope: meta.function-call.genie
+      captures:
+        1: variable.other.genie
+        2: punctuation.accessor.dot.genie
+        3: entity.name.function.genie
+        4: meta.group.genie punctuation.section.group.begin.genie
+      push:
+        - meta_scope: meta.function-call.genie
+        - match: \)
+          scope: punctuation.section.group.end.genie
+          pop: true
+        - include: expressions
     - match: '({{type_name}})(\s*\.\s*)((?!{{genie_reserved}}\b){{name}})\s*(\()'
       scope: meta.function-call.genie
       captures:
@@ -608,8 +671,17 @@ contexts:
       scope: punctuation.section.group.end.genie
     - match: \[
       scope: punctuation.section.brackets.begin.genie
+      push: bracket_index
     - match: \]
       scope: punctuation.section.brackets.end.genie
+
+  bracket_index:
+    - meta_scope: meta.brackets.genie
+    - match: \]
+      scope: punctuation.section.brackets.end.genie
+      pop: true
+    - include: literals
+    - include: expressions
     - match: \{
       scope: punctuation.section.braces.begin.genie
     - match: \}
@@ -624,12 +696,12 @@ contexts:
 
   regex_literal:
     - meta_include_prototype: false
-    - meta_scope: string.regexp.genie
+    - meta_scope: meta.string.regexp.genie string.regexp.genie
     - match: '(/)([imsxo]*)'
       scope: punctuation.definition.regex.end.genie
       captures:
         2: keyword.other.genie
       pop: true
-    - match: '\\.'
-      scope: constant.character.escape.genie
-    - match: '[^/\n]+'
+    - match: '(?=/)'
+      pop: true
+    - include: scope:source.regexp

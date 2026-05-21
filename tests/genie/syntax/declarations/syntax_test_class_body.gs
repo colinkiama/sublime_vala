@@ -16,3 +16,10 @@ class Foo:Object
     // <- keyword.other.genie
     event clicked()
     // <- keyword.other.genie
+
+	prop readonly bar:string
+	// <- storage.type.property.genie
+	     // <- storage.modifier.genie
+	              // <- variable.other.member.genie
+	                 // <- punctuation.separator.type.genie
+	                  // <- storage.type.genie
