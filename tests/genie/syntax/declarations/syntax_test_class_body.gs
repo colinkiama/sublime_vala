@@ -28,4 +28,4 @@ class Foo:Object
 		get
 		// <- storage.type.accessor.genie
 			return "bar"
-			// <- keyword.control.return.genie
+			// <- keyword.control.flow.genie
