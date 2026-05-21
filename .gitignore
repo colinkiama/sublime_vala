@@ -4,10 +4,3 @@
 # valac generated C (when emitted beside sources or in cwd)
 *.vala.c
 *.vala.h
-
-# Smoke-test executables: valac writes a binary with the source basename
-tests/genie/programs/*
-!tests/genie/programs/*.gs
-
-tests/vala/programs/*
-!tests/vala/programs/*.vala

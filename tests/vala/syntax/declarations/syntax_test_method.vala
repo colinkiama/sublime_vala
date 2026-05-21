@@ -28,6 +28,14 @@
     async void fetch () {}
 //  ^^^^^ source.vala storage.modifier.vala
 
+    public static inline int abs (int x) {
+//                ^^^^^^ source.vala storage.modifier.vala
+    }
+
+    public inline int clamp (int value, int min, int max) {
+//         ^^^^^^ source.vala storage.modifier.vala
+    }
+
     class C {
         ~C () {}
 //      ^ source.vala meta.block.vala keyword.operator.vala

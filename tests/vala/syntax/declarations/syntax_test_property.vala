@@ -21,4 +21,8 @@
             set { _name = value; }
 //                        ^^^^^ source.vala meta.block.vala meta.block.vala variable.other.vala
         }
+
+        public string label { get; private set; }
+//                                 ^^^^^^^ source.vala meta.block.vala meta.block.vala storage.modifier.access.vala
+//                                         ^^^ source.vala meta.block.vala meta.block.vala keyword.other.vala
     }

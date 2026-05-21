@@ -2165,7 +2165,7 @@ contexts:
         3: punctuation.definition.string.end.vala
     - match: (')[^']+(')
       scope: invalid.illegal.not_a_char.vala
-    # numbers (see tests/vala/programs/number_literals.vala)
+    # numbers (see tests/vala/syntax/literals/syntax_test_numbers.vala)
     # hex float: 0x1.fP1, 0x0.8P1, 0xab.cdp20, 0x47.11p9 (requires p/P exponent)
     - match: '(0[xX])([\h]+)(?:(\.)([\h]+))?((?i)[pP][-+]?\d+)({{float_suffix}})?'
       scope: constant.numeric.float.hexadecimal.vala

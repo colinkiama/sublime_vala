@@ -23,3 +23,9 @@ class Foo:Object
 	              // <- variable.other.member.genie
 	                 // <- punctuation.separator.type.genie
 	                  // <- storage.type.genie
+
+	prop foo:string
+		get
+		// <- storage.type.accessor.genie
+			return "bar"
+			// <- keyword.control.return.genie

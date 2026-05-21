@@ -17,3 +17,17 @@
 //                                ^ source.vala meta.function.parameters.vala punctuation.section.parameters.end.vala
 //                                  ^ source.vala meta.block.vala punctuation.section.block.begin.vala
     }
+
+    public sealed class Dog : Animal {
+//         ^^^^^^ source.vala storage.modifier.vala
+    }
+
+    public partial class Container : Object {
+//         ^^^^^^^ source.vala storage.modifier.vala
+    }
+
+    public class Outer {
+        public class Inner : Object {
+//             ^^^^^ source.vala meta.block.vala storage.type.class keyword.declaration.class.vala
+        }
+    }

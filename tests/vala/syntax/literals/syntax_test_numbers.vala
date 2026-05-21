@@ -1,5 +1,5 @@
 // SYNTAX TEST "Packages/sublime_vala/Vala.sublime-syntax"
-// Scopes match forms verified in tests/vala/programs/number_literals.vala
+// Decimal, hex, binary, octal, and float literal scopes
 
     42;
 //  ^^ source.vala constant.numeric.integer.decimal.vala constant.numeric.value.vala

@@ -1,33 +1,13 @@
-# Syntax and smoke tests
+# Syntax tests
 
 | Directory | Grammar | Purpose |
 |-----------|---------|---------|
-| `vala/programs/` | `Vala.sublime-syntax` | Visual smoke tests (`.vala`) |
 | `vala/syntax/` | `Vala.sublime-syntax` | Formal syntax tests (`syntax_test_*.vala`) |
-| `genie/programs/` | `Genie.sublime-syntax` | Visual smoke tests (`.gs`) |
 | `genie/syntax/` | `Genie.sublime-syntax` | Formal syntax tests (`syntax_test_*.gs`; standalone grammar, not `scope:source.vala#…`) |
 
-**Checking highlighting:** Save `Vala.sublime-syntax` or `Genie.sublime-syntax` after edits; Sublime reloads the grammar immediately. Open any `.vala` / `.gs` buffer (including `syntax_test_*` files under `syntax/` or samples under `programs/`) to see the updated scopes.
+**Checking highlighting:** Save `Vala.sublime-syntax` or `Genie.sublime-syntax` after edits; Sublime reloads the grammar immediately. Open any `syntax_test_*` file under `syntax/` to see the updated scopes.
 
 Assertion format reference: [Syntax definitions → Testing](https://www.sublimetext.com/docs/syntax.html#testing).
-
----
-
-## Smoke tests (`programs/`)
-
-Open `.vala` / `.gs` files under `programs/` to eyeball highlighting. They are informal samples only (no `SYNTAX TEST` assertions).
-
-**Vala:** `valac tests/vala/programs/foo.vala` (`number_literals.vala` needs **Vala 0.57+** for `0b`/`0o` and hex floats).
-
-**Genie:** every `tests/genie/programs/*.gs` file is valid Genie and compiles with `valac` (tabs for indentation). One exception:
-
-```bash
-valac --pkg gee-0.8 tests/genie/programs/collections.gs
-```
-
-(`list of` / `dict of` need [libgee](https://wiki.gnome.org/Projects/Libgee).) `collections_array.gs` covers fixed `array of` without extra packages. Binary/octal integer forms are exercised in `syntax_test_numbers.gs`; `number_literals.gs` uses decimal/hex/float for older `valac` releases.
-
-`valac` leaves an extensionless binary next to each source; those paths are **gitignored** (see repo `.gitignore`). To avoid clutter locally, compile out of tree, e.g. `valac -o /tmp/case_when tests/genie/programs/case_when.gs`.
 
 ---
 
@@ -168,7 +148,7 @@ That satisfies the whitespace rule (assertion line has no extra indent vs. a non
 | Preprocessor | `syntax_test_conditional_compilation` | `^` in `meta.preprocessor` regions |
 | Comments / docs | `syntax_test_block`, `syntax_test_documentation` | `^` / `<-` on `punctuation.definition.comment.*` |
 | Merge conflicts | `syntax_test_merge_conflicts` | `^` on `*.diff` scopes |
-| Genie-only | `uses`, `case`/`when`, `list of` | `^` or `<-`; see Genie indentation above |
+| Genie-only | `uses`, `case`/`when`, `list of`, `array of` | `^` or `<-`; see Genie indentation above |
 
 Avoid testing every column of long lines unless scopes change mid-token; one well-placed assertion per token or region is enough.
 
