@@ -355,19 +355,18 @@ contexts:
         2: punctuation.separator.type.genie
         3: storage.type.genie
         4: keyword.operator.assignment.genie
-      push:
-        - include: literals
-        - include: expression_remainder
+      push: expression_remainder
     - match: '({{name}})\s*(=)\s*'
       captures:
         1: variable.other.genie
         2: keyword.operator.assignment.genie
-      push:
-        - include: literals
-        - include: expression_remainder
+      push: expression_remainder
 
   expression_remainder:
     - include: literals
+    - match: /(?=[^/\s])
+      scope: punctuation.definition.regex.begin.genie
+      push: regex_literal
     - include: expressions
     - match: $
       pop: 2
@@ -655,6 +654,9 @@ contexts:
       captures:
         1: punctuation.accessor.dot.genie
         2: variable.other.member.genie
+    - match: /(?=[^/\s])
+      scope: punctuation.definition.regex.begin.genie
+      push: regex_literal
     - match: '{{bin_op}}'
       scope: keyword.operator.genie
     - match: '{{unary_op}}'
@@ -690,18 +692,19 @@ contexts:
       scope: punctuation.separator.genie
     - match: ';'
       scope: punctuation.terminator.statement.genie
-    - match: /(?=[^/\s])
-      scope: punctuation.definition.regex.begin.genie
-      push: regex_literal
 
   regex_literal:
     - meta_include_prototype: false
     - meta_scope: meta.string.regexp.genie string.regexp.genie
     - match: '(/)([imsxo]*)'
-      scope: punctuation.definition.regex.end.genie
       captures:
+        1: punctuation.definition.regex.end.genie
         2: keyword.other.genie
       pop: true
-    - match: '(?=/)'
-      pop: true
-    - include: scope:source.regexp
+    - match: '(?=.|\n)'
+      push:
+        - meta_include_prototype: false
+        - meta_content_scope: meta.string.regexp.genie string.regexp.genie
+        - match: '(?=/)'
+          pop: true
+        - include: scope:source.regexp
