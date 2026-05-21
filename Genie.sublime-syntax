@@ -695,16 +695,25 @@ contexts:
 
   regex_literal:
     - meta_include_prototype: false
-    - meta_scope: meta.string.regexp.genie string.regexp.genie
+    - match: '(?=/)'
+      set: regex_literal_end
+    - meta_content_scope: meta.string.regexp.genie string.regexp.genie
+    - match: $\n?
+      pop: true
+    - match: '\\.'
+      scope: constant.character.escape.genie
+    - match: '\('
+      scope: punctuation.section.group.begin.genie
+    - match: '\)'
+      scope: punctuation.section.group.end.genie
+    - match: '[+?*]'
+      scope: keyword.operator.genie
+    - match: '[^/\n()+*?\\]+'
+
+  regex_literal_end:
+    - meta_include_prototype: false
     - match: '(/)([imsxo]*)'
+      scope: punctuation.definition.regex.end.genie
       captures:
-        1: punctuation.definition.regex.end.genie
         2: keyword.other.genie
       pop: true
-    - match: '(?=.|\n)'
-      push:
-        - meta_include_prototype: false
-        - meta_content_scope: meta.string.regexp.genie string.regexp.genie
-        - match: '(?=/)'
-          pop: true
-        - include: scope:source.regexp

@@ -163,7 +163,7 @@ That satisfies the whitespace rule (assertion line has no extra indent vs. a non
 | Types / ownership | `syntax_test_ownership`, `syntax_test_nullable` | `^` on modifiers and type names |
 | Literals | `syntax_test_numbers`, `syntax_test_strings`, `syntax_test_character_literals.gs` | `^` on base/value/suffix; Genie `\x`/`\u` char escapes |
 | Strings / templates | `syntax_test_strings.gs` | `<-` on quotes, escapes, `$` templates |
-| Regex literals | `syntax_test_regex.gs` | `<-` on `/…/` delimiters, `imsxo` flags; pattern body uses embedded `source.regexp` (groups, quantifiers, escapes) |
+| Regex literals | `syntax_test_regex.gs` | `^` on `/…/` delimiters, `imsxo` flags, pattern body (`meta.string.regexp`), escapes, groups, quantifiers (no `source.regexp` embed) |
 | Operators | `syntax_test_binary`, `syntax_test_operators.gs` | `^` on operator tokens |
 | Preprocessor | `syntax_test_conditional_compilation` | `^` in `meta.preprocessor` regions |
 | Comments / docs | `syntax_test_block`, `syntax_test_documentation` | `^` / `<-` on `punctuation.definition.comment.*` |

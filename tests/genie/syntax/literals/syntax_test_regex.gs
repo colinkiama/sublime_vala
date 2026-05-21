@@ -15,12 +15,14 @@
     /a\.b/
 //  ^ punctuation.definition.regex.begin.genie
 //   ^ meta.string.regexp.genie string.regexp.genie
-//     ^^ constant.character.escape.regexp
+//    ^^ constant.character.escape.genie
 //       ^ punctuation.definition.regex.end.genie
 
     /(pat)+/
-//   ^ punctuation.section.group.begin.regexp
-//        ^ keyword.operator.quantifier.regexp
+//  ^ punctuation.definition.regex.begin.genie
+//   ^ punctuation.section.group.begin.genie
+//        ^ keyword.operator.genie
+//         ^ punctuation.definition.regex.end.genie
 
     f(/pat/)
 //    ^ punctuation.definition.regex.begin.genie
