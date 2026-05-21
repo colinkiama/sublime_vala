@@ -1,4 +1,4 @@
 init
-	if true and !false
-		var t:string? = null
+	if true and not false
+		t:string = null
 		assert( t == null )

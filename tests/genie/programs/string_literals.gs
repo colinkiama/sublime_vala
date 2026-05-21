@@ -2,7 +2,7 @@ def m():string
 	return ""
 
 init
-	s = "hello\n"
-	v = """verbatim"""
-	t = @"i=$s $$"
+	s:string = "hello\n"
+	v:string = """verbatim"""
+	t:string = @"i=$s $$"
 	assert( m() == "" )

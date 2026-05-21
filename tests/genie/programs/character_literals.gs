@@ -1,5 +1,4 @@
 init
 	a:char = 'a'
-	b = '\n'
-	c = '\x41'
-	d = '\u00e9'
+	b:char = '\n'
+	c:char = '\x41'
