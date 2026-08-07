@@ -38,3 +38,19 @@
 //                              ^ source.vala meta.instance.vala meta.generic.vala punctuation.definition.generic.end.vala
 //                                ^ source.vala meta.instance.vala meta.group.vala punctuation.section.group.begin.vala
 //                                 ^ source.vala meta.instance.vala meta.group.vala punctuation.section.group.end.vala
+
+    // Generic method declaration inside a class body: the type parameters
+    // belong to the method name, not to a return type.
+    public class Sorter {
+//               ^^^^^^ source.vala entity.name.class.vala
+
+        public static void sort<G> (List<G> list) {
+//                         ^^^^ source.vala meta.function.vala entity.name.function.vala
+//                             ^ source.vala meta.function.vala meta.generic.vala punctuation.definition.generic.begin.vala
+//                              ^ source.vala meta.function.vala meta.generic.vala variable.parameter.type.vala
+//                               ^ source.vala meta.function.vala meta.generic.vala punctuation.definition.generic.end.vala
+//                                 ^ source.vala meta.function.parameters.vala punctuation.section.parameters.begin.vala
+//                                              ^ source.vala meta.function.parameters.vala punctuation.section.parameters.end.vala
+        }
+//      ^ source.vala punctuation.section.block.end.vala
+    }

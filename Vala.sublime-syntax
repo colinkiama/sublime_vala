@@ -82,21 +82,25 @@ contexts:
     - include: block_comments
 
   preprocessor:
-    - match: '^\s*(#)\s*\b(if)\b'
+    # Not `^\s*(#)`: contexts that pop with a `(?=\S)` lookahead leave the
+    # position on the '#' itself, several columns in, where `^` can never match
+    # (that silently broke every indented `#endif`). The lookbehind instead
+    # requires only that nothing but whitespace precedes the '#'.
+    - match: '(?<![^\s])(#)\s*\b(if)\b'
       captures:
         1: punctuation.definition.preprocessor.vala
         2: keyword.control.preprocessor.if.vala
       push: preprocessor_expression_line
-    - match: '^\s*(#)\s*\b(elif)\b'
+    - match: '(?<![^\s])(#)\s*\b(elif)\b'
       captures:
         1: punctuation.definition.preprocessor.vala
         2: keyword.control.preprocessor.elif.vala
       push: preprocessor_expression_line
-    - match: '^\s*(#)\s*\b(else)\b'
+    - match: '(?<![^\s])(#)\s*\b(else)\b'
       captures:
         1: punctuation.definition.preprocessor.vala
         2: keyword.control.preprocessor.else.vala
-    - match: '^\s*(#)\s*\b(endif)\b'
+    - match: '(?<![^\s])(#)\s*\b(endif)\b'
       captures:
         1: punctuation.definition.preprocessor.vala
         2: keyword.control.preprocessor.endif.vala
@@ -777,15 +781,6 @@ contexts:
     - match: '\boperator\b'
       scope: storage.modifier.vala
       push: method_name_or_member_variable
-    # Generic method declaration — `void sort<G> (…)`, where the type parameters
-    # belong to the method name. Distinguished from a generic return type
-    # (`List<G> sort (…)`) by the '(' that follows the closing '>'.
-    # Scoping mirrors the `method_name` rule for `name<T>` so both paths agree.
-    - match: '((?!{{reserved}}\b){{name}})\s*(<)(?=[^(){};]*>\s*\()'
-      captures:
-        1: entity.name.function.vala
-        2: meta.generic.vala punctuation.definition.generic.begin.vala
-      push: [method_generic_parameters, method_type_parameter_list]
     - match: '({{name}})\s*(<)'
       captures:
         1: support.type.vala
@@ -929,6 +924,15 @@ contexts:
         - meta_scope: meta.function.vala
         - meta_content_scope: meta.generic.vala
         - include: inside_type_parameter
+    # Parameter list of a generic method — `void sort<G> (…)`. The type
+    # parameter context above pops on '>', so the '(' arrives here with no
+    # preceding name, and every other rule in this context requires one. Without
+    # this the parameter list is re-read as a declaration, the body's '{' never
+    # opens a block, and every later brace is off by one.
+    - match: '\s*(\()'
+      captures:
+        1: meta.function.parameters.vala punctuation.section.parameters.begin.vala
+      set: method_params_declaration
     - match: '(this)\s*(\[)'
       captures:
         1: variable.language.vala
@@ -952,21 +956,6 @@ contexts:
       set: method_accessor
     - match: ';'
       scope: punctuation.terminator.statement.vala
-      pop: true
-
-  # type parameter list of a generic method declaration — `sort<G>`
-  method_type_parameter_list:
-    - meta_scope: meta.function.vala
-    - meta_content_scope: meta.generic.vala
-    - include: inside_type_parameter
-
-  # after the type parameter list of a generic method declaration
-  method_generic_parameters:
-    - match: '\s*(\()'
-      captures:
-        1: meta.function.parameters.vala punctuation.section.parameters.begin.vala
-      set: method_params_declaration
-    - match: (?=\S)
       pop: true
 
   method_params_declaration:
@@ -1243,6 +1232,10 @@ contexts:
       pop: true
 
   code_block_in:
+    # Has to be tried here, at column 0. The `preprocessor` include inside
+    # line_of_code is unreachable for indented directives: the rule below skips
+    # the indent before pushing, and `^\s*(#)` can then never match.
+    - include: preprocessor
     - match: (?=\S)
       push: line_of_code
 
