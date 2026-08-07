@@ -31,7 +31,10 @@ variables:
 
   # characters
   unicode_char: '(?:\\u\h{4}|\\U\h{8})'
-  escaped_char: \\[bfnrtv"$\\]
+  # Escape sequences accepted by Vala.Scanner (valascanner.vala, read_token /
+  # read_template_token): \' \" \\ \0 \b \f \n \r \t \v \$
+  # plus \uXXXX (exactly four hex digits) and \xHH (one or two hex digits).
+  escaped_char: '\\(?:u\h{4}|x\h{1,2}|[0bfnrtv''"$\\])'
 
   visibility: \b(?:public|private|protected|internal)\b
   ownership: \b(?:unowned|owned|weak)\b
@@ -1521,7 +1524,8 @@ contexts:
           scope: meta.group.vala punctuation.section.group.end.vala
           pop: true
         - include: type
-    - match: \b(as|is(?:\s+not)?)\s+
+    # valaparser.parse_type_check_expression: only `is` / `as`, no `is not`
+    - match: \b(as|is)\s+
       captures:
         1: keyword.operator.vala
       push: [maybe_pattern_matching_object, type_no_space]
@@ -1913,12 +1917,14 @@ contexts:
       scope: invalid.illegal.expected-close-paren.vala
       pop: true
     - include: stray_close_bracket
-    - match: '@"'
-      scope: punctuation.definition.string.begin.vala
-      push: vala_template_string
+    # @"""…""" must precede @"…", otherwise @" wins and the verbatim template
+    # string is never recognised
     - match: '@"""'
       scope: punctuation.definition.string.begin.vala
       push: vala_verbatim_template_string
+    - match: '@"'
+      scope: punctuation.definition.string.begin.vala
+      push: vala_template_string
     - match: (?=\S)
       push:
         - include: lambdas
@@ -2147,8 +2153,6 @@ contexts:
     - match: \b(true|false|null)\b
       scope: constant.language.vala
     # characters
-    - match: '''\'''
-      scope: invalid.illegal.lone-escape.vala
     - match: (')({{escaped_char}})(')
       scope: meta.string.vala
              string.quoted.single.vala
@@ -2156,13 +2160,18 @@ contexts:
         1: punctuation.definition.string.begin.vala
         2: constant.character.escape.vala
         3: punctuation.definition.string.end.vala
-    - match: (')(.)(')
+    - match: (')([^'\\])(')
       scope: meta.string.vala
              string.quoted.single.vala
       captures:
         1: punctuation.definition.string.begin.vala
         2: constant.character.literal.vala
         3: punctuation.definition.string.end.vala
+    # a backslash that did not start one of the escapes above
+    - match: '''\\.?'''
+      scope: invalid.illegal.lone-escape.vala
+    - match: ''''''
+      scope: invalid.illegal.not_a_char.vala
     - match: (')[^']+(')
       scope: invalid.illegal.not_a_char.vala
     # numbers (see tests/vala/syntax/literals/syntax_test_numbers.vala)
@@ -2217,19 +2226,27 @@ contexts:
         1: constant.numeric.value.vala
         2: constant.numeric.value.exponent.vala
         3: constant.numeric.suffix.vala
+    # digits + f/F/d/D is a real literal (read_number); the lookahead keeps
+    # identifiers that start with a digit (1foo) out of this rule
+    - match: '(\d+)({{float_suffix}})(?![[:alnum:]_])'
+      scope: constant.numeric.float.decimal.vala
+      captures:
+        1: constant.numeric.value.vala
+        2: constant.numeric.suffix.vala
     - match: '(0|[1-9]\d*)({{integer_suffix}})?'
       scope: constant.numeric.integer.decimal.vala
       captures:
         1: constant.numeric.value.vala
         2: constant.numeric.suffix.vala
+    # Verbatim template strings (@"""...""") with $ interpolation — must precede
+    # @"…", otherwise @" wins and this rule is unreachable
+    - match: '@"""'
+      scope: punctuation.definition.string.begin.vala
+      push: vala_verbatim_template_string
     # Vala template strings (@"...") — must precede plain "
     - match: '@"'
       scope: punctuation.definition.string.begin.vala
       push: vala_template_string
-    # Verbatim template strings (@"""...""") with optional $ interpolation
-    - match: '@"""'
-      scope: punctuation.definition.string.begin.vala
-      push: vala_verbatim_template_string
     # verbatim strings (""")
     - match: '"""'
       scope: punctuation.definition.string.begin.vala
