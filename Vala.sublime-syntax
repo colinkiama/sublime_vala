@@ -477,11 +477,11 @@ contexts:
       scope: storage.modifier.vala
     - match: '{{visibility}}'
       scope: storage.modifier.access.vala
+    - include: construct_block_declaration
     - match: \b(class)\s+
       captures:
         1: storage.type.class keyword.declaration.class.vala
       push: qualified_class_declaration_name
-    - include: construct_block_declaration
     - match: '(?:\b(readonly)\s+)?(?:\b(ref)\s+)?\b(struct)\s+'
       captures:
         1: storage.modifier.vala
@@ -3255,6 +3255,11 @@ contexts:
     - match: '\b(static)\s+(construct)\b'
       captures:
         1: storage.modifier.vala
+        2: keyword.context.block.vala
+      push: construct_block_body
+    - match: '\b(class)\s+(construct)\b'
+      captures:
+        1: storage.type.class keyword.declaration.class.vala
         2: keyword.context.block.vala
       push: construct_block_body
     - match: '\b(construct)\b'
