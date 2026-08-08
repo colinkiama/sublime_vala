@@ -622,6 +622,10 @@ contexts:
       push: [method_param, method_param_type]
 
   delegate_end:
+    # Parser.parse_delegate_declaration takes a throws clause before the ';'
+    - match: (?=throws\b)
+      push: method_throws_clause
+    - match: '\s+'
     - match: ';'
       scope: punctuation.terminator.vala
       pop: true
@@ -1790,6 +1794,13 @@ contexts:
     # Match this before {{bin_op}} to scope specially in the generic context
     - match: '->'
       scope: punctuation.accessor.arrow.vala
+    # regex literals (/pattern/flags) - must precede {{bin_op}}, or the opening
+    # slash of `if (/pattern/.match (s))` is taken for a division operator. The
+    # lookbehind keeps real division safe: `a / b` and `a/b` both have an
+    # operand, not an operator, before the slash.
+    - match: (?<=[=,({\[:;?&|+\-*/%<>!])\s*(/)(?=[^/\s])
+      scope: punctuation.definition.regex.begin.vala
+      push: regex_literal
     - match: '{{bin_op}}='
       scope: keyword.operator.vala
     - match: '{{bin_op}}|{{unary_op}}'
@@ -1797,10 +1808,6 @@ contexts:
     - match: '='
       scope: keyword.operator.assignment.vala
     - include: literals
-    # regex literals (/pattern/flags)
-    - match: (?<=[=,({\[:;?&|+\-*/%<>!])\s*(/)(?=[^/\s])
-      scope: punctuation.definition.regex.begin.vala
-      push: regex_literal
     - match: '({{name}})(<)(?=[^(]*>\s*\()'
       captures:
         1: variable.function.vala
@@ -3085,7 +3092,11 @@ contexts:
           push: inline_fixed_array_length
         - match: '(?=\s*\bin\b)'
           pop: true
-        - match: '(?=[,);}])'
+        # Hand the initializer back to the caller (for_var_assignment, ...).
+        # Without the `=` this context sat on `for (unichar c = next_char (); …)`
+        # and scoped `next_char` as a variable, leaving its `(` unopened - the
+        # matching `)` then closed the for header and the real one was a stray.
+        - match: '(?=[,);}=;])'
           pop: true
     - match: '(?!(?:{{ownership}}\s+){{base_type}}\b)(?:({{name}}){{type_suffix_capture}})(?:\s+((?!{{reserved}}\b){{name}}))?\s*'
       captures:
@@ -3127,6 +3138,19 @@ contexts:
       - match: (?=\S)
         set:
           - include: line_of_code
+    # The iterator clause was left unparsed: for_block only waited for the
+    # closing paren, so anything with parens of its own in it
+    # (`for (…; …; i = f (x))`) ended the header early and the real closing
+    # paren was flagged as a stray brace. Parse it in a frame of its own -
+    # line_of_code_in_no_semicolon pops on a bare comma, and the clause is a
+    # comma-separated statement list.
+    - match: '(?=\S)'
+      push:
+        - match: ','
+          scope: punctuation.separator.sequence.vala
+        - match: '(?=\))'
+          pop: true
+        - include: line_of_code_in_no_semicolon
 
   while_block:
     - match: \{
