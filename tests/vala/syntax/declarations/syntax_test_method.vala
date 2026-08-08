@@ -38,10 +38,10 @@
 
     class C {
         ~C () {}
-//      ^ source.vala meta.block.vala keyword.operator.vala
+//      ^^ source.vala meta.block.vala entity.name.function.destructor.vala
 
         C () : base () {}
-//      ^ source.vala meta.block.vala meta.function-call.vala variable.function.vala
+//      ^ source.vala meta.block.vala entity.name.function.constructor.vala
 //        ^^ source.vala meta.block.vala
 //             ^^^^ source.vala meta.block.vala variable.language.vala
 
@@ -58,3 +58,24 @@
         }
     }
 //  ^ source.vala meta.block.vala punctuation.section.block.end.vala
+
+    // The class body is a real member-declaration context (it used to fall
+    // through to main's generic brace handler whenever a space separated the
+    // class name from its brace).
+    class BodyChecks {
+//        ^^^^^^^^^^ source.vala entity.name.class.vala
+        [CCode (cname = "gvRenderData")]
+#if SOME_DEFINE
+        public int with_directive ();
+//                 ^^^^^^^^^^^^^^ source.vala meta.class.body.vala meta.function.vala entity.name.function.vala
+#endif
+
+        // brace on the line after the parameter list
+        public BodyChecks (string name,
+                           int count)
+        {
+//      ^ source.vala meta.class.body.vala meta.function.vala meta.block.vala punctuation.section.block.begin.vala
+            this.name = name;
+//               ^^^^ source.vala meta.function.vala meta.block.vala variable.other.vala
+        }
+    }

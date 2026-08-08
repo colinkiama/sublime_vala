@@ -681,13 +681,24 @@ contexts:
     - include: stray_close_bracket
 
   data_type_body:
+    # We are entered on a `(?=\s*\{)` lookahead, so the position is usually on
+    # the space before the brace. Skip it explicitly: the fallback below used to
+    # be `\S*`, which matches the empty string on whitespace and popped the
+    # whole class/interface body before the `\{` rule ever ran - `class Foo {`
+    # fell through to main's generic brace handler (no member declarations,
+    # so constructors read as function calls), while `class Foo{` worked.
+    - match: '\s+'
+    # `set`, not `push`: once the body's closing brace pops we must leave this
+    # context too, otherwise it stays on the stack and flags the next member of
+    # the *enclosing* type as invalid.
     - match: \{
       scope: punctuation.section.block.begin.vala
-      push:
+      set:
         - meta_scope: meta.block.vala
         - match: \}
           scope: punctuation.section.block.end.vala
           pop: true
+        - include: preprocessor
         - include: attribute
         - include: class_declaration
         - include: interface_declaration
@@ -696,7 +707,7 @@ contexts:
         - include: construct_block_declaration
         - include: method_declaration
         - include: stray_close_bracket
-    - match: \S*
+    - match: \S
       scope: invalid.illegal
       pop: true
 
@@ -1064,7 +1075,22 @@ contexts:
       pop: true
     - match: '(?=\{|=>)'
       set: method_body
+    # The brace is often on the line after the parameter list (libvaladoc does
+    # this throughout). Popping straight away at end of line meant the body was
+    # never entered and its statements were read as member declarations, so
+    # look at the next line before giving up on finding one.
     - match: '(?=\s*$)'
+      set: constructor_prebody_next_line
+
+  constructor_prebody_next_line:
+    - meta_scope: meta.function.vala
+    - match: '\s+'
+    - match: '(?=\{|=>)'
+      set: method_body
+    - match: ';'
+      scope: punctuation.terminator.statement.vala
+      pop: true
+    - match: '(?=\S)'
       pop: true
 
   constructor_initializer:
@@ -1211,6 +1237,9 @@ contexts:
         - match: \b(?:set|init)\b
           scope: keyword.declaration.function.accessor.set.vala
           push: property_setter_body
+        # the bodyless accessor rules above stop at the `;`, so terminate it here
+        - match: ';'
+          scope: punctuation.terminator.vala
         - match: \bdefault\b\s*=
           scope: keyword.other.vala
           push: line_of_code_in
@@ -1394,6 +1423,19 @@ contexts:
             - match: \.
               set: line_of_code
               scope: punctuation.accessor.dot.namespace.vala
+            # `List<G>? l = …`, `List<G>[] a = …` — a type suffix after the
+            # generic still leaves a variable declaration. Without this the
+            # `?` fell through to line_of_code as a ternary operator and the
+            # generic frame stayed on the stack, desyncing every later brace.
+            - match: '{{type_suffix_capture}}(?=\s+{{name}})'
+              captures:
+                1: storage.type.nullable.vala
+                2: meta.brackets.vala
+                3: punctuation.section.brackets.begin.vala
+                4: punctuation.separator.vala
+                5: punctuation.section.brackets.end.vala
+                6: keyword.operator.pointer.vala
+              set: variables_declaration
             - match: \s+
               set: variables_declaration
             - match: (?=\S)
@@ -1403,11 +1445,12 @@ contexts:
       captures:
         1: storage.modifier.vala
       set: [variables_declaration_const, type_no_space]
-    - match: '(var|dynamic)\s+({{reserved}}|{{base_type}})\s*(=)'
-      captures:
-        1: storage.type.variable.vala
-        2: invalid.illegal.vala
-        3: keyword.operator.assignment.variable.vala
+    # NB: a keyword is a perfectly good local variable name here.
+    # Parser.skip_identifier accepts every reserved word as an identifier
+    # ("also accept keywords as identifiers where there is no conflict"), and
+    # vala's own sources rely on it — `var params = new ArrayList<Parameter> ()`
+    # in valagenieparser.vala. The C# grammar this was ported from flagged that
+    # as illegal; Vala does not.
     - match: '(var|dynamic)\s+({{name}})\s*(=)'
       captures:
         1: storage.type.variable.vala
@@ -2042,6 +2085,19 @@ contexts:
         2: punctuation.accessor.dot.namespace.vala
         3: constant.other.enum.vala
       pop: true
+    # Vala.BinaryOperator.IN.to_string () — the member is followed by another
+    # accessor, so the rule above (which needs the type prefix in the same
+    # match) cannot fire; the preceding segments have already been consumed by
+    # the first rule, which happily treats an all-caps member as a type name.
+    - match: '((?!{{reserved}}\b){{constant_member}})(?=\s*[.?])'
+      captures:
+        1: constant.other.enum.vala
+      pop: true
+    # Safety net: never leave this context on the stack consuming the rest of
+    # the file unscoped. Consumes a character so it cannot loop against the
+    # zero-width lookahead that pushed us here.
+    - match: '\S'
+      pop: true
 
   # Namespace.Type.NameN in class/struct/interface declarations (e.g. class Test.Async)
   qualified_declaration_name_prefix:
@@ -2050,9 +2106,16 @@ contexts:
         1: support.type.vala
         2: punctuation.accessor.dot.namespace.vala
 
+  # Parser.parse_*_declaration takes any identifier, so the name is not
+  # necessarily PascalCase — glib-2.0.vapi declares `public struct int`,
+  # `struct size_t`, … Without the lowercase fallback these contexts match
+  # nothing and stay on the stack, swallowing the rest of the file.
   qualified_class_declaration_name:
     - include: qualified_declaration_name_prefix
     - match: '{{type_name}}'
+      scope: entity.name.class.vala
+      set: class_signature
+    - match: '(?!{{reserved}}\b){{name}}'
       scope: entity.name.class.vala
       set: class_signature
 
@@ -2061,10 +2124,16 @@ contexts:
     - match: '{{type_name}}'
       scope: entity.name.struct.vala
       set: struct_signature
+    - match: '(?!{{reserved}}\b){{name}}'
+      scope: entity.name.struct.vala
+      set: struct_signature
 
   qualified_interface_declaration_name:
     - include: qualified_declaration_name_prefix
     - match: '{{type_name}}'
+      scope: entity.name.interface.vala
+      set: interface_signature
+    - match: '(?!{{reserved}}\b){{name}}'
       scope: entity.name.interface.vala
       set: interface_signature
 

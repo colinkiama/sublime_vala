@@ -2,7 +2,7 @@
 
     class Foo {
         public string label { get; construct; }
-//                                 ^^^^^^^^^ source.vala meta.block.vala meta.block.vala keyword.context.block.vala
+//                                 ^^^^^^^^^ source.vala meta.property.vala keyword.declaration.function.accessor.construct.vala
 
         construct {
 //      ^^^^^^^^^ source.vala meta.block.vala keyword.context.block.vala

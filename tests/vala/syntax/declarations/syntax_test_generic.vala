@@ -54,3 +54,17 @@
         }
 //      ^ source.vala punctuation.section.block.end.vala
     }
+
+    // A type suffix on a generic local declaration (`List<G>? l = …`) must
+    // still read as a declaration - the `?` used to be taken for a ternary
+    // operator and left the generic context on the stack.
+    void nullable_generic_local () {
+        unowned List<G>? l = head.find (data);
+//                     ^ source.vala meta.function.vala meta.block.vala storage.type.nullable.vala
+//                       ^ source.vala meta.function.vala meta.block.vala variable.other.vala
+//                         ^ source.vala meta.function.vala meta.block.vala keyword.operator.assignment.variable.vala
+        Gee.List<G>[] a = b;
+//                 ^ source.vala meta.function.vala meta.block.vala meta.brackets.vala punctuation.section.brackets.begin.vala
+//                  ^ source.vala meta.function.vala meta.block.vala meta.brackets.vala punctuation.section.brackets.end.vala
+//                    ^ source.vala meta.function.vala meta.block.vala variable.other.vala
+    }
