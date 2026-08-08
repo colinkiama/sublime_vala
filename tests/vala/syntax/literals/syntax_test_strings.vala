@@ -35,3 +35,16 @@
 //           ^^^ source.vala string.regexp.vala
 //              ^ source.vala string.regexp.vala punctuation.definition.regex.end.vala
 //               ^^ source.vala string.regexp.vala punctuation.definition.regex.end.vala keyword.other.vala
+
+    // A regex literal directly after an opening paren: the slash used to be
+    // matched as division because {{bin_op}} came first.
+    if (/\.\+\(\)\-\?\/\"\$\[\]\*\^/.match (".+()-?/\"$[]*^")) {
+//      ^ source.vala string.regexp.vala punctuation.definition.regex.begin.vala
+//       ^^ source.vala string.regexp.vala constant.character.escape.vala
+//                                 ^ source.vala string.regexp.vala punctuation.definition.regex.end.vala
+//                                   ^^^^^ source.vala meta.function-call.vala variable.function.vala
+    }
+
+    // real division must not start a regex
+    var half = total / count;
+//                   ^ source.vala keyword.operator.vala

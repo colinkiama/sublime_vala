@@ -94,3 +94,16 @@
 
     0x47.11p9;
 //  ^^^^^^^^^ source.vala constant.numeric.float.hexadecimal.vala
+
+    // f/F/d/D suffix promotes an integer to a real literal (read_number)
+    1f;
+//  ^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//   ^ source.vala constant.numeric.float.decimal.vala constant.numeric.suffix.vala
+
+    2D;
+//  ^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//   ^ source.vala constant.numeric.float.decimal.vala constant.numeric.suffix.vala
+
+    100F;
+//  ^^^ source.vala constant.numeric.float.decimal.vala constant.numeric.value.vala
+//     ^ source.vala constant.numeric.float.decimal.vala constant.numeric.suffix.vala

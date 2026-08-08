@@ -12,6 +12,8 @@ scope: source.vala
 
 file_extensions:
   - vala
+  # VAPI bindings are Vala source (declarations only, same grammar)
+  - vapi
 
 first_line_match: |-
   (?x:
@@ -31,7 +33,10 @@ variables:
 
   # characters
   unicode_char: '(?:\\u\h{4}|\\U\h{8})'
-  escaped_char: \\[bfnrtv"$\\]
+  # Escape sequences accepted by Vala.Scanner (valascanner.vala, read_token /
+  # read_template_token): \' \" \\ \0 \b \f \n \r \t \v \$
+  # plus \uXXXX (exactly four hex digits) and \xHH (one or two hex digits).
+  escaped_char: '\\(?:u\h{4}|x\h{1,2}|[0bfnrtv''"$\\])'
 
   visibility: \b(?:public|private|protected|internal)\b
   ownership: \b(?:unowned|owned|weak)\b
@@ -77,21 +82,25 @@ contexts:
     - include: block_comments
 
   preprocessor:
-    - match: '^\s*(#)\s*\b(if)\b'
+    # Not `^\s*(#)`: contexts that pop with a `(?=\S)` lookahead leave the
+    # position on the '#' itself, several columns in, where `^` can never match
+    # (that silently broke every indented `#endif`). The lookbehind instead
+    # requires only that nothing but whitespace precedes the '#'.
+    - match: '(?<![^\s])(#)\s*\b(if)\b'
       captures:
         1: punctuation.definition.preprocessor.vala
         2: keyword.control.preprocessor.if.vala
       push: preprocessor_expression_line
-    - match: '^\s*(#)\s*\b(elif)\b'
+    - match: '(?<![^\s])(#)\s*\b(elif)\b'
       captures:
         1: punctuation.definition.preprocessor.vala
         2: keyword.control.preprocessor.elif.vala
       push: preprocessor_expression_line
-    - match: '^\s*(#)\s*\b(else)\b'
+    - match: '(?<![^\s])(#)\s*\b(else)\b'
       captures:
         1: punctuation.definition.preprocessor.vala
         2: keyword.control.preprocessor.else.vala
-    - match: '^\s*(#)\s*\b(endif)\b'
+    - match: '(?<![^\s])(#)\s*\b(endif)\b'
       captures:
         1: punctuation.definition.preprocessor.vala
         2: keyword.control.preprocessor.endif.vala
@@ -503,11 +512,34 @@ contexts:
                   - match: '(?=\S)'
                     pop: true
               - include: attribute
+              # value list ends; arbitrary member declarations may follow
+              - match: ';'
+                scope: punctuation.terminator.statement.vala
+                set:
+                  - meta_scope: meta.enum.body.vala meta.block.vala
+                  - include: data_type_trailing_members
+              # A member declaration with no value list to terminate - GLib's
+              # Gio-2.0-custom.vala opens `errordomain IOError {` straight onto
+              # a method. Codes are plain identifiers, so a visibility or
+              # declaration modifier can only mean the list is over; without
+              # this the modifiers were scoped as codes and the member's own
+              # closing brace ended the body.
+              - match: '(?=(?:{{visibility}}|\b(?:static|abstract|virtual|override|inline|async|extern|new|sealed|const|delegate|signal)\b))'
+                set:
+                  - meta_scope: meta.enum.body.vala meta.block.vala
+                  - include: data_type_trailing_members
               - match: '{{name}}'
                 scope: constant.other.enum.vala
               - match: '='
                 scope: keyword.operator.assignment.vala
-                push: line_of_code_in
+                push:
+                  # Stop *before* the ';' - line_of_code_in consumes it, and
+                  # then the rule above never gets to switch into the
+                  # trailing-member list, so `BAD = 23;` followed by a method
+                  # left every later member scoped as an enum/error code.
+                  - match: '(?=[;,}])'
+                    pop: true
+                  - include: line_of_code_in
               - match: ','
                 scope: punctuation.separator.enum.vala
 
@@ -538,11 +570,34 @@ contexts:
                   - match: '(?=\S)'
                     pop: true
               - include: attribute
+              # code list ends; arbitrary member declarations may follow
+              - match: ';'
+                scope: punctuation.terminator.statement.vala
+                set:
+                  - meta_scope: meta.errordomain.body.vala meta.block.vala
+                  - include: data_type_trailing_members
+              # A member declaration with no value list to terminate - GLib's
+              # Gio-2.0-custom.vala opens `errordomain IOError {` straight onto
+              # a method. Codes are plain identifiers, so a visibility or
+              # declaration modifier can only mean the list is over; without
+              # this the modifiers were scoped as codes and the member's own
+              # closing brace ended the body.
+              - match: '(?=(?:{{visibility}}|\b(?:static|abstract|virtual|override|inline|async|extern|new|sealed|const|delegate|signal)\b))'
+                set:
+                  - meta_scope: meta.errordomain.body.vala meta.block.vala
+                  - include: data_type_trailing_members
               - match: '{{name}}'
                 scope: constant.other.errordomain.vala
               - match: '='
                 scope: keyword.operator.assignment.vala
-                push: line_of_code_in
+                push:
+                  # Stop *before* the ';' - line_of_code_in consumes it, and
+                  # then the rule above never gets to switch into the
+                  # trailing-member list, so `BAD = 23;` followed by a method
+                  # left every later member scoped as an enum/error code.
+                  - match: '(?=[;,}])'
+                    pop: true
+                  - include: line_of_code_in
               - match: ','
                 scope: punctuation.separator.errordomain.vala
 
@@ -601,6 +656,10 @@ contexts:
       push: [method_param, method_param_type]
 
   delegate_end:
+    # Parser.parse_delegate_declaration takes a throws clause before the ';'
+    - match: (?=throws\b)
+      push: method_throws_clause
+    - match: '\s+'
     - match: ';'
       scope: punctuation.terminator.vala
       pop: true
@@ -641,14 +700,43 @@ contexts:
     - match: ''
       pop: true
 
+  # enum/errordomain bodies allow arbitrary member declarations (methods,
+  # constructors, ...) after the value list's terminating ';' -
+  # Parser.parse_enum_declaration / parse_errordomain_declaration both do
+  # `if (accept (SEMICOLON)) { while (current () != CLOSE_BRACE) parse_declaration (...); }`
+  data_type_trailing_members:
+    - match: \}
+      scope: punctuation.section.block.end.vala
+      set:
+        - match: ';'
+          scope: punctuation.terminator.statement.vala
+          pop: true
+        - match: '(?=\S)'
+          pop: true
+    - include: attribute
+    - include: construct_block_declaration
+    - include: method_declaration
+    - include: stray_close_bracket
+
   data_type_body:
+    # We are entered on a `(?=\s*\{)` lookahead, so the position is usually on
+    # the space before the brace. Skip it explicitly: the fallback below used to
+    # be `\S*`, which matches the empty string on whitespace and popped the
+    # whole class/interface body before the `\{` rule ever ran - `class Foo {`
+    # fell through to main's generic brace handler (no member declarations,
+    # so constructors read as function calls), while `class Foo{` worked.
+    - match: '\s+'
+    # `set`, not `push`: once the body's closing brace pops we must leave this
+    # context too, otherwise it stays on the stack and flags the next member of
+    # the *enclosing* type as invalid.
     - match: \{
       scope: punctuation.section.block.begin.vala
-      push:
+      set:
         - meta_scope: meta.block.vala
         - match: \}
           scope: punctuation.section.block.end.vala
           pop: true
+        - include: preprocessor
         - include: attribute
         - include: class_declaration
         - include: interface_declaration
@@ -657,7 +745,7 @@ contexts:
         - include: construct_block_declaration
         - include: method_declaration
         - include: stray_close_bracket
-    - match: \S*
+    - match: \S
       scope: invalid.illegal
       pop: true
 
@@ -820,6 +908,18 @@ contexts:
         1: entity.name.function.constructor.vala
         2: meta.function.parameters.vala punctuation.section.parameters.begin.vala
       push: [constructor_prebody, method_params]
+    # Named creation method - `public async Foo.async () { … }`. The segment
+    # after the dot is an identifier by definition, so keywords are allowed
+    # there (Parser.skip_identifier), and it must be matched in one go: the rule
+    # below consumes only `Foo.`, after which `async` hit the modifier rule at
+    # the top of this context and the parameter list was read as a tuple.
+    - match: '({{name}})\s*(\.)\s*({{name}})\s*(\()'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.vala
+        3: entity.name.function.constructor.vala
+        4: meta.function.parameters.vala punctuation.section.parameters.begin.vala
+      push: [constructor_prebody, method_params]
     - match: '({{name}})\s*(\.)'
       captures:
         1: entity.other.inherited-class.vala
@@ -915,6 +1015,15 @@ contexts:
         - meta_scope: meta.function.vala
         - meta_content_scope: meta.generic.vala
         - include: inside_type_parameter
+    # Parameter list of a generic method — `void sort<G> (…)`. The type
+    # parameter context above pops on '>', so the '(' arrives here with no
+    # preceding name, and every other rule in this context requires one. Without
+    # this the parameter list is re-read as a declaration, the body's '{' never
+    # opens a block, and every later brace is off by one.
+    - match: '\s*(\()'
+      captures:
+        1: meta.function.parameters.vala punctuation.section.parameters.begin.vala
+      set: method_params_declaration
     - match: '(this)\s*(\[)'
       captures:
         1: variable.language.vala
@@ -925,6 +1034,13 @@ contexts:
       captures:
         1: entity.other.inherited-class.vala
         2: punctuation.accessor.dot.vala
+    # `const OptionEntry[] options = { … };` is a field with an initializer, not
+    # a property. This branch has no rule for `=`, so it used to skip over it and
+    # take the `{` for an accessor block - which then closed on the first `}` of
+    # a nested element. Hand those to member_lambda_or_plain, which routes to
+    # member_variables_declaration. `=>` stays here: it is a lambda property.
+    - match: '(?={{name}}\s*=(?!>|=))'
+      fail: method_or_member_variable_name
     - match: '{{name}}(?!\s*\()'
       scope: meta.property.vala variable.other.member.vala
       push:
@@ -1016,7 +1132,22 @@ contexts:
       pop: true
     - match: '(?=\{|=>)'
       set: method_body
+    # The brace is often on the line after the parameter list (libvaladoc does
+    # this throughout). Popping straight away at end of line meant the body was
+    # never entered and its statements were read as member declarations, so
+    # look at the next line before giving up on finding one.
     - match: '(?=\s*$)'
+      set: constructor_prebody_next_line
+
+  constructor_prebody_next_line:
+    - meta_scope: meta.function.vala
+    - match: '\s+'
+    - match: '(?=\{|=>)'
+      set: method_body
+    - match: ';'
+      scope: punctuation.terminator.statement.vala
+      pop: true
+    - match: '(?=\S)'
       pop: true
 
   constructor_initializer:
@@ -1163,6 +1294,9 @@ contexts:
         - match: \b(?:set|init)\b
           scope: keyword.declaration.function.accessor.set.vala
           push: property_setter_body
+        # the bodyless accessor rules above stop at the `;`, so terminate it here
+        - match: ';'
+          scope: punctuation.terminator.vala
         - match: \bdefault\b\s*=
           scope: keyword.other.vala
           push: line_of_code_in
@@ -1214,21 +1348,31 @@ contexts:
       pop: true
 
   code_block_in:
+    # Has to be tried here, at column 0. The `preprocessor` include inside
+    # line_of_code is unreachable for indented directives: the rule below skips
+    # the indent before pushing, and `^\s*(#)` can then never match.
+    - include: preprocessor
     - match: (?=\S)
       push: line_of_code
 
   line_of_code:
     - include: preprocessor
     # language keywords
-    - match: \b(if)\b
+    # These statements all `expect (OPEN_PARENS)` in the parser, so require the
+    # paren: without it a keyword used as an identifier (`switch = 2;` - legal,
+    # Parser.skip_identifier) took the statement branch.
+    - match: \b(if)\b(?=\s*\()
       captures:
         1: keyword.control.conditional.if.vala
       set: [else_block, if_block, if_condition]
-    - match: \b(switch)\b
+    - match: \b(switch)\b(?=\s*\()
       captures:
         1: keyword.control.switch.vala
       set: [switch_block, if_condition]
-    - match: \b(for)\s*(\()(?=(?:{{name}}|var)\s(?!=))
+    # `for (Type x = …` / `for (var x = …` - the init clause is a declaration.
+    # Requiring the *second* identifier keeps `for (void_method (); …)` out:
+    # it used to take this branch and read the call's name as a type.
+    - match: \b(for)\s*(\()(?=(?:{{name}}\s+{{name}}|var\s+{{name}}))
       captures:
         1: keyword.control.for.vala
         2: meta.group.vala punctuation.section.group.begin.vala
@@ -1272,7 +1416,7 @@ contexts:
     - match: \bdo\b
       scope: keyword.control.do.vala
       set: [do_condition, while_block]
-    - match: \bwhile\b
+    - match: \bwhile\b(?=\s*\()
       scope: keyword.control.while.vala
       set: [while_block, while_condition]
     - match: \b(else|case|catch|finally)\b
@@ -1318,6 +1462,14 @@ contexts:
         - meta_content_scope: meta.generic.vala
         - match: ','
           scope: punctuation.separator.type.vala
+        # The argument list has to be consumed here. Popping on a bare '>' hands
+        # `(a, b)` back to line_of_code, which cannot start a statement with '('
+        # and flags the closing paren as a stray brace.
+        - match: '(>)\s*(\()'
+          captures:
+            1: meta.generic.vala punctuation.definition.generic.end.vala
+            2: meta.group.vala punctuation.section.group.begin.vala
+          set: [function_call_arguments, arguments]
         - match: '>'
           scope: meta.generic.vala punctuation.definition.generic.end.vala
           pop: true
@@ -1334,6 +1486,19 @@ contexts:
             - match: \.
               set: line_of_code
               scope: punctuation.accessor.dot.namespace.vala
+            # `List<G>? l = …`, `List<G>[] a = …` — a type suffix after the
+            # generic still leaves a variable declaration. Without this the
+            # `?` fell through to line_of_code as a ternary operator and the
+            # generic frame stayed on the stack, desyncing every later brace.
+            - match: '{{type_suffix_capture}}(?=\s+{{name}})'
+              captures:
+                1: storage.type.nullable.vala
+                2: meta.brackets.vala
+                3: punctuation.section.brackets.begin.vala
+                4: punctuation.separator.vala
+                5: punctuation.section.brackets.end.vala
+                6: keyword.operator.pointer.vala
+              set: variables_declaration
             - match: \s+
               set: variables_declaration
             - match: (?=\S)
@@ -1343,11 +1508,12 @@ contexts:
       captures:
         1: storage.modifier.vala
       set: [variables_declaration_const, type_no_space]
-    - match: '(var|dynamic)\s+({{reserved}}|{{base_type}})\s*(=)'
-      captures:
-        1: storage.type.variable.vala
-        2: invalid.illegal.vala
-        3: keyword.operator.assignment.variable.vala
+    # NB: a keyword is a perfectly good local variable name here.
+    # Parser.skip_identifier accepts every reserved word as an identifier
+    # ("also accept keywords as identifiers where there is no conflict"), and
+    # vala's own sources rely on it — `var params = new ArrayList<Parameter> ()`
+    # in valagenieparser.vala. The C# grammar this was ported from flagged that
+    # as illegal; Vala does not.
     - match: '(var|dynamic)\s+({{name}})\s*(=)'
       captures:
         1: storage.type.variable.vala
@@ -1521,7 +1687,8 @@ contexts:
           scope: meta.group.vala punctuation.section.group.end.vala
           pop: true
         - include: type
-    - match: \b(as|is(?:\s+not)?)\s+
+    # valaparser.parse_type_check_expression: only `is` / `as`, no `is not`
+    - match: \b(as|is)\s+
       captures:
         1: keyword.operator.vala
       push: [maybe_pattern_matching_object, type_no_space]
@@ -1642,6 +1809,26 @@ contexts:
     - include: qualified_constant_access
     - match: '(?={{namespaced_type_name}}\s*\.)'
       push: namespaced_type_path
+    # Type.method<G> (…) — qualified call with explicit type arguments. Without
+    # this the name falls through to the enum-member rule below and the argument
+    # list is left unparsed (stray-brace error on the closing paren).
+    - match: '({{type_name}})(\s*\.\s*)((?!{{reserved}}\b){{name}})\s*(<)(?=[^(]*>\s*\()'
+      scope: meta.function-call.vala
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.namespace.vala
+        3: variable.function.vala
+        4: meta.generic.vala punctuation.definition.generic.begin.vala
+      push:
+        - meta_content_scope: meta.generic.vala
+        - match: ','
+          scope: punctuation.separator.type.vala
+        - match: '(>)\s*(\()'
+          captures:
+            1: meta.generic.vala punctuation.definition.generic.end.vala
+            2: meta.group.vala punctuation.section.group.begin.vala
+          set: [function_call_arguments, arguments]
+        - include: type
     - match: '({{type_name}})(\s*\.\s*)((?!{{reserved}}\b){{name}})\s*(\()'
       scope: meta.function-call.vala
       captures:
@@ -1666,6 +1853,13 @@ contexts:
     # Match this before {{bin_op}} to scope specially in the generic context
     - match: '->'
       scope: punctuation.accessor.arrow.vala
+    # regex literals (/pattern/flags) - must precede {{bin_op}}, or the opening
+    # slash of `if (/pattern/.match (s))` is taken for a division operator. The
+    # lookbehind keeps real division safe: `a / b` and `a/b` both have an
+    # operand, not an operator, before the slash.
+    - match: (?<=[=,({\[:;?&|+\-*/%<>!])\s*(/)(?=[^/\s])
+      scope: punctuation.definition.regex.begin.vala
+      push: regex_literal
     - match: '{{bin_op}}='
       scope: keyword.operator.vala
     - match: '{{bin_op}}|{{unary_op}}'
@@ -1673,10 +1867,6 @@ contexts:
     - match: '='
       scope: keyword.operator.assignment.vala
     - include: literals
-    # regex literals (/pattern/flags)
-    - match: (?<=[=,({\[:;?&|+\-*/%<>!])\s*(/)(?=[^/\s])
-      scope: punctuation.definition.regex.begin.vala
-      push: regex_literal
     - match: '({{name}})(<)(?=[^(]*>\s*\()'
       captures:
         1: variable.function.vala
@@ -1724,7 +1914,12 @@ contexts:
       scope: storage.type.vala
     - match: \.emit\s*\(
       scope: keyword.other.vala
-    - match: \bswitch\b
+    # A switch *expression* (`x switch { … }`) needs the brace. Without the
+    # lookahead a `switch` used as an identifier - legal, Parser.skip_identifier
+    # accepts every keyword - pushed switch_expression, which then sat on the
+    # stack swallowing the rest of the file. See
+    # tests/parser/statement-keyword-as-identifier.vala.
+    - match: \bswitch\b(?=\s*\{)
       scope: keyword.control.vala
       push: switch_expression
     - match: '({{reserved}})\b'
@@ -1913,12 +2108,14 @@ contexts:
       scope: invalid.illegal.expected-close-paren.vala
       pop: true
     - include: stray_close_bracket
-    - match: '@"'
-      scope: punctuation.definition.string.begin.vala
-      push: vala_template_string
+    # @"""…""" must precede @"…", otherwise @" wins and the verbatim template
+    # string is never recognised
     - match: '@"""'
       scope: punctuation.definition.string.begin.vala
       push: vala_verbatim_template_string
+    - match: '@"'
+      scope: punctuation.definition.string.begin.vala
+      push: vala_template_string
     - match: (?=\S)
       push:
         - include: lambdas
@@ -1959,6 +2156,19 @@ contexts:
         2: punctuation.accessor.dot.namespace.vala
         3: constant.other.enum.vala
       pop: true
+    # Vala.BinaryOperator.IN.to_string () — the member is followed by another
+    # accessor, so the rule above (which needs the type prefix in the same
+    # match) cannot fire; the preceding segments have already been consumed by
+    # the first rule, which happily treats an all-caps member as a type name.
+    - match: '((?!{{reserved}}\b){{constant_member}})(?=\s*[.?])'
+      captures:
+        1: constant.other.enum.vala
+      pop: true
+    # Safety net: never leave this context on the stack consuming the rest of
+    # the file unscoped. Consumes a character so it cannot loop against the
+    # zero-width lookahead that pushed us here.
+    - match: '\S'
+      pop: true
 
   # Namespace.Type.NameN in class/struct/interface declarations (e.g. class Test.Async)
   qualified_declaration_name_prefix:
@@ -1967,9 +2177,16 @@ contexts:
         1: support.type.vala
         2: punctuation.accessor.dot.namespace.vala
 
+  # Parser.parse_*_declaration takes any identifier, so the name is not
+  # necessarily PascalCase — glib-2.0.vapi declares `public struct int`,
+  # `struct size_t`, … Without the lowercase fallback these contexts match
+  # nothing and stay on the stack, swallowing the rest of the file.
   qualified_class_declaration_name:
     - include: qualified_declaration_name_prefix
     - match: '{{type_name}}'
+      scope: entity.name.class.vala
+      set: class_signature
+    - match: '(?!{{reserved}}\b){{name}}'
       scope: entity.name.class.vala
       set: class_signature
 
@@ -1978,10 +2195,16 @@ contexts:
     - match: '{{type_name}}'
       scope: entity.name.struct.vala
       set: struct_signature
+    - match: '(?!{{reserved}}\b){{name}}'
+      scope: entity.name.struct.vala
+      set: struct_signature
 
   qualified_interface_declaration_name:
     - include: qualified_declaration_name_prefix
     - match: '{{type_name}}'
+      scope: entity.name.interface.vala
+      set: interface_signature
+    - match: '(?!{{reserved}}\b){{name}}'
       scope: entity.name.interface.vala
       set: interface_signature
 
@@ -2147,8 +2370,6 @@ contexts:
     - match: \b(true|false|null)\b
       scope: constant.language.vala
     # characters
-    - match: '''\'''
-      scope: invalid.illegal.lone-escape.vala
     - match: (')({{escaped_char}})(')
       scope: meta.string.vala
              string.quoted.single.vala
@@ -2156,13 +2377,18 @@ contexts:
         1: punctuation.definition.string.begin.vala
         2: constant.character.escape.vala
         3: punctuation.definition.string.end.vala
-    - match: (')(.)(')
+    - match: (')([^'\\])(')
       scope: meta.string.vala
              string.quoted.single.vala
       captures:
         1: punctuation.definition.string.begin.vala
         2: constant.character.literal.vala
         3: punctuation.definition.string.end.vala
+    # a backslash that did not start one of the escapes above
+    - match: '''\\.?'''
+      scope: invalid.illegal.lone-escape.vala
+    - match: ''''''
+      scope: invalid.illegal.not_a_char.vala
     - match: (')[^']+(')
       scope: invalid.illegal.not_a_char.vala
     # numbers (see tests/vala/syntax/literals/syntax_test_numbers.vala)
@@ -2217,19 +2443,27 @@ contexts:
         1: constant.numeric.value.vala
         2: constant.numeric.value.exponent.vala
         3: constant.numeric.suffix.vala
+    # digits + f/F/d/D is a real literal (read_number); the lookahead keeps
+    # identifiers that start with a digit (1foo) out of this rule
+    - match: '(\d+)({{float_suffix}})(?![[:alnum:]_])'
+      scope: constant.numeric.float.decimal.vala
+      captures:
+        1: constant.numeric.value.vala
+        2: constant.numeric.suffix.vala
     - match: '(0|[1-9]\d*)({{integer_suffix}})?'
       scope: constant.numeric.integer.decimal.vala
       captures:
         1: constant.numeric.value.vala
         2: constant.numeric.suffix.vala
+    # Verbatim template strings (@"""...""") with $ interpolation — must precede
+    # @"…", otherwise @" wins and this rule is unreachable
+    - match: '@"""'
+      scope: punctuation.definition.string.begin.vala
+      push: vala_verbatim_template_string
     # Vala template strings (@"...") — must precede plain "
     - match: '@"'
       scope: punctuation.definition.string.begin.vala
       push: vala_template_string
-    # Verbatim template strings (@"""...""") with optional $ interpolation
-    - match: '@"""'
-      scope: punctuation.definition.string.begin.vala
-      push: vala_verbatim_template_string
     # verbatim strings (""")
     - match: '"""'
       scope: punctuation.definition.string.begin.vala
@@ -2707,6 +2941,9 @@ contexts:
       pop: true
 
   switch_expression:
+    # never linger if the brace never arrives
+    - match: '(?=[^\s{])'
+      pop: true
     - match: \{
       scope: punctuation.section.block.begin.vala
       set:
@@ -2922,7 +3159,11 @@ contexts:
           push: inline_fixed_array_length
         - match: '(?=\s*\bin\b)'
           pop: true
-        - match: '(?=[,);}])'
+        # Hand the initializer back to the caller (for_var_assignment, ...).
+        # Without the `=` this context sat on `for (unichar c = next_char (); …)`
+        # and scoped `next_char` as a variable, leaving its `(` unopened - the
+        # matching `)` then closed the for header and the real one was a stray.
+        - match: '(?=[,);}=;])'
           pop: true
     - match: '(?!(?:{{ownership}}\s+){{base_type}}\b)(?:({{name}}){{type_suffix_capture}})(?:\s+((?!{{reserved}}\b){{name}}))?\s*'
       captures:
@@ -2964,6 +3205,19 @@ contexts:
       - match: (?=\S)
         set:
           - include: line_of_code
+    # The iterator clause was left unparsed: for_block only waited for the
+    # closing paren, so anything with parens of its own in it
+    # (`for (…; …; i = f (x))`) ended the header early and the real closing
+    # paren was flagged as a stray brace. Parse it in a frame of its own -
+    # line_of_code_in_no_semicolon pops on a bare comma, and the clause is a
+    # comma-separated statement list.
+    - match: '(?=\S)'
+      push:
+        - match: ','
+          scope: punctuation.separator.sequence.vala
+        - match: '(?=\))'
+          pop: true
+        - include: line_of_code_in_no_semicolon
 
   while_block:
     - match: \{
