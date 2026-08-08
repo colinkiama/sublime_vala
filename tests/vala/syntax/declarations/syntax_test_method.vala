@@ -79,3 +79,14 @@
 //               ^^^^ source.vala meta.function.vala meta.block.vala variable.other.vala
         }
     }
+
+    // Named creation method whose name is a keyword. The segment after the
+    // dot is an identifier by definition (Parser.skip_identifier), but it
+    // used to be re-matched as the `async` modifier.
+    class Foo {
+        public async Foo.async () {
+//                   ^^^ source.vala meta.class.body.vala meta.function.vala support.type.vala
+//                      ^ source.vala meta.class.body.vala meta.function.vala punctuation.accessor.dot.vala
+//                       ^^^^^ source.vala meta.class.body.vala meta.function.vala entity.name.function.constructor.vala
+        }
+    }

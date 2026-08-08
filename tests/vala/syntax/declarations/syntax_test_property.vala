@@ -26,3 +26,18 @@
 //                                 ^^^^^^^ source.vala meta.property.vala storage.modifier.access.vala
 //                                         ^^^ source.vala meta.property.vala keyword.declaration.function.accessor.set.vala
     }
+
+    // A field initializer is not a property accessor block. The `{` used to
+    // open one, and the first nested element's `}` closed it again, leaving
+    // every later brace off by one.
+    class Options {
+        const OptionEntry[] entries = {
+//                                  ^ source.vala meta.class.body.vala keyword.operator.assignment.variable.vala
+//                                    ^ source.vala meta.class.body.vala punctuation.section.block.begin.vala
+            { "profile", 0, OptionArg.CALLBACK, (void*) parse_profile, "help", "P" },
+//          ^ source.vala meta.class.body.vala punctuation.section.block.begin.vala
+//                                                                                 ^ source.vala meta.class.body.vala punctuation.section.block.end.vala
+        };
+//      ^ source.vala meta.class.body.vala punctuation.section.block.end.vala
+//       ^ source.vala meta.class.body.vala punctuation.terminator.statement.vala
+    }

@@ -518,11 +518,28 @@ contexts:
                 set:
                   - meta_scope: meta.enum.body.vala meta.block.vala
                   - include: data_type_trailing_members
+              # A member declaration with no value list to terminate - GLib's
+              # Gio-2.0-custom.vala opens `errordomain IOError {` straight onto
+              # a method. Codes are plain identifiers, so a visibility or
+              # declaration modifier can only mean the list is over; without
+              # this the modifiers were scoped as codes and the member's own
+              # closing brace ended the body.
+              - match: '(?=(?:{{visibility}}|\b(?:static|abstract|virtual|override|inline|async|extern|new|sealed|const|delegate|signal)\b))'
+                set:
+                  - meta_scope: meta.enum.body.vala meta.block.vala
+                  - include: data_type_trailing_members
               - match: '{{name}}'
                 scope: constant.other.enum.vala
               - match: '='
                 scope: keyword.operator.assignment.vala
-                push: line_of_code_in
+                push:
+                  # Stop *before* the ';' - line_of_code_in consumes it, and
+                  # then the rule above never gets to switch into the
+                  # trailing-member list, so `BAD = 23;` followed by a method
+                  # left every later member scoped as an enum/error code.
+                  - match: '(?=[;,}])'
+                    pop: true
+                  - include: line_of_code_in
               - match: ','
                 scope: punctuation.separator.enum.vala
 
@@ -559,11 +576,28 @@ contexts:
                 set:
                   - meta_scope: meta.errordomain.body.vala meta.block.vala
                   - include: data_type_trailing_members
+              # A member declaration with no value list to terminate - GLib's
+              # Gio-2.0-custom.vala opens `errordomain IOError {` straight onto
+              # a method. Codes are plain identifiers, so a visibility or
+              # declaration modifier can only mean the list is over; without
+              # this the modifiers were scoped as codes and the member's own
+              # closing brace ended the body.
+              - match: '(?=(?:{{visibility}}|\b(?:static|abstract|virtual|override|inline|async|extern|new|sealed|const|delegate|signal)\b))'
+                set:
+                  - meta_scope: meta.errordomain.body.vala meta.block.vala
+                  - include: data_type_trailing_members
               - match: '{{name}}'
                 scope: constant.other.errordomain.vala
               - match: '='
                 scope: keyword.operator.assignment.vala
-                push: line_of_code_in
+                push:
+                  # Stop *before* the ';' - line_of_code_in consumes it, and
+                  # then the rule above never gets to switch into the
+                  # trailing-member list, so `BAD = 23;` followed by a method
+                  # left every later member scoped as an enum/error code.
+                  - match: '(?=[;,}])'
+                    pop: true
+                  - include: line_of_code_in
               - match: ','
                 scope: punctuation.separator.errordomain.vala
 
@@ -874,6 +908,18 @@ contexts:
         1: entity.name.function.constructor.vala
         2: meta.function.parameters.vala punctuation.section.parameters.begin.vala
       push: [constructor_prebody, method_params]
+    # Named creation method - `public async Foo.async () { … }`. The segment
+    # after the dot is an identifier by definition, so keywords are allowed
+    # there (Parser.skip_identifier), and it must be matched in one go: the rule
+    # below consumes only `Foo.`, after which `async` hit the modifier rule at
+    # the top of this context and the parameter list was read as a tuple.
+    - match: '({{name}})\s*(\.)\s*({{name}})\s*(\()'
+      captures:
+        1: support.type.vala
+        2: punctuation.accessor.dot.vala
+        3: entity.name.function.constructor.vala
+        4: meta.function.parameters.vala punctuation.section.parameters.begin.vala
+      push: [constructor_prebody, method_params]
     - match: '({{name}})\s*(\.)'
       captures:
         1: entity.other.inherited-class.vala
@@ -988,6 +1034,13 @@ contexts:
       captures:
         1: entity.other.inherited-class.vala
         2: punctuation.accessor.dot.vala
+    # `const OptionEntry[] options = { … };` is a field with an initializer, not
+    # a property. This branch has no rule for `=`, so it used to skip over it and
+    # take the `{` for an accessor block - which then closed on the first `}` of
+    # a nested element. Hand those to member_lambda_or_plain, which routes to
+    # member_variables_declaration. `=>` stays here: it is a lambda property.
+    - match: '(?={{name}}\s*=(?!>|=))'
+      fail: method_or_member_variable_name
     - match: '{{name}}(?!\s*\()'
       scope: meta.property.vala variable.other.member.vala
       push:
@@ -1305,15 +1358,21 @@ contexts:
   line_of_code:
     - include: preprocessor
     # language keywords
-    - match: \b(if)\b
+    # These statements all `expect (OPEN_PARENS)` in the parser, so require the
+    # paren: without it a keyword used as an identifier (`switch = 2;` - legal,
+    # Parser.skip_identifier) took the statement branch.
+    - match: \b(if)\b(?=\s*\()
       captures:
         1: keyword.control.conditional.if.vala
       set: [else_block, if_block, if_condition]
-    - match: \b(switch)\b
+    - match: \b(switch)\b(?=\s*\()
       captures:
         1: keyword.control.switch.vala
       set: [switch_block, if_condition]
-    - match: \b(for)\s*(\()(?=(?:{{name}}|var)\s(?!=))
+    # `for (Type x = …` / `for (var x = …` - the init clause is a declaration.
+    # Requiring the *second* identifier keeps `for (void_method (); …)` out:
+    # it used to take this branch and read the call's name as a type.
+    - match: \b(for)\s*(\()(?=(?:{{name}}\s+{{name}}|var\s+{{name}}))
       captures:
         1: keyword.control.for.vala
         2: meta.group.vala punctuation.section.group.begin.vala
@@ -1357,7 +1416,7 @@ contexts:
     - match: \bdo\b
       scope: keyword.control.do.vala
       set: [do_condition, while_block]
-    - match: \bwhile\b
+    - match: \bwhile\b(?=\s*\()
       scope: keyword.control.while.vala
       set: [while_block, while_condition]
     - match: \b(else|case|catch|finally)\b
@@ -1855,7 +1914,12 @@ contexts:
       scope: storage.type.vala
     - match: \.emit\s*\(
       scope: keyword.other.vala
-    - match: \bswitch\b
+    # A switch *expression* (`x switch { … }`) needs the brace. Without the
+    # lookahead a `switch` used as an identifier - legal, Parser.skip_identifier
+    # accepts every keyword - pushed switch_expression, which then sat on the
+    # stack swallowing the rest of the file. See
+    # tests/parser/statement-keyword-as-identifier.vala.
+    - match: \bswitch\b(?=\s*\{)
       scope: keyword.control.vala
       push: switch_expression
     - match: '({{reserved}})\b'
@@ -2877,6 +2941,9 @@ contexts:
       pop: true
 
   switch_expression:
+    # never linger if the brace never arrives
+    - match: '(?=[^\s{])'
+      pop: true
     - match: \{
       scope: punctuation.section.block.begin.vala
       set:

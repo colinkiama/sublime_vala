@@ -46,3 +46,13 @@
             work ();
         }
     }
+
+    // A call, not a declaration, in the init clause - the declaration branch
+    // used to claim it and read the call name as a type.
+    void for_call_init () {
+        for (void_method (); ; void_method ()) {
+//           ^^^^^^^^^^^ source.vala meta.group.vala meta.function-call.vala variable.function.vala
+//                                           ^ source.vala meta.group.vala punctuation.section.group.end.vala
+            break;
+        }
+    }
