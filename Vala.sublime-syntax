@@ -512,6 +512,12 @@ contexts:
                   - match: '(?=\S)'
                     pop: true
               - include: attribute
+              # value list ends; arbitrary member declarations may follow
+              - match: ';'
+                scope: punctuation.terminator.statement.vala
+                set:
+                  - meta_scope: meta.enum.body.vala meta.block.vala
+                  - include: data_type_trailing_members
               - match: '{{name}}'
                 scope: constant.other.enum.vala
               - match: '='
@@ -547,6 +553,12 @@ contexts:
                   - match: '(?=\S)'
                     pop: true
               - include: attribute
+              # code list ends; arbitrary member declarations may follow
+              - match: ';'
+                scope: punctuation.terminator.statement.vala
+                set:
+                  - meta_scope: meta.errordomain.body.vala meta.block.vala
+                  - include: data_type_trailing_members
               - match: '{{name}}'
                 scope: constant.other.errordomain.vala
               - match: '='
@@ -649,6 +661,24 @@ contexts:
     - meta_content_scope: meta.interface.body.vala
     - match: ''
       pop: true
+
+  # enum/errordomain bodies allow arbitrary member declarations (methods,
+  # constructors, ...) after the value list's terminating ';' -
+  # Parser.parse_enum_declaration / parse_errordomain_declaration both do
+  # `if (accept (SEMICOLON)) { while (current () != CLOSE_BRACE) parse_declaration (...); }`
+  data_type_trailing_members:
+    - match: \}
+      scope: punctuation.section.block.end.vala
+      set:
+        - match: ';'
+          scope: punctuation.terminator.statement.vala
+          pop: true
+        - match: '(?=\S)'
+          pop: true
+    - include: attribute
+    - include: construct_block_declaration
+    - include: method_declaration
+    - include: stray_close_bracket
 
   data_type_body:
     - match: \{
