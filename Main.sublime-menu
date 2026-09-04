@@ -1,0 +1,26 @@
+[
+  {
+    "id": "preferences",
+    "children": [
+      {
+        "id": "package-settings",
+        "children": [
+          {
+            "caption": "Vala",
+            "mnemonic": "V",
+            "children": [
+              {
+                "command": "edit_settings",
+                "args": {
+                  "base_file": "${packages}/Vala/Vala.sublime-settings",
+                  "default": "// Settings in here override those in \"Vala/Vala.sublime-settings\",\n// which override the default Sublime Text settings.\n{\n\t$0\n}\n"
+                },
+                "caption": "Settings"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
